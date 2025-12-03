@@ -19,15 +19,24 @@ s.meter;
 s.freqscope;
 );
 
+
+//// two same oscillator with as many partials as possible and tone range 2.pow(n/16256)
+////binaural brain waves interval between oscillators 0.7Hz to 150Hz according to alertness level
+////fm noise modulator randomness
+
+/////// add tact switch (rotary switch knob) with lamdoma fundamentals (12 digital pins, pins the rotary knob has)
+//// 6 switches can set different binaural intervals via second rotary switch knob (6 positions) for:
+///1.rand value(0.5-3Hz), 2.rand value(4-7Hz), 3.rand value(8-12Hz), 4.rand value(12.5-15Hz), 5.(15-30Hz), 6.(30-110Hz)
+
+///// analog knobs (6): 1.tone, 2.master gain, 3.bandpass modulator speed (static rq) 4.pan speed for pan modulator (elevation), 5.lowpass, 6.highpass
+///highpass and reverb values static or random on every reboot along with fm noise modulator
+
+
+
 (
 s.waitForBoot{
 	Tdef(\cmrc, {
 	Buffer.freeAll;
-		///tetrahedron
-	/*(
-	~a = VBAPSpeakerArray.new(3, [[45, 35.264390.neg], [135.neg, 35.264390.neg], [45.neg, 35.264390], [135, 35.264390]]);
-	 ~b = Buffer.loadCollection(s, ~a.getSetsAndMatrices);
-)*/
 
 		///cube
 		(
