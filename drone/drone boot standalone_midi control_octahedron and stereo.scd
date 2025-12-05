@@ -71,10 +71,10 @@ phase=gold.degrad;
 fm=LFNoise1.ar(amp,amp.reciprocal);
 freq=freq;
 
-band_osc1=SinOsc.kr(freq.reciprocal*2.pow(band/56),phase:90.degrad).range(56,16256);
-band_osc2=SinOsc.kr(freq.reciprocal*2.pow(band/56),phase:90.degrad).range(56,16256);
-band_osc3=SinOsc.kr(freq.reciprocal*2.pow(band/56),phase:90.degrad.neg).range(56,16256);
-band_osc4=SinOsc.kr(freq.reciprocal*2.pow(band/56),phase:90.degrad.neg).range(56,16256);
+band_osc1=SinOsc.kr(freq.reciprocal*2.pow(band/56),phase:90.degrad).range(496,16256);
+band_osc2=SinOsc.kr(freq.reciprocal*2.pow(band/56),phase:90.degrad).range(496,16256);
+band_osc3=SinOsc.kr(freq.reciprocal*2.pow(band/56),phase:90.degrad.neg).range(496,16256);
+band_osc4=SinOsc.kr(freq.reciprocal*2.pow(band/56),phase:90.degrad.neg).range(496,16256);
 
 linex=exp(Complex(0,1)*silver3.degrad).real.abs;
 liney=exp(Complex(0,1)*silver3.degrad).imag.abs.neg;
