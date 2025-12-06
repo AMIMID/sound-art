@@ -33,7 +33,7 @@ s.scope;
 	 ~b = Buffer.loadCollection(s, ~a.getSetsAndMatrices);
 );
 /////////////osc polytope
-(
+/*(
 {
 	var az=0,el1=0,sph,n=90,iter=90,rep=360,el,silver=(1+2.sqrt),w=((1+5.sqrt)/2);
 	~az=[];~el=[];
@@ -50,24 +50,24 @@ sph=Spherical(1,az.degrad,el1.degrad).phi.round(0.000000000001);
 el1=0;n=90;
 	};
 }.value;
-);
-		/*(
+);*/
+		(
 {
-var  sph1,sph2,sph3,az1=0,el1=0,az2=0,el2=0;
+var  sph1,sph2,sph3,az1=0,el1=0,az2=0,el2=0,gold_r=((1+5.sqrt)/2),silver_r=(1+2.sqrt);
 var azimuth,elevation,angle=0,n=12,ellipsis=[1,1,1];
 var mag1=1,mag2=1,mag3=1,mag4=1,mag5=1,mag6=1,mag7=1;
 	~az=[];~el=[];
 
 	360.do{
 azimuth=90.collect{
-			az1 = (az1+((180*2.pow(n/12))-((180*2.pow(n/12))/1.6180339887499))).wrap((90*2.pow(n/12)).neg,(90*2.pow(n/12)));
-		   el1 = (el1+((90*2.pow(n/12))-((90*2.pow(n/12))/1.6180339887499))).wrap((45*2.pow(n/12)).neg,(45*2.pow(n/12)));
+			az1 = (az1+((180*2.pow(n/12))-((180*2.pow(n/12))/silver_r))).wrap((90*2.pow(n/12)).neg,(90*2.pow(n/12)));
+		   el1 = (el1+((90*2.pow(n/12))-((90*2.pow(n/12))/silver_r))).wrap((45*2.pow(n/12)).neg,(45*2.pow(n/12)));
 sph1=(Spherical(mag1,(az1.degrad+angle.degrad).wrap(pi.neg,pi),(el1.degrad+angle.degrad).wrap((pi/2).neg,(pi/2)))).theta.round(0.000000000001);
 	};
 
 elevation=90.collect{
-				az2 = (az2+((180*2.pow(n/12))-((180*2.pow(n/12))/1.6180339887499))).wrap((90*2.pow(n/12)).neg,(90*2.pow(n/12)));
-			el2 = (el2+((90*2.pow(n/12))-((90*2.pow(n/12))/1.6180339887499))).wrap((45*2.pow(n/12)).neg,(45*2.pow(n/12)));
+				az2 = (az2+((180*2.pow(n/12))-((180*2.pow(n/12))/silver_r))).wrap((90*2.pow(n/12)).neg,(90*2.pow(n/12)));
+			el2 = (el2+((90*2.pow(n/12))-((90*2.pow(n/12))/silver_r))).wrap((45*2.pow(n/12)).neg,(45*2.pow(n/12)));
 sph2=(Spherical(mag2,(az2.degrad+angle.degrad).wrap(pi.neg,pi),(el2.degrad+angle.degrad).wrap((pi/2).neg,(pi/2)))).phi.round(0.000000000001);
 	};
 
@@ -77,7 +77,7 @@ angle=(angle+((180*2.pow(n/12))-((180*2.pow(n/12))/1.6180339887499))).wrap(0,(18
 		az1=0;el1=0;az2=0;el2=0;
 	}
 }.value;
-);*/
+);
 		/////check value range
 		/*(var m,a,b,c; {m=MouseX.kr(0,32400).round(1).asInteger;
 			a=Spherical(24,Select.kr(m,~az),Select.kr(m,~el)).z.abs;
@@ -107,7 +107,7 @@ wt = signal.asWavetable;
 SynthDef.new(\synth,{
 
 	arg gain=1,low=7168,high=0,tone=0,band=1,lamdoma=1,brain=1,pan_speed=1;
-	var gold=45,silver1=0,silver2=180,gold_r=((1+5.sqrt)/2),silver_r=(1+2.sqrt),room=0.8,mix=0.6;
+	var gold=45,silver1=0,silver2=180,gold_r=((1+5.sqrt)/2),silver_r=(1+2.sqrt),room=0.5,mix=1;
 	var freq,fund,n=0,m,phase,interval,alpha,cell_az,cell_el,num=5;
 	var sig1,sig2,first=28,bank=6,out1,out2,fm,band_osc1,band_osc2,amp,ton;
 	var linex,liney,silver3=45,cell_l,cell_r,band_osc3,band_osc4;
@@ -141,25 +141,25 @@ amp=m.reciprocal*ton.reciprocal;
 phase=gold.degrad;
 
 					fm=LFNoise1.ar(amp,m);
-freq=freq+fm;
+freq=freq;
 
-band_osc1=SinOsc.kr(freq.reciprocal*2.pow(band.lag(0.1)/56),phase:90.degrad).range(56*2,16256);
-band_osc2=SinOsc.kr(freq.reciprocal*2.pow(band.lag(0.1)/56),phase:90.degrad).range(56*2,16256);
-band_osc3=SinOsc.kr(freq.reciprocal*2.pow(band.lag(0.1)/56),phase:90.degrad.neg).range(56*2,16256);
-band_osc4=SinOsc.kr(freq.reciprocal*2.pow(band.lag(0.1)/56),phase:90.degrad.neg).range(56*2,16256);
+band_osc1=SinOsc.kr(freq.reciprocal*2.pow(band.lag(0.1)/992),phase:90.degrad).range(56*2,16256);
+band_osc2=SinOsc.kr(freq.reciprocal*2.pow(band.lag(0.1)/992),phase:90.degrad).range(56*2,16256);
+band_osc3=SinOsc.kr(freq.reciprocal*2.pow(band.lag(0.1)/992),phase:90.degrad.neg).range(56*2,16256);
+band_osc4=SinOsc.kr(freq.reciprocal*2.pow(band.lag(0.1)/992),phase:90.degrad.neg).range(56*2,16256);
 
 linex=exp(Complex(0,1)*silver3.degrad).real.abs;
 liney=exp(Complex(0,1)*silver3.degrad).imag.abs.neg;
 
 sig1=BPF.ar(BRF.ar(
 (LPF.ar(Saw.ar((freq),mul:amp).abs,low/16)*SinOsc.ar(freq/(b_x),phase,amp)),
-	band_osc3.lag(0.1),2.sqrt.reciprocal),band_osc1.lag(0.1),2.sqrt.reciprocal);
+	band_osc3.lag(0.1),0.2),band_osc1.lag(0.1),2.sqrt.reciprocal);
 sig2=BPF.ar(BRF.ar(
 (LPF.ar(Saw.ar((freq),mul:amp).abs,low/16)*SinOsc.ar(freq/(b_y),phase,amp)),
-band_osc4.lag(0.1),2.sqrt.reciprocal),band_osc2.lag(0.1),2.sqrt.reciprocal);
+band_osc4.lag(0.1),0.2),band_osc2.lag(0.1),2.sqrt.reciprocal);
 sig3=BPF.ar(BRF.ar(
 (LPF.ar(Saw.ar((freq),mul:amp).abs,low/16)*SinOsc.ar(freq/(b_z),phase,amp)),
-band_osc4.lag(0.1),2.sqrt.reciprocal),band_osc2.lag(0.1),2.sqrt.reciprocal);
+band_osc4.lag(0.1),0.2),band_osc2.lag(0.1),2.sqrt.reciprocal);
 
 /*sig1=BPF.ar(BRF.ar(
 (LPF.ar(LFTri.ar((freq),mul:amp),low/4)*SinOsc.ar(freq/(b_x),phase,amp)),
@@ -172,7 +172,7 @@ sig3=BPF.ar(BRF.ar(
 band_osc4.lag(0.1),2.sqrt.reciprocal),band_osc2.lag(0.1),2.sqrt.reciprocal);*/
 
 sig1=LPF.ar(sig1,2.pow(low.lag(0.1)/992)); sig2=LPF.ar(sig2,2.pow(low.lag(0.1)/992)); sig3=LPF.ar(sig3,2.pow(low.lag(0.1)/992));
-sig1=HPF.ar(sig1,2.pow(high.lag(0.1)/992)); sig2=HPF.ar(sig2,2.pow(high.lag(0.1)/992)); sig3=LPF.ar(sig3,2.pow(high.lag(0.1)/992));
+sig1=HPF.ar(sig1,2.pow(high.lag(0.1)/992)); sig2=HPF.ar(sig2,2.pow(high.lag(0.1)/992)); sig3=HPF.ar(sig3,2.pow(high.lag(0.1)/992));
 
 cell_az=Osc.kr(~w.bufnum,2.pow(pan_speed.lag(0.1)/992),phase:0.degrad).range(180.neg,180);
 cell_el=SinOsc.kr(2.pow(pan_speed.lag(0.1)/992),phase:90.degrad).range(90.neg,90);
@@ -210,7 +210,7 @@ silver3=(silver3+(360-silver_r)).wrap(180.neg,180).round(0.0001);
 1.wait;
 ~synth=Synth.new(\synth,[\gain,100,\tone,0,\low,(496*16*(7/4)),\high,(496*8*(6/5)),\pan_speed,(496*16).neg,\band,(56*8).neg,\lamdoma,10,\brain,4]).register;//s.record
 1.wait;
-
+		2.pow((496*16*(7/4))/992)
 	(
 MIDIClient.init;
 MIDIIn.connectAll;
@@ -254,7 +254,7 @@ MIDIdef.cc(\midi_pot4,{ |val, num, chan, src|
 		(
 MIDIdef.cc(\midi_pot5,{ |val, num, chan, src|
 		var band;
-	band=val.linlin(0,127,(56*8).neg,56*32).round(1).asInteger;
+	band=val.linlin(0,127,(496*8).neg,496*32).round(1).asInteger;
 		band.postln;
 		if(~synth.isPlaying,{~synth.set(\band,band)});
 },30);
