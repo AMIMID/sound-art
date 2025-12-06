@@ -38,13 +38,6 @@ s.scope;
 ~el=[35.264390.neg.degrad,35.264390.neg.degrad,35.264390.neg.degrad,35.264390.neg.degrad,35.264390.degrad,35.264390.degrad,35.264390.degrad,35.264390.degrad];
 		);
 
-		/*(var n=0;
-			7.do{
-			Spherical(1,~az.[n],~el.[n]).rotate(45.degrad).tumble(45.degrad).tilt(45.degrad).x.postln;
-			Spherical(1,~az.[n],~el.[n]).rotate(45.degrad).tumble(45.degrad).tilt(45.degrad).y.postln;
-			Spherical(1,~az.[n],~el.[n]).rotate(45.degrad).tumble(45.degrad).tilt(45.degrad).z.postln;
-				n=n+1})*/
-
 //////saw wavetable
 		~w= Buffer.alloc(s,2048);
 		{
@@ -67,19 +60,31 @@ SynthDef.new(\synth,{
 	var sig1,sig2,first=28,bank=6,out1,out2,fm,band_osc1,band_osc2,amp,ton;
 	var linex,liney,silver3=45,cell_l,cell_r,band_osc3,band_osc4;
 	var octahedron,sig3,out3,cell_tria,b_x,b_y,b_z;
+	var xyz=[1,1,1].normalizeSum.sqrt,axis,q,rotor,rotation;
+    var i=Quaternion(0, xyz.[0], 0, 0),j=Quaternion(0, 0, xyz.[1], 0),k=Quaternion(0, 0, 0, xyz.[2]);
+
+axis=i+j+k;
+
+octahedron=Spherical(1,Select.kr(brain.lag(0.1),~az),Select.kr(brain.lag(0.1),~el));
+
+// b_x = (lamdoma.lag(0.1)) * cos(octahedron.phi) * cos(octahedron.theta);
+// b_y = (lamdoma.lag(0.1)) * cos(octahedron.phi) * sin(octahedron.theta);
+//b_z = (lamdoma.lag(0.1)) * sin(octahedron.phi);
+
+q=Quaternion(0,octahedron.x.round(0.00001),octahedron.y.round(0.00001),octahedron.z.round(0.00001));
+rotor=((axis*exp(Complex(0,1)*45.degrad).imag)+exp(Complex(0,1)*45.degrad).real);
+rotation=rotor*q*rotor.conjugate;
+
+b_x=rotation.b;
+b_y=rotation.c;
+b_z=rotation.d;
 
 
 bank.do{
 
-ton=2.pow((tone.lag(0.1))/992).round(0.0001)*lamdoma.lag(0.1);
+ton=2.pow((tone.lag(0.1))/992).round(0.0001);
 
 fund=(first.lag(0.1))*ton;
-
-octahedron=Spherical(1,~az.[n],~el.[n]).rotate(45.degrad).tumble(45.degrad).tilt(45.degrad);
-
-b_x = 2.pow(brain.lag(0.1)/12) * cos(octahedron.phi) * cos(octahedron.theta);
-b_y = 2.pow(brain.lag(0.1)/12) * cos(octahedron.phi) * sin(octahedron.theta);
-b_z = 2.pow(brain.lag(0.1)/12) * sin(octahedron.phi);
 
 n=n+1;
 
@@ -148,7 +153,7 @@ silver3=(silver3+(360-silver_r)).wrap(180.neg,180).round(0.0001);
 }).add;);
 
 1.wait;
-~synth=Synth.new(\synth,[\gain,1,\tone,0,\low,16256/2,\high,28,\pan_speed,0.01,\band,0,\lamdoma,1/2,\brain,0.5]).register;//s.record
+~synth=Synth.new(\synth,[\gain,100,\tone,0,\low,(496*16*(7/4)),\high,(496*8*(6/5)),\pan_speed,(496*16).neg,\band,(56*8).neg,\lamdoma,1/2,\brain,4]).register;//s.record
 1.wait;
 
 	(
@@ -210,7 +215,7 @@ MIDIdef.cc(\midi_pot6,{ |val, num, chan, src|
 		(
 MIDIdef.cc(\midi_switch1,{ |val, num, chan, src|
 		var brain;
-					if(val>0,brain=2.9999.rand.wrap(0.5,3),brain=2.9999.rand.wrap(0.5,3));
+					if(val>0,brain=0,brain=0);
 		brain.postln;
 		if(~synth.isPlaying,{~synth.set(\brain,brain)});
 },14);
@@ -218,7 +223,7 @@ MIDIdef.cc(\midi_switch1,{ |val, num, chan, src|
 	(
 MIDIdef.cc(\midi_switch2,{ |val, num, chan, src|
 		 var brain;
-				if(val>0,brain=6.9999.rand.wrap(4,7),brain=6.9999.rand.wrap(4,7));
+					if(val>0,brain=1,brain=1);
 
 		brain.postln;
 		if(~synth.isPlaying,{~synth.set(\brain,brain)});
@@ -227,7 +232,7 @@ MIDIdef.cc(\midi_switch2,{ |val, num, chan, src|
 		(
 MIDIdef.cc(\midi_switch3,{ |val, num, chan, src|
 		var brain;
-					if(val>0,brain=11.9999.rand.wrap(8,12),brain=11.9999.rand.wrap(8,12));
+					if(val>0,brain=2,brain=2);
 
 		brain.postln;
 		if(~synth.isPlaying,{~synth.set(\brain,brain)});
@@ -237,8 +242,7 @@ MIDIdef.cc(\midi_switch3,{ |val, num, chan, src|
 	(
 MIDIdef.cc(\midi_switch4,{ |val, num, chan, src|
          var brain;
-					if(val>0,brain=14.9999.rand.wrap(12.5,15),brain=14.9999.rand.wrap(12.5,15));
-
+					if(val>0,brain=3,brain=3);
 		brain.postln;
 		if(~synth.isPlaying,{~synth.set(\brain,brain)});
 },17);
@@ -246,7 +250,7 @@ MIDIdef.cc(\midi_switch4,{ |val, num, chan, src|
 		(
 MIDIdef.cc(\midi_switch5,{ |val, num, chan, src|
 		var brain;
-				if(val>0,brain=29.9999.rand.wrap(15,30),brain=29.9999.rand.wrap(15,30));
+				if(val>0,brain=4,brain=4);
 
 		brain.postln;
 		if(~synth.isPlaying,{~synth.set(\brain,brain)});
@@ -255,8 +259,7 @@ MIDIdef.cc(\midi_switch5,{ |val, num, chan, src|
 					(
 MIDIdef.cc(\midi_switch6,{ |val, num, chan, src|
 		var brain;
-				if(val>0,brain=109.9999.rand.wrap(30,110),brain=109.9999.rand.wrap(30,110));
-
+				iif(val>0,brain=5,brain=5);
 		brain.postln;
 		if(~synth.isPlaying,{~synth.set(\brain,brain)});
 },19);
@@ -330,3 +333,58 @@ MIDIdef.cc(\midi_switch12,{ |val, num, chan, src|
 	m=val.linlin(0,127,0.1,1).round(0.1);
 		m.postln;
 		if(~synth.isPlaying,{~synth.set(\mix,m)});*/
+
+/*(
+MIDIdef.cc(\midi_switch1,{ |val, num, chan, src|
+		var brain;
+					if(val>0,brain=2.9999.rand.wrap(0.5,3),brain=2.9999.rand.wrap(0.5,3));
+		brain.postln;
+		if(~synth.isPlaying,{~synth.set(\brain,brain)});
+},14);
+	);
+	(
+MIDIdef.cc(\midi_switch2,{ |val, num, chan, src|
+		 var brain;
+				if(val>0,brain=6.9999.rand.wrap(4,7),brain=6.9999.rand.wrap(4,7));
+
+		brain.postln;
+		if(~synth.isPlaying,{~synth.set(\brain,brain)});
+},15);
+	);
+		(
+MIDIdef.cc(\midi_switch3,{ |val, num, chan, src|
+		var brain;
+					if(val>0,brain=11.9999.rand.wrap(8,12),brain=11.9999.rand.wrap(8,12));
+
+		brain.postln;
+		if(~synth.isPlaying,{~synth.set(\brain,brain)});
+},16);
+	);
+
+	(
+MIDIdef.cc(\midi_switch4,{ |val, num, chan, src|
+         var brain;
+					if(val>0,brain=14.9999.rand.wrap(12.5,15),brain=14.9999.rand.wrap(12.5,15));
+
+		brain.postln;
+		if(~synth.isPlaying,{~synth.set(\brain,brain)});
+},17);
+	);
+		(
+MIDIdef.cc(\midi_switch5,{ |val, num, chan, src|
+		var brain;
+				if(val>0,brain=29.9999.rand.wrap(15,30),brain=29.9999.rand.wrap(15,30));
+
+		brain.postln;
+		if(~synth.isPlaying,{~synth.set(\brain,brain)});
+},18);
+	);
+					(
+MIDIdef.cc(\midi_switch6,{ |val, num, chan, src|
+		var brain;
+				if(val>0,brain=109.9999.rand.wrap(30,110),brain=109.9999.rand.wrap(30,110));
+
+		brain.postln;
+		if(~synth.isPlaying,{~synth.set(\brain,brain)});
+},19);
+	);*/
