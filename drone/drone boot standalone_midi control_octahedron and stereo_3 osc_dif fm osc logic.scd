@@ -33,10 +33,24 @@ s.scope;
 	 ~b = Buffer.loadCollection(s, ~a.getSetsAndMatrices);
 );
 /////////////osc polytope
-		(
-~az=[45.degrad,135.degrad,45.neg.degrad,135.neg.degrad,45.degrad,135.degrad,45.neg.degrad,135.neg.degrad];
-~el=[35.264390.neg.degrad,35.264390.neg.degrad,35.264390.neg.degrad,35.264390.neg.degrad,35.264390.degrad,35.264390.degrad,35.264390.degrad,35.264390.degrad];
-		);
+(
+{
+	var az=0,el1=0,sph,n=90,iter=45,rep=360,el,silver=(1+2.sqrt),w=((1+5.sqrt)/2);
+	~az=[];~el=[];
+
+rep.do{
+el=iter.collect{
+		el1 = 90/n;
+			n=n-2;
+sph=Spherical(1,az.degrad,el1.degrad).phi.round(0.000000000001);
+	};
+~az=~az++az.degrad;~el=~el++el;
+//az = (az+1).wrap(0,360);
+		az=(az+(360-(360/silver))).wrap(0,360);
+el1=0;n=90;
+	};
+}.value;
+);
 
 //////saw wavetable
 		~w= Buffer.alloc(s,2048);
@@ -56,7 +70,7 @@ SynthDef.new(\synth,{
 
 	arg gain=1,low=7168,high=0,tone=0,band=1,lamdoma=1,brain=1,pan_speed=1;
 	var gold=45,silver1=0,silver2=180,gold_r=((1+5.sqrt)/2),silver_r=(1+2.sqrt),room=0.8,mix=0.6;
-	var freq,fund,n=0,m,phase,interval,alpha,cell_az,cell_el,pulsenum=32;
+	var freq,fund,n=0,m,phase,interval,alpha,cell_az,cell_el,pulsenum=5;
 	var sig1,sig2,first=28,bank=6,out1,out2,fm,band_osc1,band_osc2,amp,ton;
 	var linex,liney,silver3=45,cell_l,cell_r,band_osc3,band_osc4;
 	var octahedron,sig3,out3,cell_tria,b_x,b_y,b_z;
@@ -65,19 +79,12 @@ SynthDef.new(\synth,{
 
 axis=i+j+k;
 
-octahedron=Spherical(1,Select.kr(brain.lag(0.1),~az),Select.kr(brain.lag(0.1),~el));
+octahedron=Spherical(lamdoma.lag(0.1),Select.kr(brain.lag(0.1),~az),Select.kr(brain.lag(0.1),~el));
 
-// b_x = (lamdoma.lag(0.1)) * cos(octahedron.phi) * cos(octahedron.theta);
-// b_y = (lamdoma.lag(0.1)) * cos(octahedron.phi) * sin(octahedron.theta);
-//b_z = (lamdoma.lag(0.1)) * sin(octahedron.phi);
 
-q=Quaternion(0,octahedron.x.round(0.00001),octahedron.y.round(0.00001),octahedron.z.round(0.00001));
-rotor=((axis*exp(Complex(0,1)*45.degrad).imag)+exp(Complex(0,1)*45.degrad).real);
-rotation=rotor*q*rotor.conjugate;
-
-b_x=rotation.b;
-b_y=rotation.c;
-b_z=rotation.d;
+b_x=octahedron.x.abs;
+b_y=octahedron.y.abs;
+b_z=octahedron.z.abs;
 
 
 bank.do{
@@ -107,14 +114,24 @@ linex=exp(Complex(0,1)*silver3.degrad).real.abs;
 liney=exp(Complex(0,1)*silver3.degrad).imag.abs.neg;
 
 sig1=BPF.ar(BRF.ar(
-(LPF.ar(Pulse.ar((freq)+b_x,width:0.5,mul:amp).abs,low/16)*SinOsc.ar((freq/pulsenum)+b_x,phase,amp)),
+(LPF.ar(Saw.ar((freq),mul:amp).abs,low/16)*SinOsc.ar((freq/(b_x/3)),phase,amp)),
 	band_osc3.lag(0.1),2.sqrt.reciprocal),band_osc1.lag(0.1),2.sqrt.reciprocal);
 sig2=BPF.ar(BRF.ar(
-(LPF.ar(Pulse.ar((freq)+b_y,width:0.5,mul:amp).abs,low/16)*SinOsc.ar((freq/pulsenum)+b_y,phase,amp)),
+(LPF.ar(Saw.ar((freq),mul:amp).abs,low/16)*SinOsc.ar((freq/(b_y/3)),phase,amp)),
 band_osc4.lag(0.1),2.sqrt.reciprocal),band_osc2.lag(0.1),2.sqrt.reciprocal);
 sig3=BPF.ar(BRF.ar(
-(LPF.ar(Pulse.ar((freq)+b_z,width:0.5,mul:amp).abs,low/16)*SinOsc.ar((freq/pulsenum)+b_z,phase,amp)),
+(LPF.ar(Saw.ar((freq),mul:amp).abs,low/16)*SinOsc.ar((freq/(b_z/3)),phase,amp)),
 band_osc4.lag(0.1),2.sqrt.reciprocal),band_osc2.lag(0.1),2.sqrt.reciprocal);
+
+/*sig1=BPF.ar(BRF.ar(
+(LPF.ar(Saw.ar((freq/(pulsenum+1)),mul:amp).abs,low/4)*SinOsc.ar((freq/(pulsenum+b_x)),phase,amp)),
+	band_osc3.lag(0.1),2.sqrt.reciprocal),band_osc1.lag(0.1),2.sqrt.reciprocal);
+sig2=BPF.ar(BRF.ar(
+(LPF.ar(Saw.ar((freq/(pulsenum+1)),mul:amp).abs,low/4)*SinOsc.ar((freq/(pulsenum+b_y)),phase,amp)),
+band_osc4.lag(0.1),2.sqrt.reciprocal),band_osc2.lag(0.1),2.sqrt.reciprocal);
+sig3=BPF.ar(BRF.ar(
+(LPF.ar(Saw.ar((freq/(pulsenum+1)),mul:amp).abs,low/4)*SinOsc.ar((freq/(pulsenum+b_z)),phase,amp)),
+band_osc4.lag(0.1),2.sqrt.reciprocal),band_osc2.lag(0.1),2.sqrt.reciprocal);*/
 
 sig1=LPF.ar(sig1,2.pow(low.lag(0.1)/992)); sig2=LPF.ar(sig2,2.pow(low.lag(0.1)/992)); sig3=LPF.ar(sig3,2.pow(low.lag(0.1)/992));
 sig1=HPF.ar(sig1,2.pow(high.lag(0.1)/992)); sig2=HPF.ar(sig2,2.pow(high.lag(0.1)/992)); sig3=LPF.ar(sig3,2.pow(high.lag(0.1)/992));
@@ -153,7 +170,7 @@ silver3=(silver3+(360-silver_r)).wrap(180.neg,180).round(0.0001);
 }).add;);
 
 1.wait;
-~synth=Synth.new(\synth,[\gain,100,\tone,0,\low,(496*16*(7/4)),\high,(496*8*(6/5)),\pan_speed,(496*16).neg,\band,(56*8).neg,\lamdoma,1/2,\brain,4]).register;//s.record
+~synth=Synth.new(\synth,[\gain,100,\tone,0,\low,(496*16*(7/4)),\high,(496*8*(6/5)),\pan_speed,(496*16).neg,\band,(56*8).neg,\lamdoma,10,\brain,4]).register;//s.record
 1.wait;
 
 	(
@@ -215,7 +232,7 @@ MIDIdef.cc(\midi_pot6,{ |val, num, chan, src|
 		(
 MIDIdef.cc(\midi_switch1,{ |val, num, chan, src|
 		var brain;
-					if(val>0,brain=0,brain=0);
+					if(val>0,brain=16200.rand,brain=16200.rand);
 		brain.postln;
 		if(~synth.isPlaying,{~synth.set(\brain,brain)});
 },14);
@@ -223,7 +240,7 @@ MIDIdef.cc(\midi_switch1,{ |val, num, chan, src|
 	(
 MIDIdef.cc(\midi_switch2,{ |val, num, chan, src|
 		 var brain;
-					if(val>0,brain=1,brain=1);
+					if(val>0,brain=16200.rand,brain=16200.rand);
 
 		brain.postln;
 		if(~synth.isPlaying,{~synth.set(\brain,brain)});
@@ -232,7 +249,7 @@ MIDIdef.cc(\midi_switch2,{ |val, num, chan, src|
 		(
 MIDIdef.cc(\midi_switch3,{ |val, num, chan, src|
 		var brain;
-					if(val>0,brain=2,brain=2);
+					if(val>0,brain=16200.rand,brain=16200.rand);
 
 		brain.postln;
 		if(~synth.isPlaying,{~synth.set(\brain,brain)});
@@ -242,7 +259,7 @@ MIDIdef.cc(\midi_switch3,{ |val, num, chan, src|
 	(
 MIDIdef.cc(\midi_switch4,{ |val, num, chan, src|
          var brain;
-					if(val>0,brain=3,brain=3);
+					if(val>0,brain=16200.rand,brain=16200.rand);
 		brain.postln;
 		if(~synth.isPlaying,{~synth.set(\brain,brain)});
 },17);
@@ -250,7 +267,7 @@ MIDIdef.cc(\midi_switch4,{ |val, num, chan, src|
 		(
 MIDIdef.cc(\midi_switch5,{ |val, num, chan, src|
 		var brain;
-				if(val>0,brain=4,brain=4);
+				if(val>0,brain=16200.rand,brain=16200.rand);
 
 		brain.postln;
 		if(~synth.isPlaying,{~synth.set(\brain,brain)});
@@ -259,7 +276,7 @@ MIDIdef.cc(\midi_switch5,{ |val, num, chan, src|
 					(
 MIDIdef.cc(\midi_switch6,{ |val, num, chan, src|
 		var brain;
-				iif(val>0,brain=5,brain=5);
+				if(val>0,brain=16200.rand,brain=16200.rand);
 		brain.postln;
 		if(~synth.isPlaying,{~synth.set(\brain,brain)});
 },19);
@@ -268,7 +285,7 @@ MIDIdef.cc(\midi_switch6,{ |val, num, chan, src|
 	(
 MIDIdef.cc(\midi_switch7,{ |val, num, chan, src|
 		var lamdoma;
-				if(val>0,lamdoma=1,lamdoma=1);
+				if(val>0,lamdoma=10,lamdoma=10);
 		lamdoma.postln;
 		if(~synth.isPlaying,{~synth.set(\lamdoma,lamdoma)});
 },20);
@@ -276,7 +293,7 @@ MIDIdef.cc(\midi_switch7,{ |val, num, chan, src|
 	(
 MIDIdef.cc(\midi_switch8,{ |val, num, chan, src|
 		 var lamdoma;
-				if(val>0,lamdoma=2,lamdoma=2);
+				if(val>0,lamdoma=(4/3)*10,lamdoma=(4/3)*10);
 		lamdoma.postln;
 		if(~synth.isPlaying,{~synth.set(\lamdoma,lamdoma)});
 },21);
@@ -284,7 +301,7 @@ MIDIdef.cc(\midi_switch8,{ |val, num, chan, src|
 		(
 MIDIdef.cc(\midi_switch9,{ |val, num, chan, src|
 		var lamdoma;
-					if(val>0,lamdoma=3,lamdoma=1);
+					if(val>0,lamdoma=(3/2)*10,lamdoma=(3/2)*10);
 		lamdoma.postln;
 		if(~synth.isPlaying,{~synth.set(\lamdoma,lamdoma)});
 },22);
@@ -293,7 +310,7 @@ MIDIdef.cc(\midi_switch9,{ |val, num, chan, src|
 	(
 MIDIdef.cc(\midi_switch10,{ |val, num, chan, src|
          var lamdoma;
-				if(val>0,lamdoma=4,lamdoma=4);
+				if(val>0,lamdoma=(2/1)*10,lamdoma=(2/1)*10);
 		lamdoma.postln;
 		if(~synth.isPlaying,{~synth.set(\lamdoma,lamdoma)});
 },23);
@@ -301,7 +318,7 @@ MIDIdef.cc(\midi_switch10,{ |val, num, chan, src|
 		(
 MIDIdef.cc(\midi_switch11,{ |val, num, chan, src|
 		var lamdoma;
-				if(val>0,lamdoma=5,lamdoma=5);
+				if(val>0,lamdoma=30,lamdoma=30);
 		lamdoma.postln;
 		if(~synth.isPlaying,{~synth.set(\lamdoma,lamdoma)});
 },24);
@@ -309,7 +326,7 @@ MIDIdef.cc(\midi_switch11,{ |val, num, chan, src|
 					(
 MIDIdef.cc(\midi_switch12,{ |val, num, chan, src|
 		var lamdoma;
-				if(val>0,lamdoma=6,lamdoma=6);
+				if(val>0,lamdoma=40,lamdoma=40);
 		lamdoma.postln;
 		if(~synth.isPlaying,{~synth.set(\lamdoma,lamdoma)});
 },25);
