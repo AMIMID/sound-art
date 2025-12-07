@@ -170,13 +170,13 @@ sig3=BPF.ar(BRF.ar(
 band_osc4.lag(0.1),rq),band_osc2.lag(0.1),rq);
 
 /*sig1=BPF.ar(BRF.ar(
-(LPF.ar(SoundIn.ar(0,mul:amp).abs,low/4)*SinOsc.ar(freq-(b_x),phase,amp)),
+(LPF.ar(SoundIn.ar(0,mul:amp),low/4)*SinOsc.ar(freq-(b_x),phase,amp)),
 	band_osc3.lag(0.1),rq),band_osc1.lag(0.1),rq);
 sig2=BPF.ar(BRF.ar(
-(LPF.ar(SoundIn.ar(0,mul:amp).abs,low/4)*SinOsc.ar(freq-(b_y),phase,amp)),
+(LPF.ar(SoundIn.ar(0,mul:amp),low/4)*SinOsc.ar(freq-(b_y),phase,amp)),
 band_osc4.lag(0.1),rq),band_osc2.lag(0.1),rq);
 sig3=BPF.ar(BRF.ar(
-(LPF.ar(SoundIn.ar(0,mul:amp).abs,low/4)*SinOsc.ar(freq-(b_z),phase,amp)),
+(LPF.ar(SoundIn.ar(0,mul:amp),low/4)*SinOsc.ar(freq-(b_z),phase,amp)),
 band_osc4.lag(0.1),rq),band_osc2.lag(0.1),rq);*/
 
 sig1=LPF.ar(sig1,2.pow(low.lag(0.1)/992)); sig2=LPF.ar(sig2,2.pow(low.lag(0.1)/992)); sig3=LPF.ar(sig3,2.pow(low.lag(0.1)/992));
