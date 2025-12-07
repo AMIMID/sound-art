@@ -136,8 +136,7 @@ SynthDef.new(\synth,{
 axis=i+j+k;
 
 
-				octahedron=Spherical(10*
-					lamdoma.lag(0.1),Select.kr(brain.lag(0.1),~az),Select.kr(brain.lag(0.1),~el));
+				octahedron=Spherical(10*lamdoma.lag(0.1),Select.kr(brain.lag(0.1),~az),Select.kr(brain.lag(0.1),~el));
 
 
 b_x=octahedron.x;
@@ -351,7 +350,7 @@ MIDIdef.cc(\midi_switch7,{ |val, num, chan, src|
 	(
 MIDIdef.cc(\midi_switch8,{ |val, num, chan, src|
 		 var lamdoma, n=1, a=1;
-				if(val>0,lamdoma=6/5,lamdoma=6/5);
+				if(val>0,lamdoma=2,lamdoma=2);
 		lamdoma.postln;
 		if(~synth.isPlaying,{~synth.set(\lamdoma,lamdoma)});
 },21);
@@ -359,7 +358,7 @@ MIDIdef.cc(\midi_switch8,{ |val, num, chan, src|
 		(
 MIDIdef.cc(\midi_switch9,{ |val, num, chan, src|
 		var lamdoma, n=2, a=1;
-					if(val>0,lamdoma=5/4,lamdoma=5/4);
+					if(val>0,lamdoma=3,lamdoma=3);
 		lamdoma.postln;
 		if(~synth.isPlaying,{~synth.set(\lamdoma,lamdoma)});
 },22);
@@ -368,7 +367,7 @@ MIDIdef.cc(\midi_switch9,{ |val, num, chan, src|
 	(
 MIDIdef.cc(\midi_switch10,{ |val, num, chan, src|
          var lamdoma, n=3, a=1;
-				if(val>0,lamdoma=4/3,lamdoma=4/3);
+				if(val>0,lamdoma=4,lamdoma=4);
 		lamdoma.postln;
 		if(~synth.isPlaying,{~synth.set(\lamdoma,lamdoma)});
 },23);
@@ -376,7 +375,7 @@ MIDIdef.cc(\midi_switch10,{ |val, num, chan, src|
 		(
 MIDIdef.cc(\midi_switch11,{ |val, num, chan, src|
 		var lamdoma, n=4, a=1;
-				if(val>0,lamdoma=3/2,lamdoma=3/2);
+				if(val>0,lamdoma=5,lamdoma=5);
 		lamdoma.postln;
 		if(~synth.isPlaying,{~synth.set(\lamdoma,lamdoma)});
 },24);
@@ -384,7 +383,7 @@ MIDIdef.cc(\midi_switch11,{ |val, num, chan, src|
 					(
 MIDIdef.cc(\midi_switch12,{ |val, num, chan, src|
 		var lamdoma, n=5, a=1;
-					if(val>0,lamdoma=2/1,lamdoma=2/1);
+					if(val>0,lamdoma=6,lamdoma=6);
 		lamdoma.postln;
 		if(~synth.isPlaying,{~synth.set(\lamdoma,lamdoma)});
 },25);
