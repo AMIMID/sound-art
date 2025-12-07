@@ -115,7 +115,7 @@ SynthDef.new(\synth,{
 
 	arg gain=1,low=7168,high=0,tone=0,band=1,lamdoma=1,brain=1,pan_speed=1;
 	var gold=45,silver1=0,silver2=180,gold_r=((1+5.sqrt)/2),silver_r=(1+2.sqrt),room=0.333,mix=1;
-	var freq,fund,n=0,m,phase,interval,alpha,cell_az,cell_el,num=5;
+	var freq,fund,n=0,m,phase,interval,alpha,cell_az,cell_el;
 	var sig1,sig2,first=28,bank=6,out1,out2,fm,band_osc1,band_osc2,amp,ton;
 	var linex,liney,silver3=45,cell_l,cell_r,band_osc3,band_osc4;
 	var octahedron,sig3,out3,cell_tria,b_x,b_y,b_z,rq=0.25;
@@ -125,7 +125,7 @@ SynthDef.new(\synth,{
 axis=i+j+k;
 
 
-				octahedron=Spherical(2.pow(lamdoma.lag(0.1)/56),Select.kr(brain.lag(0.1),~az),Select.kr(brain.lag(0.1),~el));
+				octahedron=Spherical(lamdoma.lag(0.1),Select.kr(brain.lag(0.1),~az),Select.kr(brain.lag(0.1),~el));
 
 
 b_x=octahedron.x;
