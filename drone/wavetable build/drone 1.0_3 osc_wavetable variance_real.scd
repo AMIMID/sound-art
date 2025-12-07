@@ -40,7 +40,7 @@ s.scope;
 	 ~b = Buffer.loadCollection(s, ~a.getSetsAndMatrices);
 );
 /////////////osc polytope
-(
+/*(
 {
 	var az=0,el1=0,sph,n=90,iter=90,rep=360,el,silver=(1+2.sqrt),w=((1+5.sqrt)/2);
 	~az=[];~el=[];
@@ -57,8 +57,8 @@ sph=Spherical(1,az.degrad,el1.degrad).phi.round(0.000000000001);
 el1=0;n=90;
 	};
 }.value;
-);
-/*		(
+);*/
+		(
 {
 var  sph1,sph2,sph3,az1=0,el1=0,az2=0,el2=0,gold_r=((1+5.sqrt)/2),silver_r=(1+2.sqrt);
 var azimuth,elevation,angle=0,n=12,ellipsis=[1,1,1];
@@ -84,7 +84,7 @@ angle=(angle+((180*2.pow(n/12))-((180*2.pow(n/12))/1.6180339887499))).wrap(0,(18
 		az1=0;el1=0;az2=0;el2=0;
 	}
 }.value;
-);*/
+);
 		/////check value range
 		/*(var m,a,b,c, n=0; {m=MouseX.kr(0,32400).round(1).asInteger;
 			a=Spherical(28,Select.kr(m,~az),Select.kr(m,~el)).z.abs;
@@ -108,7 +108,7 @@ wt = signal.asWavetable;
 ~w.loadCollection(wt);
 //signal.plot;
 		}.value;
-				~w_function1= Buffer.alloc(s,2048);
+				~w_function= Buffer.alloc(s,2048);
 		{
 var signal,wt,m=0,amp,ph=0;
 
@@ -116,28 +116,17 @@ var signal,wt,m=0,amp,ph=0;
 		signal=Signal.sineFill(1024,~level1,[0]);
 
 wt = signal.asWavetable;
-~w_function1.loadCollection(wt);
+~w_function.loadCollection(wt);
 //signal.plot;
 		}.value;
 
-						~w_function2= Buffer.alloc(s,2048);
-		{
-var signal,wt,m=0,amp,ph=0;
-
-~level2=32.collect{m=m+1;amp=m.reciprocal};
-		signal=Signal.sineFill(1024,~level2,[0]);
-
-wt = signal.asWavetable;
-~w_function2.loadCollection(wt);
-//signal.plot;
-		}.value;
 
 (
 SynthDef.new(\synth,{
 
 	arg gain=1,low=7168,high=0,tone=0,band=1,lamdoma=1,brain=1,pan_speed=1;
 	var gold=45,silver1=0,silver2=180,gold_r=((1+5.sqrt)/2),silver_r=(1+2.sqrt),room=0.333,mix=1;
-	var freq,fund,n=0,m,phase,interval,alpha,cell_az,cell_el,num=5;
+	var freq,fund,n=0,m,phase,interval,alpha,cell_az,cell_el;
 	var sig1,sig2,first=28,bank=6,out1,out2,fm,band_osc1,band_osc2,amp,ton;
 	var linex,liney,silver3=45,cell_l,cell_r,band_osc3,band_osc4;
 	var octahedron,sig3,out3,cell_tria,b_x,b_y,b_z,rq=0.25;
@@ -147,12 +136,12 @@ SynthDef.new(\synth,{
 axis=i+j+k;
 
 
-				octahedron=Spherical(2.pow(lamdoma.lag(0.1)/56),Select.kr(brain.lag(0.1),~az),Select.kr(brain.lag(0.1),~el));
+				octahedron=Spherical(lamdoma.lag(0.1),Select.kr(brain.lag(0.1),~az),Select.kr(brain.lag(0.1),~el));
 
 
-b_x=2.pow(octahedron.x.abs/56);
-b_y=2.pow(octahedron.y.abs/56);
-b_z=2.pow(octahedron.z.abs/56);
+b_x=octahedron.x;
+b_y=octahedron.y;
+b_z=octahedron.z;
 
 
 bank.do{
