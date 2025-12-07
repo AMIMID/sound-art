@@ -124,7 +124,7 @@ SynthDef.new(\synth,{
 
 axis=i+j+k;
 
-octahedron=Spherical(2.pow(lamdoma.lag(0.1)/56),Select.kr(brain.lag(0.1),~az),Select.kr(brain.lag(0.1),~el));
+octahedron=Spherical(lamdoma.lag(0.1),Select.kr(brain.lag(0.1),~az),Select.kr(brain.lag(0.1),~el));
 
 
 b_x=octahedron.x;
@@ -140,7 +140,7 @@ fund=(first.lag(0.1))*ton;
 
 n=n+1;
 
-interval=pi/bank;
+interval=2pi/bank;
 m=n*interval;
 freq=fund*m;
 
@@ -188,8 +188,8 @@ sig1=HPF.ar(sig1,2.pow(high.lag(0.1)/992)); sig2=HPF.ar(sig2,2.pow(high.lag(0.1)
 cell_az=Osc.kr(~w.bufnum,2.pow(pan_speed.lag(0.1)/992),phase:0.degrad).range(180.neg,180);
 cell_el=SinOsc.kr(2.pow(pan_speed.lag(0.1)/992),phase:90.degrad).range(90.neg,90);
 
-cell_l=SinOsc.kr(2.pow(pan_speed.lag(0.1)/992),phase:0.degrad);
-cell_r=SinOsc.kr(2.pow(pan_speed.lag(0.1)/992),phase:180.degrad);
+cell_l=Saw.kr(2.pow(pan_speed.lag(0.1)/992)).range(0,1);
+cell_r=Saw.kr(2.pow(pan_speed.lag(0.1)/992)).range(0,1.neg);
 cell_tria=SinOsc.kr(2.pow(pan_speed.lag(0.1)/992),phase:90.degrad);
 
 out1=VBAP.ar(6,FreeVerb.ar(sig1,mix,room,mul:1),~b.bufnum,(silver1+cell_az.lag(0.1)).wrap(180.neg,180),
@@ -206,9 +206,9 @@ Out.ar(2,Limiter.ar(LeakDC.ar(out1,mul:2)*gain,0.1));
 Out.ar(2,Limiter.ar(LeakDC.ar(out2,mul:2)*gain,0.1));
 Out.ar(2,Limiter.ar(LeakDC.ar(out3,mul:2)*gain,0.1));
 
-Out.ar(0,Pan2.ar(Limiter.ar(LeakDC.ar(FreeVerb.ar(sig1,mix,room,mul:2),mul:1)*gain,0.1),(linex+cell_l.lag(0.1)).wrap(1.neg,1)));
-Out.ar(0,Pan2.ar(Limiter.ar(LeakDC.ar(FreeVerb.ar(sig2,mix,room,mul:2),mul:1)*gain,0.1),(liney+cell_r.lag(0.1)).wrap(1.neg,1)));
-Out.ar(0,Pan2.ar(Limiter.ar(LeakDC.ar(FreeVerb.ar(sig3,mix,room,mul:2),mul:1)*gain,0.1),0+cell_tria.lag(0.1)));
+Out.ar(0,Pan2.ar(Limiter.ar(LeakDC.ar(FreeVerb.ar(sig1,mix,room,mul:2),mul:1)*gain,0.1),(linex+cell_l.lag(0.1)).wrap(0,1)));
+Out.ar(0,Pan2.ar(Limiter.ar(LeakDC.ar(FreeVerb.ar(sig2,mix,room,mul:2),mul:1)*gain,0.1),(liney+cell_r.lag(0.1)).wrap(0,1.neg)));
+Out.ar(0,Pan2.ar(Limiter.ar(LeakDC.ar(FreeVerb.ar(sig3,mix,room,mul:2),mul:1)*gain,0.1),cell_tria.lag(0.1)));
 
 
 gold=(gold+(360-gold_r)).wrap(180.neg,180).round(0.0001);
