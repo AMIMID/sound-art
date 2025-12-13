@@ -203,9 +203,10 @@ Out.ar(0,Pan2.ar(Limiter.ar(LeakDC.ar(FreeVerb.ar(sig3,mix,room,mul:2),mul:1)*ga
 
 
 gold=(gold+(360-gold_r)).wrap(180.neg,180).round(0.0001);
-silver1=(silver1+(360-silver_r)).wrap(180.neg,180).round(0.0001);
-silver2=(silver2+(360-silver_r)).wrap(180.neg,180).round(0.0001);
-silver3=(silver3+(360-silver_r)).wrap(180.neg,180).round(0.0001);
+gold=(gold+(360-(360/gold_r))).wrap(180.neg,180).round(0.0001);
+silver1=(silver1+(360-(360/silver_r))).wrap(180.neg,180).round(0.0001);
+silver2=(silver2+(360-(360/silver_r))).wrap(180.neg,180).round(0.0001);
+silver3=(silver3+(360-(360/silver_r))).wrap(180.neg,180).round(0.0001);
 			}
 }).add;);
 
