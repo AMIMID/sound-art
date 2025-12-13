@@ -201,20 +201,20 @@ Out.ar(2,Limiter.ar(LeakDC.ar(out1,mul:2)*gain,0.1));
 Out.ar(2,Limiter.ar(LeakDC.ar(out2,mul:2)*gain,0.1));
 Out.ar(2,Limiter.ar(LeakDC.ar(out3,mul:2)*gain,0.1));
 
-Out.ar(0,Pan2.ar(Limiter.ar(LeakDC.ar(FreeVerb.ar(sig1,mix,room,mul:2),mul:1)*gain,0.1),(linex+cell_l.lag(0.1)).wrap(0,1)));
-Out.ar(0,Pan2.ar(Limiter.ar(LeakDC.ar(FreeVerb.ar(sig2,mix,room,mul:2),mul:1)*gain,0.1),(liney+cell_r.lag(0.1)).wrap(0,1.neg)));
-Out.ar(0,Pan2.ar(Limiter.ar(LeakDC.ar(FreeVerb.ar(sig3,mix,room,mul:2),mul:1)*gain,0.1),cell_tria.lag(0.1)));
+Out.ar(0,Pan2.ar(Limiter.ar(LeakDC.ar(FreeVerb.ar(sig1,mix,room,mul:1),mul:1)*gain,0.1),(linex+cell_l.lag(0.1)).wrap(0,1)));
+Out.ar(0,Pan2.ar(Limiter.ar(LeakDC.ar(FreeVerb.ar(sig2,mix,room,mul:1),mul:1)*gain,0.1),(liney+cell_r.lag(0.1)).wrap(0,1.neg)));
+Out.ar(0,Pan2.ar(Limiter.ar(LeakDC.ar(FreeVerb.ar(sig3,mix,room,mul:1),mul:1)*gain,0.1),cell_tria.lag(0.1)));
 
 
-gold=(gold+(360-gold_r)).wrap(180.neg,180).round(0.0001);
-silver1=(silver1+(360-silver_r)).wrap(180.neg,180).round(0.0001);
-silver2=(silver2+(360-silver_r)).wrap(180.neg,180).round(0.0001);
-silver3=(silver3+(360-silver_r)).wrap(180.neg,180).round(0.0001);
+gold=(gold+(360-(360/gold_r))).wrap(180.neg,180).round(0.0001);
+silver1=(silver1+(360-(360/silver_r))).wrap(180.neg,180).round(0.0001);
+silver2=(silver2+(360-(360/silver_r))).wrap(180.neg,180).round(0.0001);
+silver3=(silver3+(360-(360/silver_r))).wrap(180.neg,180).round(0.0001);
 			}
 }).add;);
 
 3.wait;
-~synth=Synth.new(\synth,[\gain,100,\tone,0,\low,(992*8*(7/4)),\high,(992*4*(6/5)),\pan_speed,(992*4).neg,\band,(12).neg,\lamdoma,1,\brain,4]).register;//s.record
+~synth=Synth.new(\synth,[\gain,100,\tone,0,\low,(992*8*(7/4)),\high,(992*4*(6/5)),\pan_speed,(992*4).neg,\band,(992*4).neg,\lamdoma,1,\brain,4]).register;//s.record
 1.wait;
 
 	(
@@ -286,7 +286,6 @@ MIDIdef.cc(\midi_switch1,{ |val, num, chan, src|
 MIDIdef.cc(\midi_switch2,{ |val, num, chan, src|
 		 var brain;
 					if(val>0,brain=32400.rand,brain=32400.rand);
-					//
 		brain.postln;
 		if(~synth.isPlaying,{~synth.set(\brain,brain)});
 },15);

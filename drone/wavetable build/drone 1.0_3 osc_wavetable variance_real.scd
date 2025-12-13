@@ -203,10 +203,10 @@ Out.ar(0,Pan2.ar(Limiter.ar(LeakDC.ar(FreeVerb.ar(sig2,mix,room,mul:2),mul:1)*ga
 Out.ar(0,Pan2.ar(Limiter.ar(LeakDC.ar(FreeVerb.ar(sig3,mix,room,mul:2),mul:1)*gain,0.1),cell_tria.lag(0.1)));
 
 
-gold=(gold+(360-gold_r)).wrap(180.neg,180).round(0.0001);
-silver1=(silver1+(360-silver_r)).wrap(180.neg,180).round(0.0001);
-silver2=(silver2+(360-silver_r)).wrap(180.neg,180).round(0.0001);
-silver3=(silver3+(360-silver_r)).wrap(180.neg,180).round(0.0001);
+gold=(gold+(360-(360/gold_r))).wrap(180.neg,180).round(0.0001);
+silver1=(silver1+(360-(360/silver_r))).wrap(180.neg,180).round(0.0001);
+silver2=(silver2+(360-(360/silver_r))).wrap(180.neg,180).round(0.0001);
+silver3=(silver3+(360-(360/silver_r))).wrap(180.neg,180).round(0.0001);
 			}
 }).add;);
 
