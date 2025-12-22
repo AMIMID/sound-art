@@ -51,7 +51,7 @@ var freq=6*32, b=1,amp=1/20;
 )
 
 
-///additive synthesis
+/*///additive synthesis
 
 (
 var fund=6*16, b=1,amp=1,freq,m=1,left,right,a=1,x=1,lamdoma,angle1=45;
@@ -76,7 +76,7 @@ var silver_ratio=(1+2.sqrt),gold_ratio=((1+5.sqrt)/2),interval,angle=0,ph=0.degr
 	angle=(angle+(360-(360/gold_ratio))).wrap(0,360);
 	angle1=(angle1+(360-(360/silver_ratio))).wrap(0,360);
 }
-)
+)*/
 
 
 /*(
