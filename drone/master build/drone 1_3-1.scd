@@ -40,35 +40,38 @@ s.meter;
 var  sph1,sph2,az1=0,el1=0,az2=0,el2=0;
 var azimuth,elevation,angle=0;
 var num=1.neg,gold_r=((1+5.sqrt)/2),silver_r=(1+2.sqrt);
-var ellipsis=[1,1,1],spread=1,mag1=1,mag2=1,temp=28;
-var n=0,n1=0,n2=0;
+var ellipsis=[1,1,1],spread=1,mag1=1,mag2=1,temp=57,mt=56;
+var n=0,n1=1.neg,n2=1.neg;
 	~az=[];~el=[];
 
-	(temp*2).do{
-azimuth=(temp*2).collect{
-			n1=n1+1;
-			az1 = (n1*(pi/temp)).wrap(pi.neg,pi);
-		   el1 = (n1*((pi/2)/temp)).wrap((pi/2).neg,(pi/2));
 
+	temp.do{
+azimuth=temp.collect{
+			n1=n1+1;
+						az1 =(2.pow(n1/mt).linlin(1,2,pi.neg,pi));
+				el1 = (2.pow(n1/mt).linlin(1,2,(pi/2).neg,(pi/2)));
+
+//	mag1=(mag1+(1-(1/silver_r))).wrap(0,1);
 sph1=(Spherical(mag1,(az1+angle).wrap(pi.neg,pi),(el1+angle).wrap((pi/2).neg,(pi/2)))).theta.round(0.000000000001);
 
 	};
 
-elevation=(temp*2).collect{
+elevation=temp.collect{
 				n2=n2+1;
-				az2 = (n2*(pi/temp)).wrap(pi.neg,pi);
-			el2 = (n2*((pi/2)/temp)).wrap((pi/2).neg,(pi/2));
+				az2 = (2.pow(n2/mt).linlin(1,2,pi.neg,pi));
+			el2 = (2.pow(n2/mt).linlin(1,2,(pi/2).neg,(pi/2)));
+
+	//mag2=(mag2+(1-(1/silver_r))).wrap(0,1);
 		sph2=(Spherical(mag2,(az2+angle).wrap(pi.neg,pi),(el2+angle).wrap((pi/2).neg,(pi/2)))).phi.round(0.000000000001);
 
 	};
-
-
-				};
-		n=n+1;
-angle=(angle+(360-(360/silver_r))).wrap(0,360);
-	//	angle=(n*(pi/temp));
+						n=n+1;
+angle=(angle+(2pi-(2pi/silver_r))).wrap(pi.neg,pi);
+//	angle=(2.pow(n/mt).linlin(1,2,0,2pi));
 ~az=~az++azimuth;~el=~el++elevation;
 		n1=0;n2=0;az1=0;el1=0;az2=0;el2=0;
+
+				};
 }.value;
 );
 		/////check value range
@@ -153,7 +156,7 @@ SynthDef.new(\synth,{
 
 	mix=high.lag(0.01);
 
-octahedron=Spherical(10*lamdoma.lag(0.01).reciprocal,Select.kr(brain.lag(0.01),~az),Select.kr(brain.lag(0.01),~el));
+octahedron=Spherical(lamdoma.lag(0.01).reciprocal,Select.kr(brain.lag(0.01),~az),Select.kr(brain.lag(0.01),~el));
 
 //gain=gain*(rq/(2.sqrt)).reciprocal;
 b_x=octahedron.x;
@@ -222,9 +225,9 @@ amp1=ton.reciprocal*lamdoma.lag(0.01);
 amp2=ton.reciprocal*lamdoma.lag(0.01);
 amp3=ton.reciprocal*lamdoma.lag(0.01);
 
-					phase1=b_x.linlin((10*lamdoma.lag(0.01)).neg,(10*lamdoma.lag(0.01)),pi.neg,pi);
-					phase2=b_y.linlin((10*lamdoma.lag(0.01)).neg,(10*lamdoma.lag(0.01)),pi.neg,pi);
-					phase3=b_z.linlin((10*lamdoma.lag(0.01)).neg,(10*lamdoma.lag(0.01)),pi.neg,pi);
+					phase1=b_x.linlin((lamdoma.lag(0.01)).neg,(lamdoma.lag(0.01)),pi.neg,pi);
+					phase2=b_y.linlin((lamdoma.lag(0.01)).neg,(lamdoma.lag(0.01)),pi.neg,pi);
+					phase3=b_z.linlin((lamdoma.lag(0.01)).neg,(lamdoma.lag(0.01)),pi.neg,pi);
 
 //fm=LFNoise1.ar(f,f.reciprocal);
 
@@ -276,166 +279,7 @@ Out.ar(0,Pan2.ar(Limiter.ar(LeakDC.ar(FreeVerb.ar(sig3,mix,room,mul:1),mul:1)*ga
 10.wait;
 ~synth=Synth.new(\synth,[\gain,1,\tone,0,\low,0,\high,0,\pan_speed,0,\band,(992*4).neg,\lamdoma,1,\brain,4]).register;//s.record
 2.wait;
-	(
-MIDIClient.init;
-MIDIIn.connectAll;
-		(
-MIDIdef.cc(\midi_pot1,{ |val, num, chan, src|
-		var gain;
-	//[val, num, chan, src].postln;
-	gain=val.linlin(0,127,0,1).round(0.000001);
 
-		gain.postln;
-		if(~synth.isPlaying,{~synth.set(\gain,gain)});
-},26);
-	);
-			////note//2.pow((496*8*(6/5))/992)
-			////note//2.pow((56*32)/56).round(000.1)
-	(
-MIDIdef.cc(\midi_pot2,{ |val, num, chan, src|
-		 var high;
-	high=val.linlin(0,127,0,1).round(0.00001);
-		high.postln;
-		if(~synth.isPlaying,{~synth.set(\high,high)});
-},27);
-	);
-		(
-MIDIdef.cc(\midi_pot3,{ |val, num, chan, src|
-		var pan;
-		pan=val.linlin(0,127,(992*8).neg,(992*8)).round(0.00001).round(1).asInteger;
-		pan.postln;
-		if(~synth.isPlaying,{~synth.set(\pan_speed,pan)});
-},28);
-	);
-
-	(
-MIDIdef.cc(\midi_pot4,{ |val, num, chan, src|
-         var low;
-					low=val.linlin(0,127,0,(992*4)).round(1).asInteger;
-		low.postln;
-		if(~synth.isPlaying,{~synth.set(\low,low)});
-},29);
-	);
-
-		(
-MIDIdef.cc(\midi_pot5,{ |val, num, chan, src|
-		var band;
-	band=val.linlin(0,127,(992*4).neg,992*8).round(1).asInteger;
-		band.postln;
-		if(~synth.isPlaying,{~synth.set(\band,band)});
-},30);
-	);
-					(
-MIDIdef.cc(\midi_pot6,{ |val, num, chan, src|
-		var tone;
-		tone=val.linlin(0,127,0,992*4).round(1).asInteger;
-		tone.postln;
-		if(~synth.isPlaying,{~synth.set(\tone,tone)});
-},31);
-	);
-		(
-MIDIdef.cc(\midi_switch1,{ |val, num, chan, src|
-		var brain;
-					if(val>0,brain=3136.rand,brain=3136.rand);
-		brain.postln;
-		if(~synth.isPlaying,{~synth.set(\brain,brain)});
-},14);
-	);
-	(
-MIDIdef.cc(\midi_switch2,{ |val, num, chan, src|
-		 var brain;
-					if(val>0,brain=3136.rand,brain=3136.rand);
-		brain.postln;
-		if(~synth.isPlaying,{~synth.set(\brain,brain)});
-},15);
-	);
-		(
-MIDIdef.cc(\midi_switch3,{ |val, num, chan, src|
-		var brain;
-					if(val>0,brain=3136.rand,brain=3136.rand);
-
-		brain.postln;
-		if(~synth.isPlaying,{~synth.set(\brain,brain)});
-},16);
-	);
-
-	(
-MIDIdef.cc(\midi_switch4,{ |val, num, chan, src|
-         var brain;
-					if(val>0,brain=3136.rand,brain=3136.rand);
-		brain.postln;
-		if(~synth.isPlaying,{~synth.set(\brain,brain)});
-},17);
-	);
-		(
-MIDIdef.cc(\midi_switch5,{ |val, num, chan, src|
-		var brain;
-				if(val>0,brain=3136.rand,brain=3136.rand);
-
-		brain.postln;
-		if(~synth.isPlaying,{~synth.set(\brain,brain)});
-},18);
-	);
-					(
-MIDIdef.cc(\midi_switch6,{ |val, num, chan, src|
-		var brain;
-				if(val>0,brain=3136.rand,brain=3136.rand);
-		brain.postln;
-		if(~synth.isPlaying,{~synth.set(\brain,brain)});
-},19);
-	);
-
-	(
-MIDIdef.cc(\midi_switch7,{ |val, num, chan, src|
-		var lamdoma, n=1, a=1;
-				if(val>0,lamdoma=1,lamdoma=1);
-		lamdoma.postln;
-		if(~synth.isPlaying,{~synth.set(\lamdoma,lamdoma)});
-},20);
-	);
-	(
-MIDIdef.cc(\midi_switch8,{ |val, num, chan, src|
-		 var lamdoma, n=1, a=1;
-				if(val>0,lamdoma=5/6,lamdoma=5/6);
-		lamdoma.postln;
-		if(~synth.isPlaying,{~synth.set(\lamdoma,lamdoma)});
-},21);
-	);
-		(
-MIDIdef.cc(\midi_switch9,{ |val, num, chan, src|
-		var lamdoma, n=2, a=1;
-					if(val>0,lamdoma=4/5,lamdoma=4/5);
-		lamdoma.postln;
-		if(~synth.isPlaying,{~synth.set(\lamdoma,lamdoma)});
-},22);
-	);
-
-	(
-MIDIdef.cc(\midi_switch10,{ |val, num, chan, src|
-         var lamdoma, n=3, a=1;
-				if(val>0,lamdoma=3/4,lamdoma=3/4);
-		lamdoma.postln;
-		if(~synth.isPlaying,{~synth.set(\lamdoma,lamdoma)});
-},23);
-	);
-		(
-MIDIdef.cc(\midi_switch11,{ |val, num, chan, src|
-		var lamdoma, n=4, a=1;
-				if(val>0,lamdoma=2/3,lamdoma=2/3);
-		lamdoma.postln;
-		if(~synth.isPlaying,{~synth.set(\lamdoma,lamdoma)});
-},24);
-	);
-					(
-MIDIdef.cc(\midi_switch12,{ |val, num, chan, src|
-		var lamdoma, n=5, a=1;
-					if(val>0,lamdoma=1/2,lamdoma=1/2);
-		lamdoma.postln;
-		if(~synth.isPlaying,{~synth.set(\lamdoma,lamdoma)});
-},25);
-	);
-
-)
 });
 	Tdef(\drone).play;
 }
