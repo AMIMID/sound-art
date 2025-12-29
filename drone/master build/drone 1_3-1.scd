@@ -339,7 +339,7 @@ MIDIdef.cc(\midi_pot6,{ |val, num, chan, src|
 		(
 MIDIdef.cc(\midi_switch1,{ |val, num, chan, src|
 		var brain;
-					if(val>0,brain=1024.rand,brain=1024.rand);
+					if(val>0,brain=3249.rand,brain=3249.rand);
 		brain.postln;
 		if(~synth.isPlaying,{~synth.set(\brain,brain)});
 },14);
@@ -347,7 +347,7 @@ MIDIdef.cc(\midi_switch1,{ |val, num, chan, src|
 	(
 MIDIdef.cc(\midi_switch2,{ |val, num, chan, src|
 		 var brain;
-					if(val>0,brain=1024.rand,brain=1024.rand);
+					if(val>0,brain=3249.rand,brain=3249.rand);
 		brain.postln;
 		if(~synth.isPlaying,{~synth.set(\brain,brain)});
 },15);
@@ -355,7 +355,7 @@ MIDIdef.cc(\midi_switch2,{ |val, num, chan, src|
 		(
 MIDIdef.cc(\midi_switch3,{ |val, num, chan, src|
 		var brain;
-					if(val>0,brain=1024.rand,brain=1024.rand);
+					if(val>0,brain=3249.rand,brain=3249.rand);
 
 		brain.postln;
 		if(~synth.isPlaying,{~synth.set(\brain,brain)});
@@ -365,7 +365,7 @@ MIDIdef.cc(\midi_switch3,{ |val, num, chan, src|
 	(
 MIDIdef.cc(\midi_switch4,{ |val, num, chan, src|
          var brain;
-					if(val>0,brain=1024.rand,brain=1024.rand);
+					if(val>0,brain=3249.rand,brain=3249.rand);
 		brain.postln;
 		if(~synth.isPlaying,{~synth.set(\brain,brain)});
 },17);
@@ -373,7 +373,7 @@ MIDIdef.cc(\midi_switch4,{ |val, num, chan, src|
 		(
 MIDIdef.cc(\midi_switch5,{ |val, num, chan, src|
 		var brain;
-				if(val>0,brain=1024.rand,brain=1024.rand);
+				if(val>0,brain=3249.rand,brain=3249.rand);
 
 		brain.postln;
 		if(~synth.isPlaying,{~synth.set(\brain,brain)});
@@ -382,7 +382,7 @@ MIDIdef.cc(\midi_switch5,{ |val, num, chan, src|
 					(
 MIDIdef.cc(\midi_switch6,{ |val, num, chan, src|
 		var brain;
-				if(val>0,brain=1024.rand,brain=1024.rand);
+				if(val>0,brain=3249.rand,brain=3249.rand);
 		brain.postln;
 		if(~synth.isPlaying,{~synth.set(\brain,brain)});
 },19);
@@ -446,28 +446,4 @@ MIDIdef.cc(\midi_switch12,{ |val, num, chan, src|
 )
 
 
-
-
-
-/*	r=val.linlin(0,127,(0.0001),1).round(0.0001);
-		r.postln;
-		if(~synth.isPlaying,{~synth.set(\room,r)});
-
-	m=val.linlin(0,127,0.1,1).round(0.1);
-		m.postln;
-		if(~synth.isPlaying,{~synth.set(\mix,m)});*/
-
-
-
-
-
-
-
-/*	r=val.linlin(0,127,(0.0001),1).round(0.0001);
-		r.postln;
-		if(~synth.isPlaying,{~synth.set(\room,r)});
-
-	m=val.linlin(0,127,0.1,1).round(0.1);
-		m.postln;
-		if(~synth.isPlaying,{~synth.set(\mix,m)});*/
 
