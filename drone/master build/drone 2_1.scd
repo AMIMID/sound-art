@@ -140,19 +140,12 @@ wt = signal.asWavetable;
 (
 SynthDef.new(\synth,{
 
-	arg gain=1,low=992,mix=1,room=1,tone=0,band=1,x=1,a=1,brain=1,pan_speed1=1,pan_speed2=1,pan_speed3=1,m=4,rq=0.1,b=0,scale=1;
-	var gold=45,gold_r=((1+5.sqrt)/2),silver_r=(1+2.sqrt),lamdoma;
-	var freq1,freq2,freq3,fund,phase1,phase2,phase3,amp1,amp2,amp3,alpha,cell_az,cell_el;
+	arg gain=1,low=992,mix=1,room=1,tone=0,band=1,x=1,a=1,brain=1,pan_speed1=1,pan_speed2=1,pan_speed3=1,m=4,rq=0.1,b=0,scale=1,equlibrium=1.neg,f=1;
+	var lamdoma,freq,freq2,freq3,fund,amp1,amp2,amp3,alpha,cell_az,cell_el;
 	var sig1,sig2,first=32*(9/8),bank=3,out1,out2,fm,band_osc1,band_osc2,ton;
-	var linex,liney,cell_l,cell_r,band_osc3,band_osc4,band_osc5,band_osc6;
-	var octahedron,sig3,out3,cell_tria,b_x,b_y,b_z,polytope;
-	var magx,magy,magz,magqx,magqy,mod_angle;
-	var mod_angle1,mod_anglez,mx,my,mz,mqx,mqy,mag,magq;
-	var spread=1,mq=(m-1),f=1,choice,angle,nn=0;
-	//var xyz=[1,1,1].normalizeSum.sqrt,axis,q,rotor,rotation;
-  //  var i=Quaternion(0, xyz.[0], 0, 0),j=Quaternion(0, 0, xyz.[1], 0),k=Quaternion(0, 0, 0, xyz.[2]);
-
-//axis=i+j+k;
+	var band_osc3,band_osc4,band_osc5,band_osc6,octahedron,sig3,out3,cell_tria,b_x,b_y,b_z,polytope;
+	var magx,magy,magz,magqx,magqy,mod_angle,phase1,phase2,angle,pos1,pos2,sph1,sph2,pan1,pan2;
+	var mod_angle1,mod_anglez,mx,my,mz,mqx,mqy,mag,magq,spread=1,mq=(m-1),choice,nn=0;
 
 				lamdoma=(x+a)/x;
 octahedron=Spherical(lamdoma.lag(0.01),Select.kr(brain.lag(0.01),~az),Select.kr(brain.lag(0.01),~el));
@@ -206,29 +199,39 @@ cos((polytope.phi.round(0.00001)).wrap((pi/2).neg,(pi/2))))))).rho/(2.sqrt)).pow
 					mag=(Cartesian(magx.value,magy.value,0).rho);
 					magq=(Cartesian(magqx.value,magqy.value,0).rho);
 
-//linex=Complex(polytope.theta.linlin(180.neg.degrad,180.degrad,1.neg,1),polytope.phi.linlin(90.neg.degrad,90.degrad,1.neg,1)).real.abs;
-//liney=Complex(polytope.theta.linlin(180.neg.degrad,180.degrad,1.neg,1),polytope.phi.linlin(90.neg.degrad,90.degrad,1.neg,1)).imag.abs.neg;
-
-//nn=nn+1;  angle=nn*(pi/6); linex=exp(Complex(0,1)*angle).real;  liney=exp(Complex(0,1)*angle).imag;
-
 
 ton=2.pow((tone.lag(0.01))/992).round(0.0001);
 
 fund=first*lamdoma.lag(0.01).reciprocal;
 
-freq1=(fund*ton)+b_x;
-freq2=(fund*ton)+b_y;
-freq3=(fund*ton)+b_z;
+fm=LFNoise1.ar(f,f.reciprocal);
+
+freq=(fund*ton)+b_x+fm;
+freq2=(fund*ton)+b_y+fm;
+freq3=(fund*ton)+b_z+fm;
 
 amp1=ton.reciprocal*lamdoma.lag(0.01);
 amp2=ton.reciprocal*lamdoma.lag(0.01);
 amp3=ton.reciprocal*lamdoma.lag(0.01);
 
-					phase1=b_x.linlin((lamdoma.lag(0.01)).neg,(lamdoma.lag(0.01)),pi.neg,pi);
-					phase2=b_y.linlin((lamdoma.lag(0.01)).neg,(lamdoma.lag(0.01)),pi.neg,pi);
-					phase3=b_z.linlin((lamdoma.lag(0.01)).neg,(lamdoma.lag(0.01)),pi.neg,pi);
 
-//fm=LFNoise1.ar(f,f.reciprocal);
+cell_tria=SinOsc.ar(mz,phase:90.degrad);
+
+phase1=0.degrad; phase2=equlibrium.linlin(1,1.neg,0,90.degrad);
+pan1=SinOsc.ar(mx,phase:phase1);
+pan2=SinOsc.ar(my,phase:phase2);
+
+
+sph1=Spherical(1,polytope.theta,polytope.phi);
+sph2=Spherical(1,polytope.theta,polytope.phi*equilibrium);
+
+angle1=Complex(exp(Complex(0,1)*sph1.theta).real,exp(Complex(0,1)*sph1.phi).imag).theta;
+angle2=Complex(exp(Complex(0,1)*sph2.theta).real,exp(Complex(0,1)*sph2.phi).imag).theta;
+
+angle=Complex(exp(Complex(0,1)*angle1).real,exp(Complex(0,1)*angle2).imag).theta;
+
+pos1=exp(Complex(0,1)*angle).real;
+pos2=exp(Complex(0,1)*angle).imag;
 
 band_osc1=SinOsc.kr(b_x*2.pow(band.lag(0.01)/992),phase:0.degrad).range(496,16256);
 band_osc2=SinOsc.kr(b_y*2.pow(band.lag(0.01)/992),phase:90.degrad).range(496,16256);
@@ -237,31 +240,16 @@ band_osc4=SinOsc.kr(b_x*2.pow(band.lag(0.01)/992),phase:180.degrad).range(496,16
 band_osc5=SinOsc.kr(b_y*2.pow(band.lag(0.01)/992),phase:90.degrad.neg).range(496,16256);
 band_osc6=SinOsc.kr(b_z*2.pow(band.lag(0.01)/992),phase:45.degrad.neg).range(496,16256);
 
-sig1=BPF.ar(BRF.ar(LPF.ar((Osc.ar(~w1.bufnum,freq1+b,phase:phase1,mul:100).abs*SinOsc.ar(freq1+b,phase:phase1)),freq1*2.pow(low.lag(0.01)/992),amp1),
+sig1=BPF.ar(BRF.ar(LPF.ar((Osc.ar(~w1.bufnum,freq+b,phase:angle,mul:100).abs*SinOsc.ar(freq+b,phase:angle)),freq*2.pow(low.lag(0.01)/992),amp1),
 band_osc1.lag(0.1),rq),band_osc4.lag(0.1),rq);
-sig2=BPF.ar(BRF.ar(LPF.ar((Osc.ar(~w1.bufnum,freq2+b,phase:phase2,mul:100).abs*SinOsc.ar(freq2+b,phase:phase2)),freq2*2.pow(low.lag(0.01)/992),amp2),
+sig2=BPF.ar(BRF.ar(LPF.ar((Osc.ar(~w1.bufnum,freq2+b,phase:angle,mul:100).abs*SinOsc.ar(freq2+b,phase:angle)),freq2*2.pow(low.lag(0.01)/992),amp2),
 band_osc2.lag(0.1),rq),band_osc5.lag(0.1),rq);
-sig3=BPF.ar(BRF.ar(LPF.ar((Osc.ar(~w1.bufnum,freq3+b,phase:phase3,mul:100).abs*SinOsc.ar(freq3+b,phase:phase3)),freq3*2.pow(low.lag(0.01)/992),amp3),
+sig3=BPF.ar(BRF.ar(LPF.ar((Osc.ar(~w1.bufnum,freq3+b,phase:angle,mul:100).abs*SinOsc.ar(freq3+b,phase:angle)),freq3*2.pow(low.lag(0.01)/992),amp3),
 band_osc3.lag(0.1),rq),band_osc6.lag(0.1),rq);
 
-//sig1=LPF.ar((Osc.ar(~w1.bufnum,freq1+b,phase:phase1,mul:100).abs*SinOsc.ar(freq1+b,phase:phase1)),freq1*2.pow(low.lag(0.01)/992),amp1);
+//sig1=LPF.ar((Osc.ar(~w1.bufnum,freq+b,phase:phase1,mul:100).abs*SinOsc.ar(freq+b,phase:phase1)),freq*2.pow(low.lag(0.01)/992),amp1);
 //sig2=LPF.ar((Osc.ar(~w1.bufnum,freq2+b,phase:phase2,mul:100).abs*SinOsc.ar(freq2+b,phase:phase2)),freq2*2.pow(low.lag(0.01)/992),amp2);
 //sig3=LPF.ar((Osc.ar(~w1.bufnum,freq3+b,phase:phase3,mul:100).abs*SinOsc.ar(freq3+b,phase:phase3)),freq3*2.pow(low.lag(0.01)/992),amp3);
-
-
-cell_az=Osc.kr(~w.bufnum,mag,phase:0.degrad).range(0,360);
-cell_el=SinOsc.kr(mz,phase:90.degrad).range(90.neg,90);
-
-cell_l=SinOsc.ar(mx,phase:0.degrad);
-cell_r=SinOsc.ar(my,phase:90.degrad);
-cell_tria=SinOsc.ar(mz,phase:45.degrad);
-
-out1=VBAP.ar(6,FreeVerb.ar(sig1,mix.lag(0.01),room.lag(0.01),mul:1),~b.bufnum,(polytope.theta+cell_az.lag(0.01)).wrap(180.neg,180),
-(polytope.phi+cell_el.lag(0.01)).wrap(90.neg,90));
-out2=VBAP.ar(6,FreeVerb.ar(sig2,mix.lag(0.01),room.lag(0.01),mul:1),~b.bufnum,(polytope.theta+cell_az.lag(0.01)).wrap(180.neg,180),
-(polytope.phi+cell_el.lag(0.01)).wrap(90.neg,90));
-out3=VBAP.ar(6,FreeVerb.ar(sig3,mix.lag(0.01),room.lag(0.01),mul:1),~b.bufnum,(polytope.theta+cell_az.lag(0.01)).wrap(180.neg,180),
-(polytope.phi+cell_el.lag(0.01)).wrap(90.neg,90));
 
 Out.ar(2,Limiter.ar(LeakDC.ar(out1,mul:1)*gain,room.lag(0.01)));
 Out.ar(2,Limiter.ar(LeakDC.ar(out2,mul:1)*gain,room.lag(0.01)));
@@ -269,15 +257,15 @@ Out.ar(2,Limiter.ar(LeakDC.ar(out3,mul:1)*gain,room.lag(0.01)));
 
 //Out.ar(0,Pan2.ar(Limiter.ar(LeakDC.ar(FreeVerb.ar(sig2,mix.lag(0.01),room.lag(0.01),mul:1),mul:1)*gain,room.lag(0.01)),(liney+cell_r.lag(0.01)).wrap(1.neg,1)));
 //Out.ar(0,Pan2.ar(Limiter.ar(LeakDC.ar(FreeVerb.ar(sig1,mix.lag(0.01),room.lag(0.01),mul:1),mul:1)*gain,room.lag(0.01)),(linex+cell_l.lag(0.01)).wrap(1.neg,1)));
-Out.ar(0,Pan2.ar(Limiter.ar(LeakDC.ar(FreeVerb.ar(sig1,mix.lag(0.01),room.lag(0.01),mul:1),mul:1)*gain,room.lag(0.01)),cell_l));
-Out.ar(0,Pan2.ar(Limiter.ar(LeakDC.ar(FreeVerb.ar(sig2,mix.lag(0.01),room.lag(0.01),mul:1),mul:1)*gain,room.lag(0.01)),cell_r));
+Out.ar(0,Pan2.ar(Limiter.ar(LeakDC.ar(FreeVerb.ar(sig1,mix.lag(0.01),room.lag(0.01),mul:1),mul:1)*gain,room.lag(0.01)),pos1)*pan1);
+Out.ar(0,Pan2.ar(Limiter.ar(LeakDC.ar(FreeVerb.ar(sig2,mix.lag(0.01),room.lag(0.01),mul:1),mul:1)*gain,room.lag(0.01)),pos2)*pan2);
 Out.ar(0,Pan2.ar(Limiter.ar(LeakDC.ar(FreeVerb.ar(sig3,mix.lag(0.01),room.lag(0.01),mul:1),mul:1)*gain,room.lag(0.01)),cell_tria));
 			}
 }).add;);
 
 10.wait;
 ~synth=Synth.new(\synth,[\gain,1,\tone,992,\low,0,\mix,0,\room,1,\a,1,\pan_speed1,992,\pan_speed2,992,\pan_speed3,992,
-			\band,(992*4).neg,\x,1,\brain,4,\m,4,\rq,1,\b,1,\scale,100]).register;//s.record
+			\band,(992*4).neg,\x,1,\brain,4,\m,4,\rq,1,\b,1,\scale,100,\equilibrium,1,\f,1]).register;//s.record
 2.wait;
 (
 MIDIClient.init;
@@ -409,7 +397,7 @@ MIDIdef.cc(\midi_pot13,{ |val, num, chan, src|
 		if(~synth.isPlaying,{~synth.set(\b,b)});
 },33);
 	);
-
+											;
 									(
 MIDIdef.cc(\midi_pot14,{ |val, num, chan, src|
 		var scale;
@@ -418,6 +406,22 @@ MIDIdef.cc(\midi_pot14,{ |val, num, chan, src|
 		if(~synth.isPlaying,{~synth.set(\scale,scale)});
 },34);
 	);
+			(
+MIDIdef.cc(\midi_pot15,{ |val, num, chan, src|
+		var eq;
+		eq=val.linlin(0,127,0.degrad,90.degrad).round(0.00001);
+		eq.postln;
+		if(~synth.isPlaying,{~synth.set(\equilibrium,eq)});
+},35);
+	);
+						(
+MIDIdef.cc(\midi_pot16,{ |val, num, chan, src|
+		var f;
+		f=val.linlin(0,127,0.001,100).round(0.00001);
+		f.postln;
+		if(~synth.isPlaying,{~synth.set(\f,f)});
+},36);
+	);
 
 	(
 MIDIdef.cc(\midi_switch1,{ |val, num, chan, src|
@@ -425,7 +429,7 @@ MIDIdef.cc(\midi_switch1,{ |val, num, chan, src|
 				if(val>0,lamdoma=1);
 		lamdoma.postln;
 		if(~synth.isPlaying,{~synth.set(\x,lamdoma)});
-},35);
+},37);
 	);
 	(
 MIDIdef.cc(\midi_switch2,{ |val, num, chan, src|
@@ -433,7 +437,7 @@ MIDIdef.cc(\midi_switch2,{ |val, num, chan, src|
 					if(val>0,lamdoma=2);
 		lamdoma.postln;
 		if(~synth.isPlaying,{~synth.set(\x,lamdoma)});
-},36);
+},38);
 	);
 		(
 MIDIdef.cc(\midi_switch3,{ |val, num, chan, src|
@@ -441,7 +445,7 @@ MIDIdef.cc(\midi_switch3,{ |val, num, chan, src|
 					if(val>0,lamdoma=3);
 		lamdoma.postln;
 		if(~synth.isPlaying,{~synth.set(\x,lamdoma)});
-},37);
+},39);
 	);
 
 	(
@@ -450,7 +454,7 @@ MIDIdef.cc(\midi_switch4,{ |val, num, chan, src|
 				if(val>0,lamdoma=4);
 		lamdoma.postln;
 		if(~synth.isPlaying,{~synth.set(\x,lamdoma)});
-},38);
+},40);
 	);
 		(
 MIDIdef.cc(\midi_switch5,{ |val, num, chan, src|
@@ -458,7 +462,7 @@ MIDIdef.cc(\midi_switch5,{ |val, num, chan, src|
 				if(val>0,lamdoma=5);
 		lamdoma.postln;
 		if(~synth.isPlaying,{~synth.set(\x,lamdoma)});
-},39);
+},41);
 	);
 					(
 MIDIdef.cc(\midi_switch6,{ |val, num, chan, src|
@@ -466,7 +470,7 @@ MIDIdef.cc(\midi_switch6,{ |val, num, chan, src|
 					if(val>0,lamdoma=6);
 		lamdoma.postln;
 		if(~synth.isPlaying,{~synth.set(\x,lamdoma)});
-},40);
+},42);
 					);
 	(
 MIDIdef.cc(\midi_switch7,{ |val, num, chan, src|
@@ -474,7 +478,7 @@ MIDIdef.cc(\midi_switch7,{ |val, num, chan, src|
 				if(val>0,lamdoma=7);
 		lamdoma.postln;
 		if(~synth.isPlaying,{~synth.set(\x,lamdoma)});
-},41);
+},43);
 	);
 	(
 MIDIdef.cc(\midi_switch8,{ |val, num, chan, src|
@@ -482,7 +486,7 @@ MIDIdef.cc(\midi_switch8,{ |val, num, chan, src|
 						if(val>0,lamdoma=8);
 		lamdoma.postln;
 		if(~synth.isPlaying,{~synth.set(\x,lamdoma)});
-},42);
+},44);
 	);
 		(
 MIDIdef.cc(\midi_switch9,{ |val, num, chan, src|
@@ -490,7 +494,7 @@ MIDIdef.cc(\midi_switch9,{ |val, num, chan, src|
 					if(val>0,lamdoma=9);
 		lamdoma.postln;
 		if(~synth.isPlaying,{~synth.set(\x,lamdoma)});
-},43);
+},45);
 	);
 
 	(
@@ -499,7 +503,7 @@ MIDIdef.cc(\midi_switch10,{ |val, num, chan, src|
 				if(val>0,lamdoma=10);
 		lamdoma.postln;
 		if(~synth.isPlaying,{~synth.set(\x,lamdoma)});
-},44);
+},46);
 	);
 		(
 MIDIdef.cc(\midi_switch11,{ |val, num, chan, src|
@@ -507,7 +511,7 @@ MIDIdef.cc(\midi_switch11,{ |val, num, chan, src|
 				if(val>0,lamdoma=11);
 		lamdoma.postln;
 		if(~synth.isPlaying,{~synth.set(\x,lamdoma)});
-},45);
+},47);
 	);
 					(
 MIDIdef.cc(\midi_switch12,{ |val, num, chan, src|
@@ -515,7 +519,7 @@ MIDIdef.cc(\midi_switch12,{ |val, num, chan, src|
 					if(val>0,lamdoma=12);
 		lamdoma.postln;
 		if(~synth.isPlaying,{~synth.set(\x,lamdoma)});
-},46);
+},48);
 						);
 	(
 MIDIdef.cc(\midi_switch13,{ |val, num, chan, src|
@@ -523,7 +527,7 @@ MIDIdef.cc(\midi_switch13,{ |val, num, chan, src|
 				if(val>0,lamdoma=13);
 		lamdoma.postln;
 		if(~synth.isPlaying,{~synth.set(\x,lamdoma)});
-},47);
+},49);
 	);
 	(
 MIDIdef.cc(\midi_switch14,{ |val, num, chan, src|
@@ -531,7 +535,7 @@ MIDIdef.cc(\midi_switch14,{ |val, num, chan, src|
 				if(val>0,lamdoma=14);
 		lamdoma.postln;
 		if(~synth.isPlaying,{~synth.set(\x,lamdoma)});
-},48);
+},50);
 	);
 		(
 MIDIdef.cc(\midi_switch15,{ |val, num, chan, src|
@@ -539,7 +543,7 @@ MIDIdef.cc(\midi_switch15,{ |val, num, chan, src|
 					if(val>0,lamdoma=15);
 		lamdoma.postln;
 		if(~synth.isPlaying,{~synth.set(\x,lamdoma)});
-},49);
+},51);
 	);
 
 	(
@@ -548,7 +552,7 @@ MIDIdef.cc(\midi_switch16,{ |val, num, chan, src|
 				if(val>0,lamdoma=16);
 		lamdoma.postln;
 		if(~synth.isPlaying,{~synth.set(\x,lamdoma)});
-},50);
+},52);
 	);
 
 )
