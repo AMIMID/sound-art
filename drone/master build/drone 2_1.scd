@@ -28,12 +28,6 @@ s.meter;
 	Tdef(\drone, {
 	Buffer.freeAll;
 
-		///octahedron
-		(
-~a = VBAPSpeakerArray.new(3,
-				[[0, 90.neg],[0, 0],[90, 0],[180,0],[90.neg,0],[0,90]]);
-	 ~b = Buffer.loadCollection(s, ~a.getSetsAndMatrices);
-);
 /////////////osc polytope
 	(
 {
@@ -140,11 +134,11 @@ wt = signal.asWavetable;
 (
 SynthDef.new(\synth,{
 
-	arg gain=1,low=992,mix=1,room=1,tone=0,band=1,x=1,a=1,brain=1,pan_speed1=1,pan_speed2=1,pan_speed3=1,m=4,rq=0.1,b=0,scale=1,equlibrium=1.neg,f=1;
+	arg gain=1,low=992,mix=1,room=1,tone=0,band=1,x=1,a=1,brain=1,pan_speed1=1,pan_speed2=1,pan_speed3=1,m=4,rq=0.1,b=0,scale=1,equlibrium=180.degrad,f=1;
 	var lamdoma,freq,freq2,freq3,fund,amp1,amp2,amp3,alpha,cell_az,cell_el;
 	var sig1,sig2,first=32*(9/8),bank=3,out1,out2,fm,band_osc1,band_osc2,ton;
 	var band_osc3,band_osc4,band_osc5,band_osc6,octahedron,sig3,out3,cell_tria,b_x,b_y,b_z,polytope;
-	var magx,magy,magz,magqx,magqy,mod_angle,phase1,phase2,angle,pos1,pos2,sph1,sph2,pan1,pan2;
+	var magx,magy,magz,magqx,magqy,mod_angle,phase1,phase2,angle,angle1,angle2,pos1,pos2,sph1,sph2,pan1,pan2;
 	var mod_angle1,mod_anglez,mx,my,mz,mqx,mqy,mag,magq,spread=1,mq=(m-1),choice,nn=0;
 
 				lamdoma=(x+a)/x;
@@ -217,13 +211,13 @@ amp3=ton.reciprocal*lamdoma.lag(0.01);
 
 cell_tria=SinOsc.ar(mz,phase:90.degrad);
 
-phase1=0.degrad; phase2=equlibrium.linlin(1,1.neg,0,90.degrad);
+phase1=0.degrad; phase2=(equlibrium-90.degrad).wrap2(180.0);
 pan1=SinOsc.ar(mx,phase:phase1);
 pan2=SinOsc.ar(my,phase:phase2);
 
 
 sph1=Spherical(1,polytope.theta,polytope.phi);
-sph2=Spherical(1,polytope.theta,polytope.phi*equilibrium);
+sph2=Spherical(1,polytope.theta,(polytope.phi+equlibrium).wrap2(90.0));
 
 angle1=Complex(exp(Complex(0,1)*sph1.theta).real,exp(Complex(0,1)*sph1.phi).imag).theta;
 angle2=Complex(exp(Complex(0,1)*sph2.theta).real,exp(Complex(0,1)*sph2.phi).imag).theta;
@@ -247,25 +241,15 @@ band_osc2.lag(0.1),rq),band_osc5.lag(0.1),rq);
 sig3=BPF.ar(BRF.ar(LPF.ar((Osc.ar(~w1.bufnum,freq3+b,phase:angle,mul:100).abs*SinOsc.ar(freq3+b,phase:angle)),freq3*2.pow(low.lag(0.01)/992),amp3),
 band_osc3.lag(0.1),rq),band_osc6.lag(0.1),rq);
 
-//sig1=LPF.ar((Osc.ar(~w1.bufnum,freq+b,phase:phase1,mul:100).abs*SinOsc.ar(freq+b,phase:phase1)),freq*2.pow(low.lag(0.01)/992),amp1);
-//sig2=LPF.ar((Osc.ar(~w1.bufnum,freq2+b,phase:phase2,mul:100).abs*SinOsc.ar(freq2+b,phase:phase2)),freq2*2.pow(low.lag(0.01)/992),amp2);
-//sig3=LPF.ar((Osc.ar(~w1.bufnum,freq3+b,phase:phase3,mul:100).abs*SinOsc.ar(freq3+b,phase:phase3)),freq3*2.pow(low.lag(0.01)/992),amp3);
-
-Out.ar(2,Limiter.ar(LeakDC.ar(out1,mul:1)*gain,room.lag(0.01)));
-Out.ar(2,Limiter.ar(LeakDC.ar(out2,mul:1)*gain,room.lag(0.01)));
-Out.ar(2,Limiter.ar(LeakDC.ar(out3,mul:1)*gain,room.lag(0.01)));
-
-//Out.ar(0,Pan2.ar(Limiter.ar(LeakDC.ar(FreeVerb.ar(sig2,mix.lag(0.01),room.lag(0.01),mul:1),mul:1)*gain,room.lag(0.01)),(liney+cell_r.lag(0.01)).wrap(1.neg,1)));
-//Out.ar(0,Pan2.ar(Limiter.ar(LeakDC.ar(FreeVerb.ar(sig1,mix.lag(0.01),room.lag(0.01),mul:1),mul:1)*gain,room.lag(0.01)),(linex+cell_l.lag(0.01)).wrap(1.neg,1)));
-Out.ar(0,Pan2.ar(Limiter.ar(LeakDC.ar(FreeVerb.ar(sig1,mix.lag(0.01),room.lag(0.01),mul:1),mul:1)*gain,room.lag(0.01)),pos1)*pan1);
-Out.ar(0,Pan2.ar(Limiter.ar(LeakDC.ar(FreeVerb.ar(sig2,mix.lag(0.01),room.lag(0.01),mul:1),mul:1)*gain,room.lag(0.01)),pos2)*pan2);
-Out.ar(0,Pan2.ar(Limiter.ar(LeakDC.ar(FreeVerb.ar(sig3,mix.lag(0.01),room.lag(0.01),mul:1),mul:1)*gain,room.lag(0.01)),cell_tria));
+	Out.ar(0,Pan2.ar(Limiter.ar(LeakDC.ar(FreeVerb.ar(sig1,mix.lag(0.01),room.lag(0.01),mul:gain)),1/2),pos1)*pan1);
+	Out.ar(0,Pan2.ar(Limiter.ar(LeakDC.ar(FreeVerb.ar(sig2,mix.lag(0.01),room.lag(0.01),mul:gain)),1/2),pos2)*pan2);
+	Out.ar(0,Pan2.ar(Limiter.ar(LeakDC.ar(FreeVerb.ar(sig3,mix.lag(0.01),room.lag(0.01),mul:gain)),1/2),cell_tria));
 			}
 }).add;);
 
 10.wait;
-~synth=Synth.new(\synth,[\gain,1,\tone,992,\low,0,\mix,0,\room,1,\a,1,\pan_speed1,992,\pan_speed2,992,\pan_speed3,992,
-			\band,(992*4).neg,\x,1,\brain,4,\m,4,\rq,1,\b,1,\scale,100,\equilibrium,1,\f,1]).register;//s.record
+~synth=Synth.new(\synth,[\gain,10,\tone,992,\low,0,\mix,0,\room,1,\a,1,\pan_speed1,992,\pan_speed2,992,\pan_speed3,992,
+			\band,(992*4).neg,\x,1,\brain,4,\m,4,\rq,1,\b,1,\scale,100,\equilibrium,pi,\f,1]).register;//s.record
 2.wait;
 (
 MIDIClient.init;
@@ -397,7 +381,7 @@ MIDIdef.cc(\midi_pot13,{ |val, num, chan, src|
 		if(~synth.isPlaying,{~synth.set(\b,b)});
 },33);
 	);
-											;
+
 									(
 MIDIdef.cc(\midi_pot14,{ |val, num, chan, src|
 		var scale;
@@ -409,7 +393,7 @@ MIDIdef.cc(\midi_pot14,{ |val, num, chan, src|
 			(
 MIDIdef.cc(\midi_pot15,{ |val, num, chan, src|
 		var eq;
-		eq=val.linlin(0,127,0.degrad,90.degrad).round(0.00001);
+		eq=val.linlin(0,127,pi.neg,pi).round(0.00001);
 		eq.postln;
 		if(~synth.isPlaying,{~synth.set(\equilibrium,eq)});
 },35);
