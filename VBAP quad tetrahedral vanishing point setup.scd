@@ -203,7 +203,7 @@ pan2=SinOsc.ar(0.1,phase:phase2,mul:p_amp2);
 //sph2=Spherical(1,(~az2.[coordinate]+az).wrap(pi.neg,pi),(~el2.[coordinate]+el).wrap((pi/2).neg,(pi/2)));
 
 sph1=Spherical(1,(az),(el));
-sph2=Spherical(1,(az),(el+equlibrium).wrap2(90.0));
+sph2=Spherical(1,(az),(el+equlibrium).wrap2((pi/2)));
 
 angle1=Complex(exp(Complex(0,1)*sph1.theta).real,exp(Complex(0,1)*sph1.phi).imag).theta;
 angle2=Complex(exp(Complex(0,1)*sph2.theta).real,exp(Complex(0,1)*sph2.phi).imag).theta;
