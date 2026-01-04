@@ -318,6 +318,22 @@ MIDIdef.cc(\midi_pot14,{ |val, num, chan, src|
 		if(~synth.isPlaying,{~synth.set(\amp7a,a14)});
 },33);
 	);
+											(
+MIDIdef.cc(\midi_pot15,{ |val, num, chan, src|
+		var a15;
+		a15=val.linlin(0,127,0,1).round(0.000001);
+		a15.postln;
+		if(~synth.isPlaying,{~synth.set(\amp8a,a15)});
+},34);
+	);
+											(
+MIDIdef.cc(\midi_pot16,{ |val, num, chan, src|
+		var a16;
+		a16=val.linlin(0,127,0,1).round(0.000001);
+		a16.postln;
+		if(~synth.isPlaying,{~synth.set(\amp8a,a16)});
+},35);
+	);
 
 
 
