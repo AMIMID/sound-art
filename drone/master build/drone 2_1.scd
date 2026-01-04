@@ -217,7 +217,7 @@ pan2=SinOsc.ar(my,phase:phase2);
 
 
 sph1=Spherical(1,polytope.theta,polytope.phi);
-sph2=Spherical(1,polytope.theta,(polytope.phi+equlibrium).wrap2(90.0));
+sph2=Spherical(1,polytope.theta,(polytope.phi+equlibrium).wrap2((pi/2)));
 
 angle1=Complex(exp(Complex(0,1)*sph1.theta).real,exp(Complex(0,1)*sph1.phi).imag).theta;
 angle2=Complex(exp(Complex(0,1)*sph2.theta).real,exp(Complex(0,1)*sph2.phi).imag).theta;
