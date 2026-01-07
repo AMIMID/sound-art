@@ -59,7 +59,7 @@ wt = signal.asWavetable;
 
 
 //////kick
-(
+ (
 SynthDef(\kick, {
 	var amp=3,fund=28,ton=4,pan=2,low=992,noise=0.001,decay=2;
     var env,linex,liney,sig1,sig2,freq,angle,angle1,angle2,pos1,pos2;
@@ -109,46 +109,63 @@ sig2 = sig2 + (sig2 * BrownNoise.ar(noise));
 }).add;);
 
 //Synth(\kick);
-/*(
+
 /////snare
 (
 SynthDef(\snare, {
-    var env,silver=45,golden=90,bank=9,linex=0,liney=0,sig,phs;
-	var toneEnv,tone,noise,ton=3,decay=2;
+ 	var amp=3,fund=110,pan=2,low=0,noise=0.1,decay=2,snare=2000;
+    var env,linex,liney,sig1,sig2,freq,angle,angle1,angle2,pos1,pos2;
+	var az,el,sph1,sph2,equlibrium,pan1,pan2,phase1,phase2,p_amp1=1,p_amp2=1;
 
-	toneEnv = EnvGen.kr(Env.perc(0.0001, decay));
+	toneEnv = EnvGen.kr(Env([fund*1/4, fund], [decay/8], curve: -4));
 	env= EnvGen.kr(Env.perc(0.0001, decay),doneAction:2,levelScale:1/16);
-	noise= BrownNoise.ar(0.01)*env;
 
-	bank.do{
+equlibrium=pi;
+phase1=0.degrad; phase2=(equlibrium-90.degrad).wrap2(pi);
+pan1=SinOsc.ar(pan,phase:phase1,mul:p_amp1);
+pan2=SinOsc.ar(pan/2,phase:phase2,mul:p_amp2);
+
+	az=SinOsc.ar(1,0.degrad,pi);
+	el=SinOsc.ar(1,90.degrad,pi/2);
 
 
-linex=exp(Complex(0,1)*silver.degrad).real.round(0.00001).abs;
-liney=exp(Complex(0,1)*silver.degrad).imag.round(0.00001).abs.neg;
-phs=golden.degrad;
+sph1=Spherical(1,(az),(el));
+sph2=Spherical(1,(az),(el+equlibrium).wrap2((pi/2)));
 
-		tone=LPF.ar(Pulse.ar((56*ton),width:0.5,mul:toneEnv).abs,56*16)*SinOsc.ar((56*ton)/2,phs,toneEnv);
-		sig = (tone * 0.1) + (noise * 0.5);
-	    sig = HPF.ar(sig, 56); // filter out low rumble
+angle1=Complex(exp(Complex(0,1)*sph1.theta).real,exp(Complex(0,1)*sph1.phi).imag).theta;
+angle2=Complex(exp(Complex(0,1)*sph2.theta).real,exp(Complex(0,1)*sph2.phi).imag).theta;
 
-		Out.ar(0, Pan2.ar(sig,linex));
-		Out.ar(0, Pan2.ar(sig,liney));
+angle=Complex(exp(Complex(0,1)*angle1).real,exp(Complex(0,1)*angle2).imag).theta;
 
-silver=(silver+(360-(360/(1+2.sqrt)))).wrap(180.neg,180).round(0.00001);
-golden=(golden+(360-(360/((1+5.sqrt)/2)))).wrap(180.neg,180).round(0.0001);
+pos1=exp(Complex(0,1)*angle).real;
+pos2=exp(Complex(0,1)*angle).imag;
 
-	};
+
+		sig=LPF.ar(Pulse.ar((56*ton),width:0.5,mul:toneEnv).abs,56*16)*SinOsc.ar((56*ton)/2,phs,toneEnv);
+	sig1=(LPF.ar((Osc.ar(~w1.bufnum,freq,phase:phase1,mul:100).abs*SinOsc.ar(freq,phase:phase1)),freq*2.pow(low.lag(0.01)/992)));
+        sig2=(LPF.ar((Osc.ar(~w1.bufnum,freq,phase:phase2,mul:100).abs*SinOsc.ar(freq,phase:phase2)),freq*2.pow(low.lag(0.01)/992)));
+
+		sig1 = (sig1 + HPF.ar(BrownNoise.ar(noise),snare)* Env.perc(0.001, 0.05).ar);
+		sig2 = (sig2 + HPF.ar(BrownNoise.ar(noise),snare)* Env.perc(0.001, 0.05).ar);
+
+	    sig2=HPF.ar(sig2,50); sig2=LPF.ar(sig2, 2000); sig1=HPF.ar(sig1,50); sig1=LPF.ar(sig1, 2000);
+		sig2=Compander.ar(sig2,sig2,-24.dbamp,1,0.3,0.015,0.3); sig1=Compander.ar(sig1,sig1,-24.dbamp,1,0.3,0.015,0.3);
+		sig1=tanh(sig1*2);sig2=tanh(sig2*2);sig1=Limiter.ar(sig1,1,0.01);sig2=Limiter.ar(sig2,1,0.01);
+
+	Out.ar(2, Pan2.ar(sig1,pos1,env)*pan1);
+	Out.ar(2, Pan2.ar(sig2,pos2,env)*pan2);
 }).add;
 );
 
 //Synth(\snare);
+/*(
 ////hihat
 (
 SynthDef(\hihat, {
     var env,silver=45,bank=21,linex=0,liney=0,sig,noise,decay=0.2;
 
 
-	env= EnvGen.kr(Env.perc(0.001, decay),doneAction:2,levelScale:1/200);
+	env= EnvGen.kr(Env.perc(0.001, decay,-8),doneAction:2,levelScale:1/200);
 	noise = WhiteNoise.ar(env);
 	sig = BPF.ar(noise, 56*128, 1);
 	sig = HPF.ar(sig, 56* 128);
@@ -167,8 +184,173 @@ silver=(silver+(360-(360/(1+2.sqrt)))).wrap(180.neg,180).round(0.00001);
 
 	};
 }).add;
+);
+	(
+SynthDef(\ride, {
+    var env,silver=45,bank=21,linex=0,liney=0,sig,noise,decay=0.2;
+
+
+	env= EnvGen.kr(Env.perc(0.001, decay),doneAction:2,levelScale:1/200);
+	noise = WhiteNoise.ar(env);
+	sig = BPF.ar(noise, 56*128, 1);
+	sig = HPF.ar(sig, 56* 128);
+
+// ping (stick attack)
+    ping = SinOsc.ar(bellFreq * 2, 0, 0.2) * env;
+
+    // metallic wash
+    wash = Mix.fill(6, {
+        SinOsc.ar(exprand(2000, 9000), 0, 0.12)
+    });
+    wash = HPF.ar(wash, 3000);
+    wash = wash * washEnv;
+
+    // bell
+    bell = SinOsc.ar(bellFreq, 0, 0.15) * Env.perc(0.001, decay * 0.6).ar;
+
+    sig = (ping + wash + bell) * amp;
+
+		Out.ar(0, Pan2.ar(sig,linex,bank.reciprocal));
+		Out.ar(0, Pan2.ar(sig,liney,bank.reciprocal));
+
+
+
+silver=(silver+(360-(360/(1+2.sqrt)))).wrap(180.neg,180).round(0.00001);
+
+	};
+}).add;
 )
 
+	(
+SynthDef(\crash, {
+    var env,silver=45,bank=21,linex=0,liney=0,sig,noise,decay=0.2;
+
+
+	env= EnvGen.kr(Env.perc(0.001, decay),doneAction:2,levelScale:1/200);
+	noise = WhiteNoise.ar(env);
+	sig = BPF.ar(noise, 56*128, 1);
+	sig = HPF.ar(sig, 56* 128);
+
+// metallic inharmonic cluster
+    metal = Mix.fill(6, { |i|
+        SinOsc.ar(exprand(3000, 12000), 0, 0.15)
+    });
+
+    // noisy wash
+    noise = WhiteNoise.ar(0.4);
+    noise = HPF.ar(noise, 4000);
+
+    sig = (metal + noise) * env;
+    sig = sig * amp;
+
+    sig = (ping + wash + bell) * amp;
+
+		Out.ar(0, Pan2.ar(sig,linex,bank.reciprocal));
+		Out.ar(0, Pan2.ar(sig,liney,bank.reciprocal));
+
+
+
+silver=(silver+(360-(360/(1+2.sqrt)))).wrap(180.neg,180).round(0.00001);
+
+	};
+}).add;
+)
+(
+SynthDef(\tome1, {
+	var amp=3,fund=28,ton=4,pan=2,low=992,noise=0.001,decay=2;
+    var env,linex,liney,sig1,sig2,freq,angle,angle1,angle2,pos1,pos2;
+	var az,el,sph1,sph2,equlibrium,pan1,pan2,phase1,phase2,p_amp1=1,p_amp2=1;
+
+	freq = EnvGen.kr(Env([fund*ton, fund], [decay/8], curve: -4)); // pitch drop
+	env= EnvGen.kr(Env.perc(0.01, decay, curve: -4),doneAction:2,levelScale:amp);
+
+equlibrium=pi;
+phase1=0.degrad; phase2=(equlibrium-90.degrad).wrap2(pi);
+pan1=SinOsc.ar(pan,phase:phase1,mul:p_amp1);
+pan2=SinOsc.ar(pan/2,phase:phase2,mul:p_amp2);
+
+	az=SinOsc.ar(1,0.degrad,pi);
+	el=SinOsc.ar(1,90.degrad,pi/2);
+
+
+sph1=Spherical(1,(az),(el));
+sph2=Spherical(1,(az),(el+equlibrium).wrap2((pi/2)));
+
+angle1=Complex(exp(Complex(0,1)*sph1.theta).real,exp(Complex(0,1)*sph1.phi).imag).theta;
+angle2=Complex(exp(Complex(0,1)*sph2.theta).real,exp(Complex(0,1)*sph2.phi).imag).theta;
+
+angle=Complex(exp(Complex(0,1)*angle1).real,exp(Complex(0,1)*angle2).imag).theta;
+
+pos1=exp(Complex(0,1)*angle).real;
+pos2=exp(Complex(0,1)*angle).imag;
+
+//linex=exp(Complex(0,1)*pan.degrad).real.round(0.00001).abs;
+//liney=exp(Complex(0,1)*pan.degrad).real.round(0.00001).abs.neg;
+//phase=pan.degrad;
+
+		sig1=(LPF.ar((Osc.ar(~w1.bufnum,freq,phase:phase1,mul:100).abs*SinOsc.ar(freq,phase:phase1)),freq*2.pow(low.lag(0.01)/992)));
+        sig2=(LPF.ar((Osc.ar(~w1.bufnum,freq,phase:phase2,mul:100).abs*SinOsc.ar(freq,phase:phase2)),freq*2.pow(low.lag(0.01)/992)));
+
+sig1 = sig1 + (sig1 * BPF.ar(BrownNoise.ar(noise),freq*2)* Env.perc(0.001, 0.05).ar);
+sig2 = sig2 + (sig2 * BPF.ar(BrownNoise.ar(noise),freq*2)* Env.perc(0.001, 0.05).ar);
+
+		sig2=HPF.ar(sig2,50); sig2=LPF.ar(sig2, 2000); sig1=HPF.ar(sig1,50); sig1=LPF.ar(sig1, 2000);
+		sig2=Compander.ar(sig2,sig2,-24.dbamp,1,0.3,0.015,0.3); sig1=Compander.ar(sig1,sig1,-24.dbamp,1,0.3,0.015,0.3);
+		sig1=tanh(sig1*2);sig2=tanh(sig2*2);sig1=Limiter.ar(sig1,1,0.01);sig2=Limiter.ar(sig2,1,0.01);
+
+
+		Out.ar(2, Pan2.ar(sig1,pos1,env)*pan1);
+		Out.ar(2, Pan2.ar(sig2,pos2,env)*pan2);
+
+}).add;);
+	(
+SynthDef(\tome2, {
+	var amp=3,fund=28,ton=4,pan=2,low=992,noise=0.001,decay=2;
+    var env,linex,liney,sig1,sig2,freq,angle,angle1,angle2,pos1,pos2;
+	var az,el,sph1,sph2,equlibrium,pan1,pan2,phase1,phase2,p_amp1=1,p_amp2=1;
+
+	freq = EnvGen.kr(Env([fund*ton, fund], [decay/8], curve: -4)); // pitch drop
+	env= EnvGen.kr(Env.perc(0.01, decay, curve: -4),doneAction:2,levelScale:amp);
+
+equlibrium=pi;
+phase1=0.degrad; phase2=(equlibrium-90.degrad).wrap2(pi);
+pan1=SinOsc.ar(pan,phase:phase1,mul:p_amp1);
+pan2=SinOsc.ar(pan/2,phase:phase2,mul:p_amp2);
+
+	az=SinOsc.ar(1,0.degrad,pi);
+	el=SinOsc.ar(1,90.degrad,pi/2);
+
+
+sph1=Spherical(1,(az),(el));
+sph2=Spherical(1,(az),(el+equlibrium).wrap2((pi/2)));
+
+angle1=Complex(exp(Complex(0,1)*sph1.theta).real,exp(Complex(0,1)*sph1.phi).imag).theta;
+angle2=Complex(exp(Complex(0,1)*sph2.theta).real,exp(Complex(0,1)*sph2.phi).imag).theta;
+
+angle=Complex(exp(Complex(0,1)*angle1).real,exp(Complex(0,1)*angle2).imag).theta;
+
+pos1=exp(Complex(0,1)*angle).real;
+pos2=exp(Complex(0,1)*angle).imag;
+
+//linex=exp(Complex(0,1)*pan.degrad).real.round(0.00001).abs;
+//liney=exp(Complex(0,1)*pan.degrad).real.round(0.00001).abs.neg;
+//phase=pan.degrad;
+
+		sig1=(LPF.ar((Osc.ar(~w1.bufnum,freq,phase:phase1,mul:100).abs*SinOsc.ar(freq,phase:phase1)),freq*2.pow(low.lag(0.01)/992)));
+        sig2=(LPF.ar((Osc.ar(~w1.bufnum,freq,phase:phase2,mul:100).abs*SinOsc.ar(freq,phase:phase2)),freq*2.pow(low.lag(0.01)/992)));
+
+sig1 = sig1 + (sig1 * BPF.ar(BrownNoise.ar(noise),freq*2)* Env.perc(0.001, 0.05).ar);
+sig2 = sig2 + (sig2 * BPF.ar(BrownNoise.ar(noise),freq*2)* Env.perc(0.001, 0.05).ar);;
+
+		sig2=HPF.ar(sig2,50); sig2=LPF.ar(sig2, 2000); sig1=HPF.ar(sig1,50); sig1=LPF.ar(sig1, 2000);
+		sig2=Compander.ar(sig2,sig2,-24.dbamp,1,0.3,0.015,0.3); sig1=Compander.ar(sig1,sig1,-24.dbamp,1,0.3,0.015,0.3);
+		sig1=tanh(sig1*2);sig2=tanh(sig2*2);sig1=Limiter.ar(sig1,1,0.01);sig2=Limiter.ar(sig2,1,0.01);
+
+
+		Out.ar(2, Pan2.ar(sig1,pos1,env)*pan1);
+		Out.ar(2, Pan2.ar(sig2,pos2,env)*pan2);
+
+}).add;)
 
 // Test it:
 Synth(\hihat);
