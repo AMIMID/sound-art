@@ -37,6 +37,7 @@ s.options.sampleRate= 44100;
 );
 (
 s.waitForBoot{
+	//Buffer.freeAll;
 (
 (
 ~n=1.neg;~array=992.collect{~n=~n+1;2.pow(~n/992)};
@@ -61,17 +62,17 @@ wt = signal.asWavetable;
 //////kick
  (
 SynthDef(\kick, {
-	var amp=3,fund=28,ton=4,pan=2,low=992,noise=0.001,decay=2,equlibrium;
+	var amp=4,fund=28,ton=4,pan=0.5,low=0,noise=0.001,decay=2,equlibrium;
     var env,linex,liney,sig1,sig2,freq,angle,angle1,angle2,pos1,pos2;
-	var az,el,sph1,sph2,equlibrium,pan1,pan2,phase1,phase2,p_amp1=1,p_amp2=1;
+	var az,el,sph1,sph2,pan1,pan2,phase1,phase2,p_amp1=1,p_amp2=1;
 
 	freq = EnvGen.kr(Env([fund*ton, fund], [decay/8], curve: -4)); // pitch drop
 	env= EnvGen.kr(Env.perc(0.01, decay, curve: -4),doneAction:2,levelScale:amp);
 
-equlibrium=pi;
+equlibrium=pi/2;
 phase1=0.degrad; phase2=(equlibrium-90.degrad).wrap2(pi);
-pan1=SinOsc.ar(pan,phase:phase1,mul:p_amp1);
-pan2=SinOsc.ar(pan/2,phase:phase2,mul:p_amp2);
+pan1=SinOsc.ar(pan*3,phase:phase1,mul:p_amp1);
+pan2=SinOsc.ar(pan*2,phase:phase2,mul:p_amp2);
 
 	az=SinOsc.ar(1,0.degrad,pi);
 	el=SinOsc.ar(1,90.degrad,pi/2);
@@ -103,27 +104,27 @@ sig2 = sig2 + (sig2 * BrownNoise.ar(noise));
 		sig1=tanh(sig1*2);sig2=tanh(sig2*2);sig1=Limiter.ar(sig1,1,0.01);sig2=Limiter.ar(sig2,1,0.01);
 
 
-		Out.ar(2, Pan2.ar(sig1,pos1,env)*pan1);
-		Out.ar(2, Pan2.ar(sig2,pos2,env)*pan2);
+		Out.ar(0, Pan2.ar(sig1,pos1,env)*pan1);
+		Out.ar(0, Pan2.ar(sig2,pos2,env)*pan2);
 
 }).add;);
 
-//Synth(\kick);
+Synth(\kick);
 
 /////snare
 (
 SynthDef(\snare, {
- 	var amp=3,fund=110,pan=2,low=0,noise=0.1,decay=2,snare=2000;
+ 	var amp=2,fund=28*2.pow(24/12),pan=0.5,low=992*0,noise=0.05,decay=0.3,snare=fund*8,equlibrium;
     var env,linex,liney,sig1,sig2,freq,angle,angle1,angle2,pos1,pos2;
-	var az,el,sph1,sph2,equlibrium,pan1,pan2,phase1,phase2,p_amp1=1,p_amp2=1;
+	var az,el,sph1,sph2,pan1,pan2,phase1,phase2,p_amp1=1,p_amp2=1;
 
-	toneEnv = EnvGen.kr(Env([fund*1/4, fund], [decay/8], curve: -4));
-	env= EnvGen.kr(Env.perc(0.0001, decay),doneAction:2,levelScale:1/16);
+	freq = EnvGen.kr(Env([fund, fund*(8/9)], [decay/2], curve: -4));
+	env= EnvGen.kr(Env.perc(0.01, decay),doneAction:2,levelScale:amp);
 
-equlibrium=pi;
+equlibrium=pi/2;
 phase1=0.degrad; phase2=(equlibrium-90.degrad).wrap2(pi);
-pan1=SinOsc.ar(pan,phase:phase1,mul:p_amp1);
-pan2=SinOsc.ar(pan/2,phase:phase2,mul:p_amp2);
+pan1=SinOsc.ar(pan*3,phase:phase1,mul:p_amp1);
+pan2=SinOsc.ar(pan*2,phase:phase2,mul:p_amp2);
 
 	az=SinOsc.ar(1,0.degrad,pi);
 	el=SinOsc.ar(1,90.degrad,pi/2);
@@ -141,19 +142,19 @@ pos1=exp(Complex(0,1)*angle).real;
 pos2=exp(Complex(0,1)*angle).imag;
 
 
-		sig=LPF.ar(Pulse.ar((56*ton),width:0.5,mul:toneEnv).abs,56*16)*SinOsc.ar((56*ton)/2,phs,toneEnv);
+
 	sig1=(LPF.ar((Osc.ar(~w1.bufnum,freq,phase:phase1,mul:100).abs*SinOsc.ar(freq,phase:phase1)),freq*2.pow(low.lag(0.01)/992)));
         sig2=(LPF.ar((Osc.ar(~w1.bufnum,freq,phase:phase2,mul:100).abs*SinOsc.ar(freq,phase:phase2)),freq*2.pow(low.lag(0.01)/992)));
 
-		sig1 = (sig1 + HPF.ar(BrownNoise.ar(noise),snare)* Env.perc(0.001, 0.05).ar);
-		sig2 = (sig2 + HPF.ar(BrownNoise.ar(noise),snare)* Env.perc(0.001, 0.05).ar);
+		sig1 = (sig1 + (HPF.ar(BrownNoise.ar(noise),snare)* Env.perc(0.01, 0.1).ar));
+		sig2 = (sig2 + (HPF.ar(BrownNoise.ar(noise),snare)* Env.perc(0.01, 0.1).ar));
 
-	    sig2=HPF.ar(sig2,50); sig2=LPF.ar(sig2, 2000); sig1=HPF.ar(sig1,50); sig1=LPF.ar(sig1, 2000);
+	    sig2=HPF.ar(sig2,50);  sig1=HPF.ar(sig1,50);
 		sig2=Compander.ar(sig2,sig2,-24.dbamp,1,0.3,0.015,0.3); sig1=Compander.ar(sig1,sig1,-24.dbamp,1,0.3,0.015,0.3);
 		sig1=tanh(sig1*2);sig2=tanh(sig2*2);sig1=Limiter.ar(sig1,1,0.01);sig2=Limiter.ar(sig2,1,0.01);
 
-	Out.ar(2, Pan2.ar(sig1,pos1,env)*pan1);
-	Out.ar(2, Pan2.ar(sig2,pos2,env)*pan2);
+	Out.ar(0, Pan2.ar(sig1,pos1,env)*pan1);
+	Out.ar(0, Pan2.ar(sig2,pos2,env)*pan2);
 }).add;
 );
 
@@ -269,8 +270,8 @@ SynthDef(\tom, {
 
 equlibrium=pi;
 phase1=0.degrad; phase2=(equlibrium-90.degrad).wrap2(pi);
-pan1=SinOsc.ar(pan,phase:phase1,mul:p_amp1);
-pan2=SinOsc.ar(pan/2,phase:phase2,mul:p_amp2);
+pan1=SinOsc.ar(pan*3,phase:phase1,mul:p_amp1);
+pan2=SinOsc.ar(pan*2,phase:phase2,mul:p_amp2);
 
 	az=SinOsc.ar(1,0.degrad,pi);
 	el=SinOsc.ar(1,90.degrad,pi/2);
@@ -294,8 +295,8 @@ pos2=exp(Complex(0,1)*angle).imag;
 		sig1=(LPF.ar((Osc.ar(~w1.bufnum,freq,phase:phase1,mul:100).abs*SinOsc.ar(freq,phase:phase1)),freq*2.pow(low.lag(0.01)/992)));
         sig2=(LPF.ar((Osc.ar(~w1.bufnum,freq,phase:phase2,mul:100).abs*SinOsc.ar(freq,phase:phase2)),freq*2.pow(low.lag(0.01)/992)));
 
-sig1 = sig1 + (sig1 * BPF.ar(BrownNoise.ar(noise),freq*2)* Env.perc(0.001, 0.05).ar);
-sig2 = sig2 + (sig2 * BPF.ar(BrownNoise.ar(noise),freq*2)* Env.perc(0.001, 0.05).ar);
+sig1 = sig1 + (sig1 * (BPF.ar(BrownNoise.ar(noise),freq*2)* Env.perc(0.001, 0.05).ar));
+sig2 = sig2 + (sig2 * (BPF.ar(BrownNoise.ar(noise),freq*2)* Env.perc(0.001, 0.05).ar));
 
 	Delay1.ar(in: 0.0, mul: 1.0, add: 0.0, x1: 0.0)
 
@@ -304,8 +305,8 @@ sig2 = sig2 + (sig2 * BPF.ar(BrownNoise.ar(noise),freq*2)* Env.perc(0.001, 0.05)
 		sig1=tanh(sig1*2);sig2=tanh(sig2*2);sig1=Limiter.ar(sig1,1,0.01);sig2=Limiter.ar(sig2,1,0.01);
 
 
-		Out.ar(2, Pan2.ar(sig1,pos1,env)*pan1);
-		Out.ar(2, Pan2.ar(sig2,pos2,env)*pan2);
+		Out.ar(0, Pan2.ar(sig1,pos1,env)*pan1);
+		Out.ar(0, Pan2.ar(sig2,pos2,env)*pan2);
 
 }).add;);
 	///	Synth(\tom);
@@ -315,19 +316,20 @@ Synth(\hihat);
 Synth(\snare);
 Synth(\kick);
 )*/
-	///tetrahedron
+
+	/////octahedron
 (
 ~az=[45.degrad,135.neg.degrad,45.neg.degrad,135.degrad];
 ~el=[35.264390.neg.degrad,35.264390.neg.degrad,35.264390.degrad,35.264390.degrad];
 );
 //////////patterns
-({var m1=1.neg, m2=1.neg, m3=1.neg,a,b,c, beat=1, frame=32.reciprocal,n=0,bank=6;
+({var m1=1.neg, m2=1.neg, m3=1.neg,a,b,c, beat=1, frame=32.reciprocal,n=0,bank=4;
 
-~dur=[];
+~durk=[];
 
 ~x=bank.collect{
 m1=m1+1;
-	b=Spherical(beat,~az.[m1],~el.[m1]).x.round(frame);
+			b=Spherical(beat,~az.[m1],~el.[m1]).x.round(frame);
 	2.pow(b).round(0.00001);
 };
 ~y=bank.collect{
@@ -340,21 +342,50 @@ m3=m3+1;
 	d=Spherical(beat,~az.[m3],~el.[m3]).z.round(frame);
 	2.pow(d).round(0.00001);
 };
-		bank.do{ ~dur=~dur++~x.[n]++~y.[n]++~z.[n]; n=n+1;};}.value
+		bank.do{ ~durk=~durk++~x.[n]++~y.[n]++~z.[n]; n=n+1;};
+//	~dur = ~duri.collect { |x|
+  //  if (x == 0) { Rest(2) } { x }
+//	}
+}.value;
 );
 
+	({var m1=1.neg, m2=1.neg, m3=1.neg,a,b,c, beat=1, frame=32.reciprocal,n=0,bank=4;
+
+~durs=[];
+
+~x2=bank.collect{
+m1=m1+1;
+	b=Spherical(beat,~az.[m1],~el.[m1]).rotate(90.degrad).x.round(frame);
+	2.pow(b).round(0.00001);
+};
+~y2=bank.collect{
+m2=m2+1;
+	c=Spherical(beat,~az.[m2],~el.[m2]).rotate(90.degrad).y.round(frame);
+	2.pow(c).round(0.00001);
+};
+~z2=bank.collect{
+m3=m3+1;
+	d=Spherical(beat,~az.[m3],~el.[m3]).rotate(90.degrad).z.round(frame);
+	2.pow(d).round(0.00001);
+};
+		bank.do{ ~durs=~durs++~x2.[n]++~y2.[n]++~z2.[n]; n=n+1;};
+//	~dur = ~duri.collect { |x|
+  //  if (x == 0) { Rest(2) } { x }
+//	}
+}.value;
+)
 (
 	(
 		~kick=Pdef(\1, Pbind(\instrument, \kick,
-			\dur,Pseq(~dur,inf),
+			\dur,Pseq(~durk*2,inf),
 		))
 );
 
-/*(
+(
 		~snare=Pdef(\2, Pbind(\instrument, \snare,
-			\dur,Pseq(~dur,inf),
+			\dur,Pseq(~durk,inf),
 		))
-);*/
+);
 /*(
 		~hihat=Pdef(\3, Pbind(\instrument, \hihat,
 			\dur,Pseq(~dur,inf),
@@ -374,8 +405,9 @@ m3=m3+1;
 		~tom=Pdef(\6, Pbind(\instrument, \tom,
 			\dur,Pseq(~dur,inf),
 		))
-);t*/
-/*(
+);*/
+
+		(
 );
 
 
@@ -385,7 +417,7 @@ TempoClock.default.tempo_(4);
 
 (
 ~kick.play;
-//~snare.play;
+~snare.play;
 //~hihat.play;
 //~ride.play;
 //~crash.play;
@@ -401,23 +433,25 @@ TempoClock.default.tempo_(4);
 
 
 
+
+	///tetrahedron
+(
+~az=[45.degrad,135.neg.degrad,45.neg.degrad,135.degrad];
+~el=[35.264390.neg.degrad,35.264390.neg.degrad,35.264390.degrad,35.264390.degrad];
+);
 //////cube
 (
-
 ~az=[45.degrad,135.degrad,45.neg.degrad,135.neg.degrad,45.degrad,135.degrad,45.neg.degrad,135.neg.degrad];
 ~el=[35.264390.neg.degrad,35.264390.neg.degrad,35.264390.neg.degrad,35.264390.neg.degrad,35.264390.degrad,35.264390.degrad,35.264390.degrad,35.264390.degrad];
-
 )
 
 /////octahedron
 
 (
-
 ~az=[0.degrad,0.degrad,90.degrad,180.degrad,90.neg.degrad,0.degrad];
 ~el=[90.neg.degrad,0.degrad,0.degrad,0.degrad,0.degrad,90.degrad];
-
 )
-/////////////sun
+
 //////icosahedron
 (
 ~az=[90.degrad,90.neg.degrad,0.degrad,180.degrad,58.28.degrad,121.72.degrad,121.72.neg.degrad,58.neg.degrad,90.degrad,90.neg.degrad,0.degrad,180.degrad];
@@ -434,7 +468,6 @@ TempoClock.default.tempo_(4);
 	35.26.degrad,35.26.degrad,35.26.degrad,35.26.degrad,69.09.degrad,69.09.degrad,0.degrad,0.degrad,0.degrad,0.degrad,20.91.degrad,20.91.degrad]
 )
 
-////planet
 /////Rhombic dodecahedron//// hull
 
 (
