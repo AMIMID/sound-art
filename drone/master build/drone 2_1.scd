@@ -134,9 +134,10 @@ wt = signal.asWavetable;
 (
 SynthDef.new(\synth,{
 
-	arg gain=1,low=992,mix=1,room=1,tone=0,band=1,x=1,a=1,brain=1,pan_speed1=1,pan_speed2=1,pan_speed3=1,m=4,rq=0.1,b=0,scale=1,equlibrium=180.degrad,f=1,pan=1;
-	var lamdoma,freq,freq2,freq3,fund,amp1,amp2,amp3,alpha,cell_az,cell_el,x_pos,y_pos;
-	var sig1,sig2,first=32*(9/8),bank=4,out1,out2,fm,band_osc1,band_osc2,ton;
+	arg gain=1,low=992,mix=1,room=1,tone=0,band=1,x=1,a=1,brain=1,pan_speed1=1,pan_speed2=1,
+				pan_speed3=1,m=4,rq=0.1,b=0,scale=1,equlibrium=180.degrad,f=1,pan=1;
+	var lamdoma,freq1,freq2,freq3,fund,amp1,amp2,amp3,alpha,cell_az,cell_el,x_pos,y_pos,control1,control2,control3;
+	var sig1,sig2,first=32*(9/8),bank=4,out1,out2,fm,band_osc1,band_osc2,ton,threshold=18.neg.dbamp;
 	var band_osc3,band_osc4,band_osc5,band_osc6,octahedron,sig3,out3,cell_tria,b_x,b_y,b_z,polytope;
 	var magx,magy,magz,magqx,magqy,mod_angle,phase1,phase2,angle,angle1,angle2,pos1,pos2,sph1,sph2,pan1,pan2;
 	var mod_angle1,mod_anglez,mx,my,mz,mqx,mqy,mag,magq,spread=1,mq=(m-1),choice,nn=0;
@@ -200,7 +201,7 @@ fund=first*lamdoma.lag(0.01).reciprocal;
 
 fm=LFNoise1.ar(f,f.reciprocal);
 
-freq=(fund*ton)+b_x+fm;
+freq1=(fund*ton)+b_x+fm;
 freq2=(fund*ton)+b_y+fm;
 freq3=(fund*ton)+b_z+fm;
 
@@ -214,6 +215,7 @@ cell_tria=SinOsc.ar(mz,phase:90.degrad);
 phase1=0.degrad; phase2=(equlibrium-90.degrad).wrap2(pi);
 pan1=SinOsc.ar(mx,phase:phase1);
 pan2=SinOsc.ar(my,phase:phase2);
+
 
 
 sph1=Spherical(1,polytope.theta,polytope.phi);
@@ -234,28 +236,44 @@ band_osc4=SinOsc.kr(b_x*2.pow(band.lag(0.01)/992),phase:180.degrad).range(496,16
 band_osc5=SinOsc.kr(b_y*2.pow(band.lag(0.01)/992),phase:90.degrad.neg).range(496,16256);
 band_osc6=SinOsc.kr(b_z*2.pow(band.lag(0.01)/992),phase:45.degrad.neg).range(496,16256);
 
-sig1=BPF.ar(BRF.ar(LPF.ar((Osc.ar(~w1.bufnum,freq+b,phase:angle,mul:100).abs*SinOsc.ar(freq+b,phase:angle)),freq*2.pow(low.lag(0.01)/992),amp1),
-band_osc1.lag(0.1),rq),band_osc4.lag(0.1),rq);
-sig2=BPF.ar(BRF.ar(LPF.ar((Osc.ar(~w1.bufnum,freq2+b,phase:angle,mul:100).abs*SinOsc.ar(freq2+b,phase:angle)),freq2*2.pow(low.lag(0.01)/992),amp2),
-band_osc2.lag(0.1),rq),band_osc5.lag(0.1),rq);
-sig3=BPF.ar(BRF.ar(LPF.ar((Osc.ar(~w1.bufnum,freq3+b,phase:angle,mul:100).abs*SinOsc.ar(freq3+b,phase:angle)),freq3*2.pow(low.lag(0.01)/992),amp3),
-band_osc3.lag(0.1),rq),band_osc6.lag(0.1),rq);
+control1=SinOsc.ar(freq1+b,phase:angle,mul:amp1);
+control2=SinOsc.ar(freq2+b,phase:angle,mul:amp2);
+control3=SinOsc.ar(freq3+b,phase:angle,mul:amp3);
 
-	Out.ar(4,Pan2.ar(Limiter.ar(LeakDC.ar(FreeVerb.ar(sig1,mix.lag(0.01),room.lag(0.01),mul:gain)),1/2,0.03),pos1)*pan1);
-	Out.ar(4,Pan2.ar(Limiter.ar(LeakDC.ar(FreeVerb.ar(sig2,mix.lag(0.01),room.lag(0.01),mul:gain)),1/2,0.03),pos2)*pan2);
-	Out.ar(4,Pan2.ar(Limiter.ar(LeakDC.ar(FreeVerb.ar(sig3,mix.lag(0.01),room.lag(0.01),mul:gain)),1/2,0.03),cell_tria));
+sig1=(LPF.ar((Osc.ar(~w1.bufnum,freq1+b,phase:angle,mul:100).abs*SinOsc.ar(freq1+b,phase:angle)),freq1*2.pow(low.lag(0.01)/992),amp1));
+sig2=(LPF.ar((Osc.ar(~w1.bufnum,freq2+b,phase:angle,mul:100).abs*SinOsc.ar(freq2+b,phase:angle)),freq2*2.pow(low.lag(0.01)/992),amp2));
+sig3=(LPF.ar((Osc.ar(~w1.bufnum,freq3+b,phase:angle,mul:100).abs*SinOsc.ar(freq3+b,phase:angle)),freq3*2.pow(low.lag(0.01)/992),amp3));
 
-					x_pos=exp(Complex(0,1)*pan).real;
-					y_pos=exp(Complex(0,1)*pan).imag;
+	sig1=Select.ar(band.linlin((992*4).neg,((992*4).neg+1),0,1).round(1).asInteger,
+						[sig1,BPF.ar(BRF.ar(sig1,band_osc1.lag(0.1),rq),band_osc4.lag(0.1),rq)]);
+	sig2=Select.ar(band.linlin((992*4).neg,((992*4).neg+1),0,1).round(1).asInteger,
+						[sig2,BPF.ar(BRF.ar(sig2,band_osc2.lag(0.1),rq),band_osc5.lag(0.1),rq)]);
+	sig3=Select.ar(band.linlin((992*4).neg,((992*4).neg+1),0,1).round(1).asInteger,
+						[sig3,BPF.ar(BRF.ar(sig3,band_osc3.lag(0.1),rq),band_osc6.lag(0.1),rq)]);
 
-					Out.ar(0,Pan4.ar(InFeedback.ar(4),xpos:x_pos,ypos:y_pos));
-					Out.ar(1,Pan4.ar(InFeedback.ar(5),xpos:y_pos,ypos:x_pos));
+
+
+		sig1=HPF.ar(sig1,50); sig2=HPF.ar(sig1, 50);sig3=HPF.ar(sig1, 50);
+		sig1=Compander.ar(sig1,control1,threshold,1,0.3,0.015,0.3);
+		sig2=Compander.ar(sig2,control2,threshold,1,0.3,0.015,0.3);
+		sig3=Compander.ar(sig3,control3,threshold,1,0.3,0.015,0.3);
+		sig1=tanh(sig1*2);sig2=tanh(sig2*2);sig3=tanh(sig2*2);
+
+	Out.ar(0,Pan2.ar(Limiter.ar(LeakDC.ar(FreeVerb.ar(sig1,mix.lag(0.01),room.lag(0.01),mul:gain)),0.8,0.01),pos1)*pan1);
+	Out.ar(0,Pan2.ar(Limiter.ar(LeakDC.ar(FreeVerb.ar(sig2,mix.lag(0.01),room.lag(0.01),mul:gain)),0.8,0.01),pos2)*pan2);
+	Out.ar(0,Pan2.ar(Limiter.ar(LeakDC.ar(FreeVerb.ar(sig3,mix.lag(0.01),room.lag(0.01),mul:gain)),0.8,0.01),cell_tria));
+
+					//x_pos=exp(Complex(0,1)*pan).real;
+					//y_pos=exp(Complex(0,1)*pan).imag;
+
+					//Out.ar(0,Pan4.ar(InFeedback.ar(4),xpos:x_pos,ypos:y_pos));
+					//Out.ar(1,Pan4.ar(InFeedback.ar(5),xpos:y_pos,ypos:x_pos));
 			}
 }).add;);
 
 10.wait;
 ~synth=Synth.new(\synth,[\gain,10,\tone,992,\low,0,\mix,0,\room,1,\a,1,\pan_speed1,992,\pan_speed2,992,\pan_speed3,992,
-			\band,(992*4).neg,\x,1,\brain,4,\m,4,\rq,1,\b,1,\scale,100,\equilibrium,pi,\f,1,\pan,180.degrad]).register;//s.record
+			\band,(992*4).neg,\x,1,\brain,4,\m,4,\rq,1,\b,1,\scale,100,\equilibrium,pi,\f,1,\pan,45.degrad]).register;//s.record
 2.wait;
 (
 MIDIClient.init;
