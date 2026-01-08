@@ -216,14 +216,14 @@ amp3=ton.reciprocal*lamdoma.lag(0.01);
 
 cell_tria=SinOsc.ar(mz,phase:90.degrad);
 
-phase1=0.degrad; phase2=(equlibrium-90.degrad).wrap2(pi);
+phase1=0.degrad; phase2=equlibrium.linlin(0,pi,0,pi/2);
 pan1=SinOsc.ar(mx,phase:phase1);
 pan2=SinOsc.ar(my,phase:phase2);
 
 
 
 sph1=Spherical(1,polytope.theta,polytope.phi);
-sph2=Spherical(1,polytope.theta,(polytope.phi+equlibrium).wrap2((pi/2)));
+sph2=Spherical(1,polytope.theta,(polytope.phi-equlibrium).wrap2((pi/2)));
 
 angle1x=Complex(exp(Complex(0,1)*sph1.theta).real,exp(Complex(0,1)*sph1.phi).real).theta;
 angle1y=Complex(exp(Complex(0,1)*sph1.theta).real,exp(Complex(0,1)*sph1.phi).imag).theta;
