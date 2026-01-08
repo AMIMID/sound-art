@@ -28,15 +28,24 @@
 );
 
 (
+(
 			{
-var steps = 64;
+var steps = 256;
 
 ~nVals = steps.collect { |i|
     i.linexp(0, steps-1, 1, 64)
 };
 			~nVals;
 			}.value;
-		)
+		);
+(
+~n=1.neg;~array=256.collect{~n=~n+1;~nVals.[~n]};
+~a=(0-(pi/256)); ~ph=256.collect{~a=~a+(pi/256);};
+~bufferSize = 4096*8;
+~signalSize = 2048*8;
+)
+)
+
 
 (
 ~w1= Buffer.alloc(s,~bufferSize);
@@ -46,16 +55,16 @@ var steps = 64;
 
 wt = signal.asWavetable;
 ~w1.loadCollection(wt);
-//signal.plot;
+signal.plot;
 		}.value;
 );
 
 
 (
 {
-var sig,freq=440,low=1;
+var sig,freq=220,low=1;
 
-sig=(LPF.ar((Osc.ar(~w1.bufnum,freq,phase:0,mul:100).abs*SinOsc.ar(freq,phase:0)),freq*));
+sig=(LPF.ar((Osc.ar(~w1.bufnum,freq,phase:0,mul:100).abs*SinOsc.ar(freq,phase:0)),freq*low))!2;
 
 
 sig=HPF.ar(sig,50);
