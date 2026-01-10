@@ -132,5 +132,50 @@ sig=HPF.ar(sig,50);
 (((speed of sound / speaker size)/20Hz).reciprocal.ampdb/2.sqrt).dbamp;
 
 
+/////not audio based/// the latter method was written with the help of ChatGpt
+~t=(((343/0.07)/20).reciprocal.ampdb/2.sqrt).dbamp
+(
+SynthDef(\compressedSaw, {
+    arg out=0, f0=110,
+        thresh=0.020445816577977,
+        k=0.7, attack=0.03, release=0.15;
 
+    var n = 20;
+    var baseAmps, energy;
+    var gainTarget, gainEnv;
+    var sig;
 
+    // base spectral law (saw)
+    baseAmps = Array.fill(n, { |i| 1 / (i+1) });
+
+    // static energy proxy
+    energy = baseAmps.collect { |a| a*a }.sum;
+
+    // compression curve
+    gainTarget = Select.kr(
+        energy > thresh,
+        [
+            1,                              // below threshold
+            (thresh / energy).pow(k)        // compressed
+        ]
+    );
+
+    // envelope shaping (always runs, but target depends on threshold)
+    gainEnv = EnvGen.kr(
+        Env(
+            levels: [1, gainTarget, gainTarget],
+            times: [attack, release],
+            curve: -4
+        ),
+        gate: 1
+    );
+
+    // additive synthesis
+    sig = Mix.fill(n, { |i|
+        SinOsc.ar(f0 * (i+1)) * baseAmps[i] * gainEnv
+    });
+
+    Out.ar(out, sig);
+}).add;
+)
+Synth.new(\compressedSaw)
