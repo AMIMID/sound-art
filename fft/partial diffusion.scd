@@ -134,10 +134,9 @@ out2=Out.ar(0,Pan2.ar(sig,pos2)*pan);
 40.wait;
 		(
 ~synth=Synth.new(\re_dif,[\az,0,\el,pi/5,\stasis,0,\pan_lfo, 0.042105263157895]).register;
-		//	s.record(duration:(3*60)+10);
-		)
-	//	~synth=Synth.new(\re_im);
-		1/(190/8)
+		);
+		~synth=Synth.new(\re_im);
+
 2.wait;
 (
 MIDIClient.init;
@@ -175,7 +174,7 @@ MIDIdef.cc(\midi_switch1,{ |val, num, chan, src|
 },14);
 	);
 
-
+s.record(numchannels:2,duration:(2*60)+59);
 )
 });
 	Tdef(\drone).play;
