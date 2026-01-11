@@ -67,7 +67,7 @@ angle=(angle+(2pi-(2pi/silver_r))).wrap(pi.neg,pi);
 
 
 //////////////audio file
-(~b = Buffer.readChannel(s,"/Users/amimid/Documents/Art/Sound art/experimental projects/samples/Surorile Osoianu.wav",channels:0 ););
+(~b = Buffer.readChannel(s,,channels:0 ););
 
 ////psychoacoustic exponential bin distribution
 		(
