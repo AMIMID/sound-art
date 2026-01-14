@@ -76,13 +76,15 @@ wt = signal.asWavetable;
 //////kick
  (
 SynthDef(\kick, {
-	arg amp=20,n=12,pan=1,low=0,noise=0.001,decay=1,m=1,passlow=2000;
-    var env,sig,freq,anglex,angley,anglez,mod_anglex,mod_angley,mod_anglez,fund=28,mx,my,mz,magx,magz,magy;
-	var sph,control,phase,threshold=(((343/0.14)/20).reciprocal.ampdb/2.sqrt).dbamp,ton=2.pow(n/12),az=pi,el=pi/2;
+	arg amp=20,n=12,pan=1,low=0,noise=0.001,decay=1,m=1,attack=0.01;
+    var env,freq,anglex,angley,anglez,mod_anglex,mod_angley,mod_anglez,fund=28,mx,my,mz,magx,magz,magy;
+	var sph,phase,threshold,ton=2.pow(n/12),az=pi,el=pi/2;
+	var sig1,sig2,sig3,phasex,phasey,phasez,control1,control2,control3;
 
 	freq = EnvGen.kr(Env([fund*ton, fund], [decay/8], curve: -4)); // pitch drop
-	env= EnvGen.kr(Env.perc(0.01, decay, curve: -4),doneAction:2,levelScale:amp);
+	env= EnvGen.kr(Env.perc(attack, decay, curve: -4),doneAction:2,levelScale:amp);
 
+			threshold=(((343/0.14)/freq).reciprocal.ampdb/2.sqrt).dbamp;
 
 					az=SinOsc.ar(pan/2,0).range(pi,pi.neg);
 			el=SinOsc.ar(pan/2,pi/2,pan.reciprocal).range((pi/2),(pi/2).neg);
@@ -93,6 +95,10 @@ anglex=exp(Complex(0,1)*sph.theta).real*exp(Complex(0,1)*sph.phi).real;
 angley=exp(Complex(0,1)*sph.theta).imag*exp(Complex(0,1)*sph.phi).real;
 anglez=exp(Complex(0,1)*sph.phi).imag;
 
+phasex=Complex(0,anglex).theta;
+phasey=Complex(0,angley).theta;
+phasez=Complex(0,anglez).theta;
+
 mod_anglex=SinOsc.ar(pan,Complex(anglex,angley).theta,pan.reciprocal).range(pi.neg,pi);
 mod_angley=SinOsc.ar(pan,Complex(angley,anglex).theta,pan.reciprocal).range(pi.neg,pi);
 mod_anglez=SinOsc.ar(pan,Complex(0,anglez).theta,pan.reciprocal).range((pi/2).neg,(pi/2));
@@ -109,21 +115,27 @@ mx=(Cartesian(magx.value,0,0).rho);my=(Cartesian(0,magy.value,0).rho);mz=(Cartes
 
 
 
-		sig=(LPF.ar((Osc.ar(~w1.bufnum,freq,phase:sph.theta-sph.phi,mul:100).abs*SinOsc.ar(freq,phase:sph.theta-sph.phi)),freq*2.pow(low.lag(0.01)/992),ton.reciprocal));
+sig1=(LPF.ar((Osc.ar(~w1.bufnum,freq,phase:phasex,mul:100).abs*SinOsc.ar(freq,phase:phasex)),freq*2.pow(low.lag(0.01)/992),ton.reciprocal));
+sig2=(LPF.ar((Osc.ar(~w1.bufnum,freq,phase:phasey,mul:100).abs*SinOsc.ar(freq,phase:phasey)),freq*2.pow(low.lag(0.01)/992),ton.reciprocal));
+sig3=(LPF.ar((Osc.ar(~w1.bufnum,freq,phase:phasez,mul:100).abs*SinOsc.ar(freq,phase:phasez)),freq*2.pow(low.lag(0.01)/992),ton.reciprocal));
 
-	control=SinOsc.ar(freq,sph.theta-sph.phi,ton.reciprocal);
+control1=SinOsc.ar(freq,phasex,ton.reciprocal);
+control2=SinOsc.ar(freq,phasey,ton.reciprocal);
+control3=SinOsc.ar(freq,phasez,ton.reciprocal);
 
-sig = sig + (sig * BrownNoise.ar(noise));
-
-
-	sig=HPF.ar(sig,50); sig=LPF.ar(sig,passlow);
-	sig=Compander.ar(sig,control,threshold,1,0.3,0.03,0.15);
-	sig=tanh(sig*1.5);sig=Limiter.ar(sig,0.89,0.01);
+sig1 = sig1 + (sig1 * BrownNoise.ar(noise)); sig2 = sig2 + (sig2 * BrownNoise.ar(noise)); sig3 = sig3 + (sig3 * BrownNoise.ar(noise));
 
 
-		Out.ar(0, Pan2.ar(sig,anglex.round(0.0001)*mx,env));
-		Out.ar(0, Pan2.ar(sig,angley.round(0.0001)*my,env));
-		Out.ar(0, Pan2.ar(sig,anglez.round(0.0001)*mz,env));
+		sig1=HPF.ar(sig1,50); sig2=HPF.ar(sig1, 50);sig3=HPF.ar(sig1, 50);
+		sig1=Compander.ar(sig1,control1,threshold,1.2,1/3,0.03,0.15);
+		sig2=Compander.ar(sig2,control2,threshold,1.2,1/3,0.03,0.15);
+		sig3=Compander.ar(sig3,control3,threshold,1.2,1/3,0.03,0.15);
+		sig1=tanh(sig1*1.5);sig2=tanh(sig2*1.5);sig3=tanh(sig2*1.5);
+
+
+		Out.ar(0, Pan2.ar(sig1,anglex.round(0.0001)*mx,env));
+		Out.ar(0, Pan2.ar(sig2,angley.round(0.0001)*my,env));
+		Out.ar(0, Pan2.ar(sig3,anglez.round(0.0001)*mz,env));
 
 }).add;);
 
@@ -133,11 +145,14 @@ Synth(\kick);
 (
 SynthDef(\snare, {
 	arg amp=1,n=48,pan=0.5,low=0,noise=0.1,decay=1,m=1,snare=8;
-    var env,sig,freq,anglex,angley,anglez,mod_anglex,mod_angley,mod_anglez,fund=28,mx,my,mz,magx,magz,magy;
-	var sph,control,phase,threshold=(((343/0.14)/20).reciprocal.ampdb/2.sqrt).dbamp,ton=2.pow(n/12),az=pi,el=pi/2;
+    var env,freq,anglex,angley,anglez,mod_anglex,mod_angley,mod_anglez,fund=28,mx,my,mz,magx,magz,magy;
+	var sph,phase,threshold,ton=2.pow(n/12),az=pi,el=pi/2;
+	var sig1,sig2,sig3,phasex,phasey,phasez,control1,control2,control3;
 
 	freq = EnvGen.kr(Env([fund*ton, fund], [decay/2], curve: -4));
 	env= EnvGen.kr(Env.perc(0.01, decay),doneAction:2,levelScale:amp);
+
+			threshold=(((343/0.14)/freq).reciprocal.ampdb/2.sqrt).dbamp;
 
 					az=SinOsc.ar(pan,0).range(pi,pi.neg);
 			el=SinOsc.ar(pan,pi/2,pan.reciprocal).range((pi/2),(pi/2).neg);
@@ -148,6 +163,10 @@ anglex=exp(Complex(0,1)*sph.theta).real*exp(Complex(0,1)*sph.phi).real;
 angley=exp(Complex(0,1)*sph.theta).imag*exp(Complex(0,1)*sph.phi).real;
 anglez=exp(Complex(0,1)*sph.phi).imag;
 
+phasex=Complex(0,anglex).theta;
+phasey=Complex(0,angley).theta;
+phasez=Complex(0,anglez).theta;
+
 mod_anglex=SinOsc.ar(pan,Complex(anglex,angley).theta,pan.reciprocal).range(pi.neg,pi);
 mod_angley=SinOsc.ar(pan,Complex(angley,anglex).theta,pan.reciprocal).range(pi.neg,pi);
 mod_anglez=SinOsc.ar(pan,Complex(0,anglez).theta,pan.reciprocal).range((pi/2).neg,(pi/2));
@@ -163,21 +182,28 @@ magz=((Complex(cos(((sph.phi+mod_anglez).round(0.00001)*m).wrap((pi/2).neg,(pi/2
 mx=(Cartesian(magx.value,0,0).rho);my=(Cartesian(0,magy.value,0).rho);mz=(Cartesian(0,0,magz.value).rho);
 
 
-	sig=(LPF.ar((Osc.ar(~w1.bufnum,freq,phase:sph.theta-sph.phi,mul:100).abs*SinOsc.ar(freq,phase:sph.theta-sph.phi)),freq*2.pow(low.lag(0.01)/992),ton.reciprocal));
-	control=SinOsc.ar(freq,sph.theta-sph.phi,ton.reciprocal);
 
+sig1=(LPF.ar((Osc.ar(~w1.bufnum,freq,phase:phasex,mul:100).abs*SinOsc.ar(freq,phase:phasex)),freq*2.pow(low.lag(0.01)/992),ton.reciprocal));
+sig2=(LPF.ar((Osc.ar(~w1.bufnum,freq,phase:phasey,mul:100).abs*SinOsc.ar(freq,phase:phasey)),freq*2.pow(low.lag(0.01)/992),ton.reciprocal));
+sig3=(LPF.ar((Osc.ar(~w1.bufnum,freq,phase:phasez,mul:100).abs*SinOsc.ar(freq,phase:phasez)),freq*2.pow(low.lag(0.01)/992),ton.reciprocal));
 
-		sig = (sig+ (HPF.ar(BrownNoise.ar(noise),snare*fund)* Env.perc(0.01, 0.1).ar));
+control1=SinOsc.ar(freq,phasex,ton.reciprocal);
+control2=SinOsc.ar(freq,phasey,ton.reciprocal);
+control3=SinOsc.ar(freq,phasez,ton.reciprocal);
 
-		control=SinOsc.ar(freq,sph.theta-sph.phi,ton.reciprocal);
+	sig1 = (sig1+ (HPF.ar(BrownNoise.ar(noise),snare*fund)* Env.perc(0.01, 0.1).ar));
+	sig2 = (sig2+ (HPF.ar(BrownNoise.ar(noise),snare*fund)* Env.perc(0.01, 0.1).ar));
+	sig3 = (sig3+ (HPF.ar(BrownNoise.ar(noise),snare*fund)* Env.perc(0.01, 0.1).ar));
 
-	sig=HPF.ar(sig,50); sig=LPF.ar(sig,snare*fund*10);
-	sig=Compander.ar(sig,control,threshold,1,0.3,0.03,0.15);
-	sig=tanh(sig*1.5);sig=Limiter.ar(sig,0.89,0.01);
+		sig1=HPF.ar(sig1,50); sig2=HPF.ar(sig1, 50);sig3=HPF.ar(sig1, 50);
+		sig1=Compander.ar(sig1,control1,threshold,1.2,1/3,0.03,0.15);
+		sig2=Compander.ar(sig2,control2,threshold,1.2,1/3,0.03,0.15);
+		sig3=Compander.ar(sig3,control3,threshold,1.2,1/3,0.03,0.15);
+		sig1=tanh(sig1*1.5);sig2=tanh(sig2*1.5);sig3=tanh(sig2*1.5);
 
-	Out.ar(0, Pan2.ar(sig,anglex.round(0.0001)*mx,env));
-		Out.ar(0, Pan2.ar(sig,angley.round(0.0001)*my,env));
-		Out.ar(0, Pan2.ar(sig,anglez.round(0.0001)*mz,env));
+	Out.ar(0, Pan2.ar(sig1,anglex.round(0.0001)*mx,env));
+		Out.ar(0, Pan2.ar(sig2,angley.round(0.0001)*my,env));
+		Out.ar(0, Pan2.ar(sig3,anglez.round(0.0001)*mz,env));
 }).add;
 );
 
@@ -185,15 +211,18 @@ Synth(\snare);
 ////hihat
 (
 SynthDef(\hihat, {
-	arg amp=0.1,decay=1,ton=56,pan=10;
-    var env,silver=pi/4,bank=21,s1,s2,s3,sig,fund=56,freq;
-	var sph,anglex,angley,anglez,az,el,noise;
+	arg amp=1,decay=0.1,ton=128,pan=1;
+    var env,silver=pi/4,bank=21,s1,s2,s3,fund=56,freq,threshold;
+	var sph,anglex,angley,anglez,az,el,noise,sig,control;
 
 freq=fund*ton;
+threshold=(((343/0.14)/freq).reciprocal.ampdb/2.sqrt).dbamp;
 	env= EnvGen.kr(Env.perc(0.001, decay,-8),doneAction:2,levelScale:amp);
 	noise = BrownNoise.ar(env);
 	sig = BPF.ar(noise, freq, 1);
 	sig = HPF.ar(sig, freq);
+
+	control=sig;
 
 			az=SinOsc.ar(pan,0).range(pi,pi.neg);
 			el=SinOsc.ar(pan,pi/2,pan.reciprocal).range((pi/2),(pi/2).neg);
@@ -208,7 +237,10 @@ anglez=exp(Complex(0,1)*sph.phi).imag;
 
 	bank.do{
 
-		sig = sig + (sig * WhiteNoise.ar(0.01)); // add slight noise for punch
+
+		sig=HPF.ar(sig,50);
+		sig=Compander.ar(sig,control,threshold,1.2,1/3,0.03,0.15);
+		sig=tanh(sig*1);
 
 		Out.ar(0, Pan2.ar(sig,s1,bank.reciprocal));
 		Out.ar(0, Pan2.ar(sig,s2,bank.reciprocal));
@@ -296,20 +328,27 @@ silver=(silver+(360-(360/(1+2.sqrt)))).wrap(180.neg,180).round(0.00001);
 SynthDef(\tom, {
 	arg amp=20,n=12,pan=1,low=0,noise=0.001,decay=1,m=1,passlow=2000;
     var env,sig,freq,anglex,angley,anglez,mod_anglex,mod_angley,mod_anglez,fund=28,mx,my,mz,magx,magz,magy;
-	var sph,control,phase,threshold=(((343/0.14)/20).reciprocal.ampdb/2.sqrt).dbamp,ton=2.pow(n/12),az=pi,el=pi/2;
+	var sph,control,phase,threshold,ton=2.pow(n/12),az=pi,el=pi/2;
+	var sig1,sig2,sig3,phasex,phasey,phasez,control1,control2,control3;
 
 	freq = EnvGen.kr(Env([fund*ton, fund], [decay/8], curve: -4)); // pitch drop
 	env= EnvGen.kr(Env.perc(0.01, decay, curve: -4),doneAction:2,levelScale:amp);
 
 
-					az=SinOsc.ar(pan/2,0).range(pi,pi.neg);
-			el=SinOsc.ar(pan/2,pi/2,pan.reciprocal).range((pi/2),(pi/2).neg);
+		threshold=(((343/0.14)/freq).reciprocal.ampdb/2.sqrt).dbamp;
 
-		sph=Spherical(1,(az.lag(0.01)),(el.lag(0.01)));
+					az=SinOsc.ar(pan,0).range(pi,pi.neg);
+			el=SinOsc.ar(pan,pi/2,pan.reciprocal).range((pi/2),(pi/2).neg);
+
+sph=Spherical(1,(az.lag(0.01)),(el.lag(0.01)));
 
 anglex=exp(Complex(0,1)*sph.theta).real*exp(Complex(0,1)*sph.phi).real;
 angley=exp(Complex(0,1)*sph.theta).imag*exp(Complex(0,1)*sph.phi).real;
 anglez=exp(Complex(0,1)*sph.phi).imag;
+
+phasex=Complex(0,anglex).theta;
+phasey=Complex(0,angley).theta;
+phasez=Complex(0,anglez).theta;
 
 mod_anglex=SinOsc.ar(pan,Complex(anglex,angley).theta,pan.reciprocal).range(pi.neg,pi);
 mod_angley=SinOsc.ar(pan,Complex(angley,anglex).theta,pan.reciprocal).range(pi.neg,pi);
@@ -325,23 +364,30 @@ magz=((Complex(cos(((sph.phi+mod_anglez).round(0.00001)*m).wrap((pi/2).neg,(pi/2
 
 mx=(Cartesian(magx.value,0,0).rho);my=(Cartesian(0,magy.value,0).rho);mz=(Cartesian(0,0,magz.value).rho);
 
-	sig=(LPF.ar((Osc.ar(~w1.bufnum,freq,phase:sph.theta-sph.phi,mul:100).abs*SinOsc.ar(freq,phase:sph.theta-sph.phi)),freq*2.pow(low.lag(0.01)/992),ton.reciprocal));
-	control=SinOsc.ar(freq,sph.theta-sph.phi,ton.reciprocal);
+	sig1=(LPF.ar((Osc.ar(~w1.bufnum,freq,phase:phasex,mul:100).abs*SinOsc.ar(freq,phase:phasex)),freq*2.pow(low.lag(0.01)/992),ton.reciprocal));
+sig2=(LPF.ar((Osc.ar(~w1.bufnum,freq,phase:phasey,mul:100).abs*SinOsc.ar(freq,phase:phasey)),freq*2.pow(low.lag(0.01)/992),ton.reciprocal));
+sig3=(LPF.ar((Osc.ar(~w1.bufnum,freq,phase:phasez,mul:100).abs*SinOsc.ar(freq,phase:phasez)),freq*2.pow(low.lag(0.01)/992),ton.reciprocal));
+
+control1=SinOsc.ar(freq,phasex,ton.reciprocal);
+control2=SinOsc.ar(freq,phasey,ton.reciprocal);
+control3=SinOsc.ar(freq,phasez,ton.reciprocal);
 
 
-sig = sig + (sig * (BPF.ar(BrownNoise.ar(noise),freq*2)* Env.perc(0.001, 0.05).ar));
+sig1 = sig1 + (sig1 * (BPF.ar(BrownNoise.ar(noise),freq*2)* Env.perc(0.001, 0.05).ar));
+sig2 = sig2 + (sig2 * (BPF.ar(BrownNoise.ar(noise),freq*2)* Env.perc(0.001, 0.05).ar));
+sig3 = sig3 + (sig3 * (BPF.ar(BrownNoise.ar(noise),freq*2)* Env.perc(0.001, 0.05).ar));
 
+	///Delay1.ar(in: 0.0, mul: 1.0, add: 0.0, x1: 0.0)
 
-	Delay1.ar(in: 0.0, mul: 1.0, add: 0.0, x1: 0.0)
+	sig1=HPF.ar(sig1,50); sig2=HPF.ar(sig1, 50);sig3=HPF.ar(sig1, 50);
+		sig1=Compander.ar(sig1,control1,threshold,1.2,1/3,0.03,0.15);
+		sig2=Compander.ar(sig2,control2,threshold,1.2,1/3,0.03,0.15);
+		sig3=Compander.ar(sig3,control3,threshold,1.2,1/3,0.03,0.15);
+		sig1=tanh(sig1*1.5);sig2=tanh(sig2*1.5);sig3=tanh(sig2*1.5);
 
-		sig=HPF.ar(sig,50);
-	sig=Compander.ar(sig,control,threshold,1,0.3,0.03,0.15);
-	sig=tanh(sig*1.5);sig=Limiter.ar(sig,0.89,0.01);
-
-
-		Out.ar(0, Pan2.ar(sig,anglex.round(0.0001)*mx,env));
-		Out.ar(0, Pan2.ar(sig,angley.round(0.0001)*my,env));
-		Out.ar(0, Pan2.ar(sig,anglez.round(0.0001)*mz,env));
+	    Out.ar(0, Pan2.ar(sig1,anglex.round(0.0001)*mx,env));
+		Out.ar(0, Pan2.ar(sig2,angley.round(0.0001)*my,env));
+		Out.ar(0, Pan2.ar(sig3,anglez.round(0.0001)*mz,env));
 
 }).add;);
 	///	Synth(\tom);
