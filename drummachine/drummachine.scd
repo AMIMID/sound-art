@@ -76,7 +76,7 @@ wt = signal.asWavetable;
 //////kick
  (
 SynthDef(\kick, {
-	arg amp=20,n=12,pan=1,low=0,noise=0.001,decay=1,m=1;
+	arg amp=20,n=12,pan=1,low=0,noise=0.001,decay=1,m=1,passlow=2000;
     var env,sig,freq,anglex,angley,anglez,mod_anglex,mod_angley,mod_anglez,fund=28,mx,my,mz,magx,magz,magy;
 	var sph,control,phase,threshold=(((343/0.14)/20).reciprocal.ampdb/2.sqrt).dbamp,ton=2.pow(n/12),az=pi,el=pi/2;
 
@@ -116,7 +116,7 @@ mx=(Cartesian(magx.value,0,0).rho);my=(Cartesian(0,magy.value,0).rho);mz=(Cartes
 sig = sig + (sig * BrownNoise.ar(noise));
 
 
-	sig=HPF.ar(sig,50); sig=LPF.ar(sig,2000);
+	sig=HPF.ar(sig,50); sig=LPF.ar(sig,passlow);
 	sig=Compander.ar(sig,control,threshold,1,0.3,0.03,0.15);
 	sig=tanh(sig*1.5);sig=Limiter.ar(sig,0.89,0.01);
 
@@ -171,7 +171,7 @@ mx=(Cartesian(magx.value,0,0).rho);my=(Cartesian(0,magy.value,0).rho);mz=(Cartes
 
 		control=SinOsc.ar(freq,sph.theta-sph.phi,ton.reciprocal);
 
-	sig=HPF.ar(sig,50); sig=LPF.ar(sig,2000);
+	sig=HPF.ar(sig,50); sig=LPF.ar(sig,snare*fund*10);
 	sig=Compander.ar(sig,control,threshold,1,0.3,0.03,0.15);
 	sig=tanh(sig*1.5);sig=Limiter.ar(sig,0.89,0.01);
 
@@ -185,13 +185,13 @@ Synth(\snare);
 ////hihat
 (
 SynthDef(\hihat, {
-	arg amp=0.1,noise=0.1,decay=1,ton=56,pan=10;
+	arg amp=0.1,decay=1,ton=56,pan=10;
     var env,silver=pi/4,bank=21,s1,s2,s3,sig,fund=56,freq;
-	var sph,anglex,angley,anglez,az,el;
+	var sph,anglex,angley,anglez,az,el,noise;
 
 freq=fund*ton;
 	env= EnvGen.kr(Env.perc(0.001, decay,-8),doneAction:2,levelScale:amp);
-	noise = PinkNoise.ar(env);
+	noise = BrownNoise.ar(env);
 	sig = BPF.ar(noise, freq, 1);
 	sig = HPF.ar(sig, freq);
 
@@ -208,7 +208,7 @@ anglez=exp(Complex(0,1)*sph.phi).imag;
 
 	bank.do{
 
-		sig = sig + (sig * BrownNoise.ar(noise)); // add slight noise for punch
+		sig = sig + (sig * WhiteNoise.ar(0.01)); // add slight noise for punch
 
 		Out.ar(0, Pan2.ar(sig,s1,bank.reciprocal));
 		Out.ar(0, Pan2.ar(sig,s2,bank.reciprocal));
@@ -294,54 +294,54 @@ silver=(silver+(360-(360/(1+2.sqrt)))).wrap(180.neg,180).round(0.00001);
 	///	Synth(\crash);
 (
 SynthDef(\tom, {
-	var amp=4,fund=28,ton=4,pan=0.5,low=0,noise=0.001,decay=1,equlibrium,threshold=-24.dbamp;
-    var env,linex,liney,sig1,sig2,freq,angle,angle1,angle2,pos1,pos2;
-	var az,el,sph1,sph2,pan1,pan2,phase1,phase2,p_amp1=1,p_amp2=1,control;
+	arg amp=20,n=12,pan=1,low=0,noise=0.001,decay=1,m=1,passlow=2000;
+    var env,sig,freq,anglex,angley,anglez,mod_anglex,mod_angley,mod_anglez,fund=28,mx,my,mz,magx,magz,magy;
+	var sph,control,phase,threshold=(((343/0.14)/20).reciprocal.ampdb/2.sqrt).dbamp,ton=2.pow(n/12),az=pi,el=pi/2;
 
 	freq = EnvGen.kr(Env([fund*ton, fund], [decay/8], curve: -4)); // pitch drop
 	env= EnvGen.kr(Env.perc(0.01, decay, curve: -4),doneAction:2,levelScale:amp);
 
-equlibrium=pi;
-phase1=0.degrad; phase2=(equlibrium-90.degrad).wrap2(pi);
-pan1=SinOsc.ar(pan*3,phase:phase1,mul:p_amp1);
-pan2=SinOsc.ar(pan*2,phase:phase2,mul:p_amp2);
 
-	az=SinOsc.ar(1,0.degrad,pi);
-	el=SinOsc.ar(1,90.degrad,pi/2);
+					az=SinOsc.ar(pan/2,0).range(pi,pi.neg);
+			el=SinOsc.ar(pan/2,pi/2,pan.reciprocal).range((pi/2),(pi/2).neg);
+
+		sph=Spherical(1,(az.lag(0.01)),(el.lag(0.01)));
+
+anglex=exp(Complex(0,1)*sph.theta).real*exp(Complex(0,1)*sph.phi).real;
+angley=exp(Complex(0,1)*sph.theta).imag*exp(Complex(0,1)*sph.phi).real;
+anglez=exp(Complex(0,1)*sph.phi).imag;
+
+mod_anglex=SinOsc.ar(pan,Complex(anglex,angley).theta,pan.reciprocal).range(pi.neg,pi);
+mod_angley=SinOsc.ar(pan,Complex(angley,anglex).theta,pan.reciprocal).range(pi.neg,pi);
+mod_anglez=SinOsc.ar(pan,Complex(0,anglez).theta,pan.reciprocal).range((pi/2).neg,(pi/2));
+
+magx=((Complex(cos(((sph.theta+mod_anglex).round(0.00001)*m).wrap(pi.neg,pi)),cos((((sph.theta+mod_anglex).round(0.00001)*m)).wrap(pi.neg,pi))).rho/(2.sqrt))*
+	(Complex(cos((sph.phi.round(0.00001)).wrap((pi/2).neg,(pi/2))),cos((sph.phi.round(0.00001)).wrap((pi/2).neg,(pi/2)))).rho/(2.sqrt)));
+
+magy=((Complex(sin(((sph.theta+mod_angley).round(0.00001)*m).wrap(pi.neg,pi)),sin(((sph.theta+mod_angley).round(0.00001)*m).wrap(pi.neg,pi))).rho/(2.sqrt))*
+		(Complex(cos((sph.phi.round(0.00001)).wrap((pi/2).neg,(pi/2))),cos((sph.phi.round(0.00001)).wrap((pi/2).neg,(pi/2)))).rho/(2.sqrt)));
+
+magz=((Complex(cos(((sph.phi+mod_anglez).round(0.00001)*m).wrap((pi/2).neg,(pi/2))),cos(((sph.phi).round(0.00001)*m).wrap((pi/2).neg,(pi/2)))).rho/(2.sqrt)));
+
+mx=(Cartesian(magx.value,0,0).rho);my=(Cartesian(0,magy.value,0).rho);mz=(Cartesian(0,0,magz.value).rho);
+
+	sig=(LPF.ar((Osc.ar(~w1.bufnum,freq,phase:sph.theta-sph.phi,mul:100).abs*SinOsc.ar(freq,phase:sph.theta-sph.phi)),freq*2.pow(low.lag(0.01)/992),ton.reciprocal));
+	control=SinOsc.ar(freq,sph.theta-sph.phi,ton.reciprocal);
 
 
-sph1=Spherical(1,(az),(el));
-sph2=Spherical(1,(az),(el+equlibrium).wrap2((pi/2)));
+sig = sig + (sig * (BPF.ar(BrownNoise.ar(noise),freq*2)* Env.perc(0.001, 0.05).ar));
 
-angle1=Complex(exp(Complex(0,1)*sph1.theta).real,exp(Complex(0,1)*sph1.phi).imag).theta;
-angle2=Complex(exp(Complex(0,1)*sph2.theta).real,exp(Complex(0,1)*sph2.phi).imag).theta;
-
-angle=Complex(exp(Complex(0,1)*angle1).real,exp(Complex(0,1)*angle2).imag).theta;
-
-pos1=exp(Complex(0,1)*angle).real;
-pos2=exp(Complex(0,1)*angle).imag;
-
-//linex=exp(Complex(0,1)*pan.degrad).real.round(0.00001).abs;
-//liney=exp(Complex(0,1)*pan.degrad).real.round(0.00001).abs.neg;
-//phase=pan.degrad;
-
-		sig1=(LPF.ar((Osc.ar(~w1.bufnum,freq,phase:phase1,mul:100).abs*SinOsc.ar(freq,phase:phase1)),freq*2.pow(low.lag(0.01)/992)));
-        sig2=(LPF.ar((Osc.ar(~w1.bufnum,freq,phase:phase2,mul:100).abs*SinOsc.ar(freq,phase:phase2)),freq*2.pow(low.lag(0.01)/992)));
-	control=SinOsc.ar(freq,angle);
-
-
-sig1 = sig1 + (sig1 * (BPF.ar(BrownNoise.ar(noise),freq*2)* Env.perc(0.001, 0.05).ar));
-sig2 = sig2 + (sig2 * (BPF.ar(BrownNoise.ar(noise),freq*2)* Env.perc(0.001, 0.05).ar));
 
 	Delay1.ar(in: 0.0, mul: 1.0, add: 0.0, x1: 0.0)
 
-		sig2=HPF.ar(sig2,50); sig2=LPF.ar(sig2, 2000); sig1=HPF.ar(sig1,50); sig1=LPF.ar(sig1, 2000);
-		sig2=Compander.ar(sig2,control,threshold,1,0.3,0.015,0.3); sig1=Compander.ar(sig1,control,threshold,1,0.3,0.015,0.3);
-		sig1=tanh(sig1*2);sig2=tanh(sig2*2);sig1=Limiter.ar(sig1,1,0.01);sig2=Limiter.ar(sig2,1,0.01);
+		sig=HPF.ar(sig,50);
+	sig=Compander.ar(sig,control,threshold,1,0.3,0.03,0.15);
+	sig=tanh(sig*1.5);sig=Limiter.ar(sig,0.89,0.01);
 
 
-		Out.ar(0, Pan2.ar(sig1,pos1,env)*pan1);
-		Out.ar(0, Pan2.ar(sig2,pos2,env)*pan2);
+		Out.ar(0, Pan2.ar(sig,anglex.round(0.0001)*mx,env));
+		Out.ar(0, Pan2.ar(sig,angley.round(0.0001)*my,env));
+		Out.ar(0, Pan2.ar(sig,anglez.round(0.0001)*mz,env));
 
 }).add;);
 	///	Synth(\tom);
