@@ -28,6 +28,12 @@ s.meter;
 	Tdef(\drone, {
 	Buffer.freeAll;
 
+	///vbap
+			/*(
+~a = VBAPSpeakerArray.new(3,
+				[[45, 35.264390.neg],[135.neg, 35.264390.neg],[45.neg, 35.264390],[135,35.264390]]);
+	 ~b = Buffer.loadCollection(s, ~a.getSetsAndMatrices);
+);*/
 /////////////osc polytope
 	(
 {
@@ -142,7 +148,7 @@ SynthDef.new(\synth,{
 	var sig1,sig2,first=32*(9/8),bank=4,out1,out2,fm,band_osc1,band_osc2,ton,threshold1,threshold2,threshold3;
 	var band_osc3,band_osc4,band_osc5,band_osc6,sig3,out3,cell_tria,b_x,b_y,b_z,polytope;
 	var magx,magy,magz,magqx,magqy,mod_anglex,anglex,angley,anglez,phasex,phasey,phasez;
-	var mod_angley,mod_anglez,mx,my,mz,mqx,mqy,mag,magq,spread=1,mq=(m-1),choice,nn=0;
+	var mod_angley,mod_anglez,mx,my,mz,mqx,mqy,mag,magq,spread=1,mq=(m-1),choice,nn=0,lfo;
 
 lamdoma=(x+a)/x;
 
@@ -162,22 +168,23 @@ phasex=Complex(0,anglex).theta;
 phasey=Complex(0,angley).theta;
 phasez=Complex(0,anglez).theta;
 
-mod_anglex=SinOsc.ar(pan,Complex(anglex,angley).theta,pan.reciprocal).range(pi.neg,pi);
-mod_angley=SinOsc.ar(pan,Complex(angley,anglex).theta,pan.reciprocal).range(pi.neg,pi);
-mod_anglez=SinOsc.ar(pan,Complex(0,anglez).theta,pan.reciprocal).range((pi/2).neg,(pi/2));
+				lfo=2.pow(pan/992);
+
+mod_anglex=SinOsc.ar(lfo,phasex,lfo.reciprocal).range(pi.neg,pi);
+mod_angley=SinOsc.ar(lfo,phasey,lfo.reciprocal).range(pi.neg,pi);
+mod_anglez=SinOsc.ar(lfo,phasez,lfo.reciprocal).range((pi/2).neg,(pi/2));
 
 bank.do{
 
 					(
-		magx=((Complex(cos(((polytope.theta+mod_anglex).round(0.00001)*m).wrap(pi.neg,pi)),cos((((polytope.theta+mod_anglex).round(0.00001)*m)).wrap(pi.neg,pi))).rho/(2.sqrt)).pow(spread)*
-	(Complex(cos((polytope.phi.round(0.00001)).wrap((pi/2).neg,(pi/2))),cos((polytope.phi.round(0.00001)).wrap((pi/2).neg,(pi/2)))).rho/(2.sqrt)).pow(spread);
+		magx=((Complex(cos(((polytope.theta+mod_anglex).round(0.00001)*m).wrap(pi.neg,pi)),cos((((polytope.theta+mod_anglex).round(0.00001)*m)).wrap(pi.neg,pi))).rho/(2.sqrt))*(Complex(cos((polytope.phi.round(0.00001)).wrap((pi/2).neg,(pi/2))),cos((polytope.phi.round(0.00001)).wrap((pi/2).neg,(pi/2)))).rho/(2.sqrt));
 				);
 
-magy=((Complex(sin(((polytope.theta+mod_angley).round(0.00001)*m).wrap(pi.neg,pi)),sin(((polytope.theta+mod_angley).round(0.00001)*m).wrap(pi.neg,pi))).rho/(2.sqrt)).pow(spread)*
-		(Complex(cos((polytope.phi.round(0.00001)).wrap((pi/2).neg,(pi/2))),cos((polytope.phi.round(0.00001)).wrap((pi/2).neg,(pi/2)))).rho/(2.sqrt)).pow(spread);
+magy=((Complex(sin(((polytope.theta+mod_angley).round(0.00001)*m).wrap(pi.neg,pi)),sin(((polytope.theta+mod_angley).round(0.00001)*m).wrap(pi.neg,pi))).rho/(2.sqrt))*
+		(Complex(cos((polytope.phi.round(0.00001)).wrap((pi/2).neg,(pi/2))),cos((polytope.phi.round(0.00001)).wrap((pi/2).neg,(pi/2)))).rho/(2.sqrt));
 				);
 
-magz=((Complex(cos(((polytope.phi+mod_anglez).round(0.00001)*m).wrap((pi/2).neg,(pi/2))),cos(((polytope.phi).round(0.00001)*m).wrap((pi/2).neg,(pi/2)))).rho/(2.sqrt)).pow(spread));
+magz=((Complex(cos(((polytope.phi+mod_anglez).round(0.00001)*m).wrap((pi/2).neg,(pi/2))),cos(((polytope.phi).round(0.00001)*m).wrap((pi/2).neg,(pi/2)))).rho/(2.sqrt)));
 
 /*magqx=((((Complex(cos(((polytope.theta.round(0.00001)+mod_angle)*mq).wrap(pi.neg,pi)),
 cos(((polytope.theta.round(0.00001)+mod_angle)*mq).wrap(pi.neg,pi))))*
@@ -240,26 +247,35 @@ sig3=(LPF.ar((Osc.ar(~w1.bufnum,freq3+b,phase:phasez,mul:100).abs*SinOsc.ar(freq
 	sig3=Select.ar(band.linlin((992*4).neg,((992*4).neg+1),0,1).round(1).asInteger,
 						[sig3,BPF.ar(BRF.ar(sig3,band_osc3.lag(0.1),rq),band_osc6.lag(0.1),rq)]);
 
-threshold1=(((343/0.14)/freq1).reciprocal.ampdb/2.sqrt).dbamp;
-threshold2=(((343/0.14)/freq2).reciprocal.ampdb/2.sqrt).dbamp;
-threshold3=(((343/0.14)/freq3).reciprocal.ampdb/2.sqrt).dbamp;
+threshold1=(((343/0.07)/freq1).reciprocal.ampdb/2.sqrt).dbamp;
+threshold2=(((343/0.07)/freq2).reciprocal.ampdb/2.sqrt).dbamp;
+threshold3=(((343/0.07)/freq3).reciprocal.ampdb/2.sqrt).dbamp;
 
-		sig1=HPF.ar(sig1,50); sig2=HPF.ar(sig1, 50);sig3=HPF.ar(sig1, 50);
+		sig1=HPF.ar(sig1,50); sig2=HPF.ar(sig2, 50);sig3=HPF.ar(sig3, 50);
 		sig1=Compander.ar(sig1,control1,threshold1,1.2,1/3,0.03,0.15);
 		sig2=Compander.ar(sig2,control2,threshold2,1.2,1/3,0.03,0.15);
 		sig3=Compander.ar(sig3,control3,threshold3,1.2,1/3,0.03,0.15);
-		sig1=tanh(sig1*1.5);sig2=tanh(sig2*1.5);sig3=tanh(sig2*1.5);
+		sig1=tanh(sig1*1.5);sig2=tanh(sig2*1.5);sig3=tanh(sig3*1.5);
 
-	Out.ar(0,Pan2.ar(Limiter.ar(LeakDC.ar(FreeVerb.ar(sig1,mix.lag(0.01),room.lag(0.01),mul:gain)),0.8,0.01),anglex));
-	Out.ar(0,Pan2.ar(Limiter.ar(LeakDC.ar(FreeVerb.ar(sig2,mix.lag(0.01),room.lag(0.01),mul:gain)),0.8,0.01),angley));
-	Out.ar(0,Pan2.ar(Limiter.ar(LeakDC.ar(FreeVerb.ar(sig3,mix.lag(0.01),room.lag(0.01),mul:gain)),0.8,0.01),anglez));
+	Out.ar(0,Pan2.ar(Limiter.ar(LeakDC.ar(FreeVerb.ar(sig1,mix.lag(0.01),mix.lag(0.01),mul:gain),mul:mx),0.8,0.01),anglex));
+	Out.ar(0,Pan2.ar(Limiter.ar(LeakDC.ar(FreeVerb.ar(sig2,mix.lag(0.01),mix.lag(0.01),mul:gain),mul:my),0.8,0.01),angley));
+	Out.ar(0,Pan2.ar(Limiter.ar(LeakDC.ar(FreeVerb.ar(sig3,mix.lag(0.01),mix.lag(0.01),mul:gain),mul:mz),0.8,0.01),anglez));
+
+					/*(
+out1=VBAP.ar(4,FreeVerb.ar(sig1,mix.lag(0.01),room.lag(0.01),mul:mx),~b.bufnum,polytope.theta.raddeg,polytope.phi.raddeg,74);
+out2=VBAP.ar(4,FreeVerb.ar(sig2,mix.lag(0.01),room.lag(0.01),mul:my),~b.bufnum,,polytope.theta.raddeg,polytope.phi.raddeg,74);
+out3=VBAP.ar(4,FreeVerb.ar(sig3,mix.lag(0.01),room.lag(0.01),mul:mz),~b.bufnum,,polytope.theta.raddeg,polytope.phi.raddeg,74);
+
+				Out.ar(2,Limiter.ar(LeakDC.ar(out1,mul:1,mul:gain),mix.lag(0.01)));
+				Out.ar(2,Limiter.ar(LeakDC.ar(out2,mul:1,mul:gain),mix.lag(0.01)));
+				Out.ar(2,Limiter.ar(LeakDC.ar(out3,mul:1,mul:gain),mix.lag(0.01)));
+					)*/
 
 			}
 }).add;);
 
-10.wait;
-~synth=Synth.new(\synth,[\gain,2,\tone,992*2,\low,0,\mix,0,\room,1,\a,1,\pan,992,
-			\band,(992*4).neg,\x,1,\brain,4,\m,2,\rq,1,\b,1]).register;//s.record
+3.wait;
+~synth=Synth.new(\synth,[\gain,2,\tone,992*3,\low,1,\mix,1,\room,0.5,\a,1,\pan,992,\band,(992*4).neg,\x,6,\brain,468,\m,1,\rq,1,\b,1]).register;//s.record
 2.wait;
 (
 MIDIClient.init;
