@@ -42,7 +42,7 @@ wt = signal.asWavetable;
 	(
  (
 SynthDef(\kick, {
-	arg amp=10,n=12,pan=1,low=0,noise=0.001,decay=1,attack=0.01,gate;
+	arg amp=1,n=12,pan=1,low=0,noise=0.001,decay=1,attack=0.01,gate;
     var env,freq,anglex,angley,anglez,mod_anglex,mod_angley,mod_anglez,fund=32,mx,my,mz,magx,magz,magy;
 	var sph,phase,threshold,ton,az=pi,el=pi/2,m=2;
 	var sig1,sig2,sig3,phasex,phasey,phasez,control1,control2,control3;
@@ -82,9 +82,9 @@ mx=(Cartesian(magx.value,0,0).rho);my=(Cartesian(0,magy.value,0).rho);mz=(Cartes
 
 
 
-sig1=(LPF.ar((Osc.ar(~w1.bufnum,freq,phase:phasex,mul:100).abs*SinOsc.ar(freq,phase:phasex)),freq*2.pow(low.lag(0.01)/992),ton.reciprocal));
-sig2=(LPF.ar((Osc.ar(~w1.bufnum,freq,phase:phasey,mul:100).abs*SinOsc.ar(freq,phase:phasey)),freq*2.pow(low.lag(0.01)/992),ton.reciprocal));
-sig3=(LPF.ar((Osc.ar(~w1.bufnum,freq,phase:phasez,mul:100).abs*SinOsc.ar(freq,phase:phasez)),freq*2.pow(low.lag(0.01)/992),ton.reciprocal));
+sig1=(LPF.ar((Osc.ar(~w1.bufnum,freq,phase:phasex,mul:1000).abs*SinOsc.ar(freq,phase:phasex)),freq*2.pow(low.lag(0.01)/992),ton.reciprocal));
+sig2=(LPF.ar((Osc.ar(~w1.bufnum,freq,phase:phasey,mul:1000).abs*SinOsc.ar(freq,phase:phasey)),freq*2.pow(low.lag(0.01)/992),ton.reciprocal));
+sig3=(LPF.ar((Osc.ar(~w1.bufnum,freq,phase:phasez,mul:1000).abs*SinOsc.ar(freq,phase:phasez)),freq*2.pow(low.lag(0.01)/992),ton.reciprocal));
 
 control1=SinOsc.ar(freq,phasex,ton.reciprocal);
 control2=SinOsc.ar(freq,phasey,ton.reciprocal);
@@ -153,9 +153,9 @@ mx=(Cartesian(magx.value,0,0).rho);my=(Cartesian(0,magy.value,0).rho);mz=(Cartes
 
 
 
-sig1=(LPF.ar((Osc.ar(~w1.bufnum,freq,phase:phasex,mul:100).abs*SinOsc.ar(freq,phase:phasex)),freq*2.pow(low.lag(0.01)/992),ton.reciprocal));
-sig2=(LPF.ar((Osc.ar(~w1.bufnum,freq,phase:phasey,mul:100).abs*SinOsc.ar(freq,phase:phasey)),freq*2.pow(low.lag(0.01)/992),ton.reciprocal));
-sig3=(LPF.ar((Osc.ar(~w1.bufnum,freq,phase:phasez,mul:100).abs*SinOsc.ar(freq,phase:phasez)),freq*2.pow(low.lag(0.01)/992),ton.reciprocal));
+sig1=(LPF.ar((Osc.ar(~w1.bufnum,freq,phase:phasex,mul:1000).abs*SinOsc.ar(freq,phase:phasex)),freq*2.pow(low.lag(0.01)/992),ton.reciprocal));
+sig2=(LPF.ar((Osc.ar(~w1.bufnum,freq,phase:phasey,mul:1000).abs*SinOsc.ar(freq,phase:phasey)),freq*2.pow(low.lag(0.01)/992),ton.reciprocal));
+sig3=(LPF.ar((Osc.ar(~w1.bufnum,freq,phase:phasez,mul:1000).abs*SinOsc.ar(freq,phase:phasez)),freq*2.pow(low.lag(0.01)/992),ton.reciprocal));
 
 control1=SinOsc.ar(freq,phasex,ton.reciprocal);
 control2=SinOsc.ar(freq,phasey,ton.reciprocal);
@@ -257,12 +257,12 @@ phasey=Complex(0,angley).theta;
 phasez=Complex(0,anglez).theta;
 
 // ping (stick attack)
-    ping = LPF.ar((Osc.ar(~w1.bufnum,freq,mul:100).abs*SinOsc.ar(freq)),freq,ton.reciprocal/2)* env;
+    ping = LPF.ar((Osc.ar(~w1.bufnum,freq,mul:1000).abs*SinOsc.ar(freq)),freq,ton.reciprocal/2)* env;
 
 			fr=exprand(freq,freq*1000);
     // metallic wash
     wash = Mix.fill(bank, {
-     LPF.ar((Osc.ar(~w1.bufnum,fr,mul:100).abs*SinOsc.ar(fr)),fr,bank.reciprocal)
+     LPF.ar((Osc.ar(~w1.bufnum,fr,mul:1000).abs*SinOsc.ar(fr)),fr,bank.reciprocal)
     });
     wash = HPF.ar(wash, freq*1000);
 			wash = wash * EnvGen.ar(Env.perc(attack, decay/2));
@@ -328,7 +328,7 @@ anglez=exp(Complex(0,1)*sph.phi).imag;
 	//	fr=exprand(freq,freq*1000);
     // metallic wash
    // wash = Mix.fill(bank, {
-   //  LPF.ar((Osc.ar(~w1.bufnum,fr,mul:100).abs*SinOsc.ar(fr)),fr,bank.reciprocal)
+   //  LPF.ar((Osc.ar(~w1.bufnum,fr,mul:1000).abs*SinOsc.ar(fr)),fr,bank.reciprocal)
   //  });
    // wash = HPF.ar(wash, freq*1000);
 		//	wash = wash * EnvGen.ar(Env.perc(attack, decay/4));
@@ -395,9 +395,9 @@ mx=(Cartesian(magx.value,0,0).rho);my=(Cartesian(0,magy.value,0).rho);mz=(Cartes
 
 
 
-sig1=(LPF.ar((Osc.ar(~w1.bufnum,freq,phase:phasex,mul:100).abs*SinOsc.ar(freq,phase:phasex)),freq*2.pow(low.lag(0.01)/992),ton.reciprocal));
-sig2=(LPF.ar((Osc.ar(~w1.bufnum,freq,phase:phasey,mul:100).abs*SinOsc.ar(freq,phase:phasey)),freq*2.pow(low.lag(0.01)/992),ton.reciprocal));
-sig3=(LPF.ar((Osc.ar(~w1.bufnum,freq,phase:phasez,mul:100).abs*SinOsc.ar(freq,phase:phasez)),freq*2.pow(low.lag(0.01)/992),ton.reciprocal));
+sig1=(LPF.ar((Osc.ar(~w1.bufnum,freq,phase:phasex,mul:1000).abs*SinOsc.ar(freq,phase:phasex)),freq*2.pow(low.lag(0.01)/992),ton.reciprocal));
+sig2=(LPF.ar((Osc.ar(~w1.bufnum,freq,phase:phasey,mul:1000).abs*SinOsc.ar(freq,phase:phasey)),freq*2.pow(low.lag(0.01)/992),ton.reciprocal));
+sig3=(LPF.ar((Osc.ar(~w1.bufnum,freq,phase:phasez,mul:1000).abs*SinOsc.ar(freq,phase:phasez)),freq*2.pow(low.lag(0.01)/992),ton.reciprocal));
 
 control1=SinOsc.ar(freq,phasex,ton.reciprocal);
 control2=SinOsc.ar(freq,phasey,ton.reciprocal);
@@ -571,20 +571,90 @@ TempoClock.default.tempo_(4);
 )
 
 
-////seq cheeck
+
 (
-(
-		~kick=Pdef(\1, Pbind(\instrument, \kick,
-			\dur,Pseq(~dur1,inf),
-				\amp,10,
-				\n,24,
-				\pan,1,
-			\low,0,
-				\noise,0.001,
-				\decay,1,
-				\attack,0.01;
-		))
+var n=1.neg;
+r = Routine {
+	loop{ 6.do{n=n+1; Synth(\kick,[	\amp,10,\n,24,\pan,1,\low,0,\noise,0.001,\decay,1,\attack,0.01;]);
+		~dur1.[n].wait;};n=1.neg;
+		//2.wait;
+};
+
+}
 );
 
-~kick.play;
+r.play
+/*
+	///tetrahedron
+(
+~az=[45.degrad,135.neg.degrad,45.neg.degrad,135.degrad];
+~el=[35.264390.neg.degrad,35.264390.neg.degrad,35.264390.degrad,35.264390.degrad];
+);
+//////cube
+(
+~az=[45.degrad,135.degrad,45.neg.degrad,135.neg.degrad,45.degrad,135.degrad,45.neg.degrad,135.neg.degrad];
+~el=[35.264390.neg.degrad,35.264390.neg.degrad,35.264390.neg.degrad,35.264390.neg.degrad,35.264390.degrad,35.264390.degrad,35.264390.degrad,35.264390.degrad];
 )
+
+/////octahedron
+
+(
+~az=[0.degrad,0.degrad,90.degrad,180.degrad,90.neg.degrad,0.degrad];
+~el=[90.neg.degrad,0.degrad,0.degrad,0.degrad,0.degrad,90.degrad];
+)
+
+//////icosahedron
+(
+~az=[90.degrad,90.neg.degrad,0.degrad,180.degrad,58.28.degrad,121.72.degrad,121.72.neg.degrad,58.neg.degrad,90.degrad,90.neg.degrad,0.degrad,180.degrad];
+~el=[58.28.neg.degrad,58.28.neg.degrad,31.72.neg.degrad,31.72.neg.degrad,0.degrad,0.degrad,0.degrad,0.degrad,58.28.degrad,58.28.degrad,31.72.degrad,31.72.degrad];
+)
+
+/////dodecahedron
+
+(
+~az=[45.degrad,135.neg.degrad,135.degrad,45.neg.degrad,90.degrad,90.neg.degrad,0.degrad,180.degrad,45.degrad,135.neg.degrad,135.degrad,45.neg.degrad,90.degrad,
+	90.neg.degrad,69.09.degrad,110.91.degrad,110.91.neg.degrad,69.09.neg.degrad,0.degrad,180.degrad];
+
+~el=[35.26.neg.degrad,35.26.neg.degrad,35.26.neg.degrad,35.26.neg.degrad,69.09.neg.degrad,69.09.neg.degrad,20.91.neg.degrad,20.91.neg.degrad,
+	35.26.degrad,35.26.degrad,35.26.degrad,35.26.degrad,69.09.degrad,69.09.degrad,0.degrad,0.degrad,0.degrad,0.degrad,20.91.degrad,20.91.degrad]
+)
+
+/////Rhombic dodecahedron//// hull
+
+(
+~az=[0.degrad,45.degrad,135.neg.degrad,135.degrad,45.neg.degrad,0.degrad,180.degrad,90.degrad,90.neg.degrad,0.degrad,
+	45.degrad,135.neg.degrad,135.degrad,45.neg.degrad];
+~el=[90.neg.degrad,35.264390.neg.degrad,35.264390.neg.degrad,35.264390.neg.degrad,35.264390.neg.degrad,0.degrad
+	,0.degrad,0.degrad,0.degrad,90.degrad,35.264390.degrad,35.264390.degrad,35.264390.degrad,35.264390.degrad];
+)
+
+/////cuboctahedron//// core
+
+(
+~az=[0.degrad,90.degrad,180.degrad,90.neg.degrad,45.degrad,135.degrad,45.neg.degrad,135.neg.degrad,
+	0.degrad,90.degrad,180.degrad,90.neg.degrad];
+~el=[45.neg.degrad,45.neg.degrad,45.neg.degrad,45.neg.degrad,0.degrad,0.degrad,0.degrad,0.degrad,
+	45.degrad,45.degrad,45.degrad,45.degrad];
+)
+
+
+///////////////Rhombic Triacontahedron//// hull
+(
+~az=[0.degrad,0.degrad,72.degrad,144.degrad,144.neg.degrad,72.neg.degrad,36.degrad,108.degrad,180.degrad,108.neg.degrad,36.neg.degrad,
+	0.degrad,72.degrad,144.degrad,144.neg.degrad,72.neg.degrad,36.degrad,108.degrad,180.degrad,108.neg.degrad,36.neg.degrad,
+	0.degrad,72.degrad,144.degrad,144.neg.degrad,72.neg.degrad,36.degrad,108.degrad,180.degrad,108.neg.degrad,36.neg.degrad,0.degrad];
+
+~el=[90.neg.degrad,52.6.neg.degrad,52.6.neg.degrad,52.6.neg.degrad,52.6.neg.degrad,52.6.neg.degrad,26.6.neg.degrad,26.6.neg.degrad,26.6.neg.degrad,26.6.neg.degrad,26.6.neg.degrad,10.8.neg.degrad,10.8.neg.degrad,10.8.neg.degrad,10.8.neg.degrad,10.8.neg.degrad,52.6.degrad,52.6.degrad,52.6.degrad,52.6.degrad,52.6.degrad,26.6.degrad,26.6.degrad,26.6.degrad,26.6.degrad,26.6.degrad,10.8.degrad,10.8.degrad,10.8.degrad,10.8.degrad,10.8.degrad,90.degrad];
+
+)
+
+///////icosidodecahedron//// core
+(
+~az=[18.degrad,90.degrad,162.degrad,126.neg.degrad,54.neg.degrad,54.degrad,126.degrad,162.neg.degrad,90.neg.degrad,18.neg.degrad,
+	0.degrad,36.degrad,72.degrad,108.degrad,144.degrad,180.degrad,144.neg.degrad,108.neg.degrad,72.neg.degrad,36.neg.degrad,
+	54.degrad,126.degrad,162.neg.degrad,90.neg.degrad,18.neg.degrad,18.degrad,90.degrad,162.degrad,126.neg.degrad,54.neg.degrad];
+
+~el=[58.283.degrad,58.283.degrad,58.283.degrad,58.283.degrad,58.283.degrad,58.283.neg.degrad,58.283.neg.degrad,58.283.neg.degrad,58.283.neg.degrad,58.283.neg.degrad,0.degrad,0.degrad,0.degrad,0.degrad,0.degrad,0.degrad,0.degrad,0.degrad,0.degrad,0.degrad,
+37.717.degrad,37.717.degrad,37.717.degrad,37.717.degrad,37.717.degrad,37.717.neg.degrad,37.717.neg.degrad,37.717.neg.degrad,37.717.neg.degrad,37.717.neg.degrad];
+
+)*/

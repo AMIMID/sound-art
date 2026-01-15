@@ -48,7 +48,7 @@ wt = signal.asWavetable;
 	(
  (
 SynthDef(\kick, {
-	arg amp=10,n=12,pan=1,low=0,noise=0.001,decay=1,attack=0.01;
+	arg amp=1,n=12,pan=1,low=0,noise=0.001,decay=1,attack=0.01;
     var env,freq,anglex,angley,anglez,mod_anglex,mod_angley,mod_anglez,fund=32,mx,my,mz,magx,magz,magy;
 	var sph,phase,threshold,ton,az=pi,el=pi/2,m=2;
 	var sig1,sig2,sig3,phasex,phasey,phasez,control1,control2,control3;
@@ -88,9 +88,9 @@ mx=(Cartesian(magx.value,0,0).rho);my=(Cartesian(0,magy.value,0).rho);mz=(Cartes
 
 
 
-sig1=(LPF.ar((Osc.ar(~w1.bufnum,freq,phase:phasex,mul:100).abs*SinOsc.ar(freq,phase:phasex)),freq*2.pow(low.lag(0.01)/992),ton.reciprocal));
-sig2=(LPF.ar((Osc.ar(~w1.bufnum,freq,phase:phasey,mul:100).abs*SinOsc.ar(freq,phase:phasey)),freq*2.pow(low.lag(0.01)/992),ton.reciprocal));
-sig3=(LPF.ar((Osc.ar(~w1.bufnum,freq,phase:phasez,mul:100).abs*SinOsc.ar(freq,phase:phasez)),freq*2.pow(low.lag(0.01)/992),ton.reciprocal));
+sig1=(LPF.ar((Osc.ar(~w1.bufnum,freq,phase:phasex,mul:1000).abs*SinOsc.ar(freq,phase:phasex)),freq*2.pow(low.lag(0.01)/992),ton.reciprocal));
+sig2=(LPF.ar((Osc.ar(~w1.bufnum,freq,phase:phasey,mul:1000).abs*SinOsc.ar(freq,phase:phasey)),freq*2.pow(low.lag(0.01)/992),ton.reciprocal));
+sig3=(LPF.ar((Osc.ar(~w1.bufnum,freq,phase:phasez,mul:1000).abs*SinOsc.ar(freq,phase:phasez)),freq*2.pow(low.lag(0.01)/992),ton.reciprocal));
 
 control1=SinOsc.ar(freq,phasex,ton.reciprocal);
 control2=SinOsc.ar(freq,phasey,ton.reciprocal);
@@ -126,7 +126,7 @@ SynthDef(\snare, {
 			ton=2.pow(n/12);
 			fr=fund*ton;
 	freq = EnvGen.kr(Env([fr+(9/8), fr], [decay], curve: -4));
-	env= EnvGen.kr(Env.perc(0.01, decay),doneAction:2,levelScale:amp);
+	env= EnvGen.kr(Env.perc(0.01, decay),doneAction:0,levelScale:amp);
 
 			threshold=(((343/0.14)/freq).reciprocal.ampdb/2.sqrt).dbamp;
 
@@ -159,9 +159,9 @@ mx=(Cartesian(magx.value,0,0).rho);my=(Cartesian(0,magy.value,0).rho);mz=(Cartes
 
 
 
-sig1=(LPF.ar((Osc.ar(~w1.bufnum,freq,phase:phasex,mul:100).abs*SinOsc.ar(freq,phase:phasex)),freq*2.pow(low.lag(0.01)/992),ton.reciprocal));
-sig2=(LPF.ar((Osc.ar(~w1.bufnum,freq,phase:phasey,mul:100).abs*SinOsc.ar(freq,phase:phasey)),freq*2.pow(low.lag(0.01)/992),ton.reciprocal));
-sig3=(LPF.ar((Osc.ar(~w1.bufnum,freq,phase:phasez,mul:100).abs*SinOsc.ar(freq,phase:phasez)),freq*2.pow(low.lag(0.01)/992),ton.reciprocal));
+sig1=(LPF.ar((Osc.ar(~w1.bufnum,freq,phase:phasex,mul:1000).abs*SinOsc.ar(freq,phase:phasex)),freq*2.pow(low.lag(0.01)/992),ton.reciprocal));
+sig2=(LPF.ar((Osc.ar(~w1.bufnum,freq,phase:phasey,mul:1000).abs*SinOsc.ar(freq,phase:phasey)),freq*2.pow(low.lag(0.01)/992),ton.reciprocal));
+sig3=(LPF.ar((Osc.ar(~w1.bufnum,freq,phase:phasez,mul:1000).abs*SinOsc.ar(freq,phase:phasez)),freq*2.pow(low.lag(0.01)/992),ton.reciprocal));
 
 control1=SinOsc.ar(freq,phasex,ton.reciprocal);
 control2=SinOsc.ar(freq,phasey,ton.reciprocal);
@@ -195,7 +195,7 @@ SynthDef(\hihat, {
 			ton=2.pow(n/56);
 freq=fund*128;
 threshold=(((343/0.14)/freq).reciprocal.ampdb/2.sqrt).dbamp;
-	env= EnvGen.kr(Env.perc(attack, decay,-8),doneAction:2,levelScale:amp);
+	env= EnvGen.kr(Env.perc(attack, decay,-8),doneAction:0,levelScale:amp);
 	noise = BrownNoise.ar(env);
 	sig = BPF.ar(noise, freq, rq,(2.sqrt/rq));
 	sig = HPF.ar(sig, freq,ton.reciprocal);
@@ -230,7 +230,7 @@ silver=(silver+(2pi-(2pi/(1+2.sqrt)))).wrap(pi.neg,pi).round(0.00001);
 }).add;
 );
 	//Synth(\hihat);
-(
+/*(
 SynthDef(\ride, {
 	arg amp=1,decay=4,attack=0.01,n,pan=1,az=pi/2,el=pi/4,rq=1;
     var env,silver=45,bank=8,sig,wash,ping,noise;
@@ -241,7 +241,7 @@ SynthDef(\ride, {
 n=(56*4);
 ton=2.pow(n/56);
 
-	env= EnvGen.kr(Env.perc(attack, decay),doneAction:2,levelScale:1);
+	env= EnvGen.kr(Env.perc(attack, decay),doneAction:0,levelScale:1);
 	noise = PinkNoise.ar(env);
 freq=fund*ton;
 	sig = BPF.ar(noise, freq, rq,(rq/2.sqrt));
@@ -263,12 +263,12 @@ phasey=Complex(0,angley).theta;
 phasez=Complex(0,anglez).theta;
 
 // ping (stick attack)
-    ping = LPF.ar((Osc.ar(~w1.bufnum,freq,mul:100).abs*SinOsc.ar(freq)),freq,ton.reciprocal/2)* env;
+    ping = LPF.ar((Osc.ar(~w1.bufnum,freq,mul:1000).abs*SinOsc.ar(freq)),freq,ton.reciprocal/2)* env;
 
 			fr=exprand(freq,freq*1000);
     // metallic wash
     wash = Mix.fill(bank, {
-     LPF.ar((Osc.ar(~w1.bufnum,fr,mul:100).abs*SinOsc.ar(fr)),fr,bank.reciprocal)
+     LPF.ar((Osc.ar(~w1.bufnum,fr,mul:1000).abs*SinOsc.ar(fr)),fr,bank.reciprocal)
     });
     wash = HPF.ar(wash, freq*1000);
 			wash = wash * EnvGen.ar(Env.perc(attack, decay/2));
@@ -317,7 +317,7 @@ ton=2.pow(n/56);
 freq=fund*ton;
 threshold=(((343/0.14)/freq).reciprocal.ampdb/2.sqrt).dbamp;
 
-	env= EnvGen.kr(Env.perc(attack, decay,-8),doneAction:2,levelScale:amp);
+	env= EnvGen.kr(Env.perc(attack, decay,-8),doneAction:0,levelScale:amp);
 	noise = PinkNoise.ar(env);
 	sig = BPF.ar(noise, freq,rq,(2.sqrt/rq));
 	sig = HPF.ar(sig, freq,ton.reciprocal);
@@ -334,7 +334,7 @@ anglez=exp(Complex(0,1)*sph.phi).imag;
 	//	fr=exprand(freq,freq*1000);
     // metallic wash
    // wash = Mix.fill(bank, {
-   //  LPF.ar((Osc.ar(~w1.bufnum,fr,mul:100).abs*SinOsc.ar(fr)),fr,bank.reciprocal)
+   //  LPF.ar((Osc.ar(~w1.bufnum,fr,mul:1000).abs*SinOsc.ar(fr)),fr,bank.reciprocal)
   //  });
    // wash = HPF.ar(wash, freq*1000);
 		//	wash = wash * EnvGen.ar(Env.perc(attack, decay/4));
@@ -358,7 +358,7 @@ silver=(silver+(2pi-(2pi/(1+2.sqrt)))).wrap(pi.neg,pi).round(0.00001);
 	};
 }).add;
 );
-	//Synth(\crash);
+	//Synth(\crash);*/
 (
 SynthDef(\tom, {
 	arg amp=20,n=48,pan=1,low=0,noise=0.001,decay=1,attack=0.01;
@@ -368,7 +368,7 @@ SynthDef(\tom, {
 
 				n=12*3;  ton=2.pow(n/12);	fr=fund*ton;
 	freq = EnvGen.kr(Env([fr*1.01, fr], [decay], curve: -4)); // pitch drop
-	env= EnvGen.kr(Env.perc(attack, decay, curve: -4),doneAction:2,levelScale:amp);
+	env= EnvGen.kr(Env.perc(attack, decay, curve: -4),doneAction:0,levelScale:amp);
 
 			threshold=(((343/0.14)/freq).reciprocal.ampdb/2.sqrt).dbamp;
 
@@ -401,9 +401,9 @@ mx=(Cartesian(magx.value,0,0).rho);my=(Cartesian(0,magy.value,0).rho);mz=(Cartes
 
 
 
-sig1=(LPF.ar((Osc.ar(~w1.bufnum,freq,phase:phasex,mul:100).abs*SinOsc.ar(freq,phase:phasex)),freq*2.pow(low.lag(0.01)/992),ton.reciprocal));
-sig2=(LPF.ar((Osc.ar(~w1.bufnum,freq,phase:phasey,mul:100).abs*SinOsc.ar(freq,phase:phasey)),freq*2.pow(low.lag(0.01)/992),ton.reciprocal));
-sig3=(LPF.ar((Osc.ar(~w1.bufnum,freq,phase:phasez,mul:100).abs*SinOsc.ar(freq,phase:phasez)),freq*2.pow(low.lag(0.01)/992),ton.reciprocal));
+sig1=(LPF.ar((Osc.ar(~w1.bufnum,freq,phase:phasex,mul:1000).abs*SinOsc.ar(freq,phase:phasex)),freq*2.pow(low.lag(0.01)/992),ton.reciprocal));
+sig2=(LPF.ar((Osc.ar(~w1.bufnum,freq,phase:phasey,mul:1000).abs*SinOsc.ar(freq,phase:phasey)),freq*2.pow(low.lag(0.01)/992),ton.reciprocal));
+sig3=(LPF.ar((Osc.ar(~w1.bufnum,freq,phase:phasez,mul:1000).abs*SinOsc.ar(freq,phase:phasez)),freq*2.pow(low.lag(0.01)/992),ton.reciprocal));
 
 control1=SinOsc.ar(freq,phasex,ton.reciprocal);
 control2=SinOsc.ar(freq,phasey,ton.reciprocal);
@@ -455,17 +455,17 @@ axis=i+j+k;
 
 ~x=bank.collect{
 m1=m1+1;
-	b=Spherical(beat,~az.[m1],~el.[m1]).rotate(0.degrad).x.round(0.00001);
+	b=Spherical(beat,~az.[m1],~el.[m1]).x.round(0.00001);
 	2.pow(b).round(time);
 };
 ~y=bank.collect{
 m2=m2+1;
-	c=Spherical(beat,~az.[m2],~el.[m2]).rotate(0.degrad).y.round(0.00001);
+	c=Spherical(beat,~az.[m2],~el.[m2]).y.round(0.00001);
 	2.pow(c).round(time);
 };
 ~z=bank.collect{
 m3=m3+1;
-	d=Spherical(beat,~az.[m3],~el.[m3]).rotate(0.degrad).z.round(0.00001);
+	d=Spherical(beat,~az.[m3],~el.[m3]).z.round(0.00001);
 	2.pow(d).round(time);
 };
 		bank.do{ ~dur1=~dur1++~x.[n];n=n+1;};n=0;
@@ -477,7 +477,7 @@ m3=m3+1;
 //	}
 }.value;
 );
-	({var m1=1.neg, m2=1.neg, m3=1.neg,a,b,c,n=0,bank=6,time=16.reciprocal,beat=1;
+			({var m1=1.neg, m2=1.neg, m3=1.neg,a,b,c,n=0,bank=6,time=16.reciprocal,beat=1;
 
 ~dur4=[];~dur5=[];~dur6=[];
 
@@ -505,6 +505,7 @@ m3=m3+1;
 //	}
 }.value;
 );
+
 
 
 /////sequence
@@ -682,133 +683,133 @@ MIDIdef.cc(\midi_pot12,{ |val, num, chan, src|
 
 	(
 MIDIdef.cc(\midi_switch1,{ |val, num, chan, src|
-		var lamdoma, n=1, a=1;
-				if(val>0,lamdoma=1);
-		lamdoma.postln;
-		if(~synth.isPlaying,{~synth.set(\x,lamdoma)});
+		var gate, n=1, a=1;
+				if(val>0,gate=1);
+		gate.postln;
+		if(~synth.isPlaying,{~synth.set(\gate,gate)});
 },38);
 	);
 	(
 MIDIdef.cc(\midi_switch2,{ |val, num, chan, src|
-		 var lamdoma, n=1, a=1;
-					if(val>0,lamdoma=2);
-		lamdoma.postln;
-		if(~synth.isPlaying,{~synth.set(\x,lamdoma)});
+		 var gate, n=1, a=1;
+					if(val>0,gate=2);
+		gate.postln;
+		if(~synth.isPlaying,{~synth.set(\gate,gate)});
 },39);
 	);
 		(
 MIDIdef.cc(\midi_switch3,{ |val, num, chan, src|
-		var lamdoma, n=2, a=1;
-					if(val>0,lamdoma=3);
-		lamdoma.postln;
-		if(~synth.isPlaying,{~synth.set(\x,lamdoma)});
+		var gate, n=2, a=1;
+					if(val>0,gate=3);
+		gate.postln;
+		if(~synth.isPlaying,{~synth.set(\gate,gate)});
 },40);
 	);
 
 	(
 MIDIdef.cc(\midi_switch4,{ |val, num, chan, src|
-         var lamdoma, n=3, a=1;
-				if(val>0,lamdoma=4);
-		lamdoma.postln;
-		if(~synth.isPlaying,{~synth.set(\x,lamdoma)});
+         var gate, n=3, a=1;
+				if(val>0,gate=4);
+		gate.postln;
+		if(~synth.isPlaying,{~synth.set(\gate,gate)});
 },41);
 	);
 		(
 MIDIdef.cc(\midi_switch5,{ |val, num, chan, src|
-		var lamdoma, n=4, a=1;
-				if(val>0,lamdoma=5);
-		lamdoma.postln;
-		if(~synth.isPlaying,{~synth.set(\x,lamdoma)});
+		var gate, n=4, a=1;
+				if(val>0,gate=5);
+		gate.postln;
+		if(~synth.isPlaying,{~synth.set(\gate,gate)});
 },42);
 	);
 					(
 MIDIdef.cc(\midi_switch6,{ |val, num, chan, src|
-		var lamdoma, n=5, a=1;
-					if(val>0,lamdoma=6);
-		lamdoma.postln;
-		if(~synth.isPlaying,{~synth.set(\x,lamdoma)});
+		var gate, n=5, a=1;
+					if(val>0,gate=6);
+		gate.postln;
+		if(~synth.isPlaying,{~synth.set(\gate,gate)});
 },43);
 					);
 	(
 MIDIdef.cc(\midi_switch7,{ |val, num, chan, src|
-		var lamdoma, n=1, a=1;
-				if(val>0,lamdoma=7);
-		lamdoma.postln;
-		if(~synth.isPlaying,{~synth.set(\x,lamdoma)});
+		var gate, n=1, a=1;
+				if(val>0,gate=7);
+		gate.postln;
+		if(~synth.isPlaying,{~synth.set(\gate,gate)});
 },44);
 	);
 	(
 MIDIdef.cc(\midi_switch8,{ |val, num, chan, src|
-		 var lamdoma, n=1, a=1;
-						if(val>0,lamdoma=8);
-		lamdoma.postln;
-		if(~synth.isPlaying,{~synth.set(\x,lamdoma)});
+		 var gate, n=1, a=1;
+						if(val>0,gate=8);
+		gate.postln;
+		if(~synth.isPlaying,{~synth.set(\gate,gate)});
 },45);
 	);
 		(
 MIDIdef.cc(\midi_switch9,{ |val, num, chan, src|
-		var lamdoma, n=2, a=1;
-					if(val>0,lamdoma=9);
-		lamdoma.postln;
-		if(~synth.isPlaying,{~synth.set(\x,lamdoma)});
+		var gate, n=2, a=1;
+					if(val>0,gate=9);
+		gate.postln;
+		if(~synth.isPlaying,{~synth.set(\gate,gate)});
 },46);
 	);
 
 	(
 MIDIdef.cc(\midi_switch10,{ |val, num, chan, src|
-         var lamdoma, n=3, a=1;
-				if(val>0,lamdoma=10);
-		lamdoma.postln;
-		if(~synth.isPlaying,{~synth.set(\x,lamdoma)});
+         var gate, n=3, a=1;
+				if(val>0,gate=10);
+		gate.postln;
+		if(~synth.isPlaying,{~synth.set(\gate,gate)});
 },47);
 	);
 		(
 MIDIdef.cc(\midi_switch11,{ |val, num, chan, src|
-		var lamdoma, n=4, a=1;
-				if(val>0,lamdoma=11);
-		lamdoma.postln;
-		if(~synth.isPlaying,{~synth.set(\x,lamdoma)});
+		var gate, n=4, a=1;
+				if(val>0,gate=11);
+		gate.postln;
+		if(~synth.isPlaying,{~synth.set(\gate,gate)});
 },48);
 	);
 					(
 MIDIdef.cc(\midi_switch12,{ |val, num, chan, src|
-		var lamdoma, n=5, a=1;
-					if(val>0,lamdoma=12);
-		lamdoma.postln;
-		if(~synth.isPlaying,{~synth.set(\x,lamdoma)});
+		var gate, n=5, a=1;
+					if(val>0,gate=12);
+		gate.postln;
+		if(~synth.isPlaying,{~synth.set(\gate,gate)});
 },49);
 						);
 	(
 MIDIdef.cc(\midi_switch13,{ |val, num, chan, src|
-		var lamdoma, n=1, a=1;
-				if(val>0,lamdoma=13);
-		lamdoma.postln;
-		if(~synth.isPlaying,{~synth.set(\x,lamdoma)});
+		var gate, n=1, a=1;
+				if(val>0,gate=13);
+		gate.postln;
+		if(~synth.isPlaying,{~synth.set(\gate,gate)});
 },50);
 	);
 	(
 MIDIdef.cc(\midi_switch14,{ |val, num, chan, src|
-		 var lamdoma, n=1, a=1;
-				if(val>0,lamdoma=14);
-		lamdoma.postln;
-		if(~synth.isPlaying,{~synth.set(\x,lamdoma)});
+		 var gate, n=1, a=1;
+				if(val>0,gate=14);
+		gate.postln;
+		if(~synth.isPlaying,{~synth.set(\gate,gate)});
 },51);
 	);
 		(
 MIDIdef.cc(\midi_switch15,{ |val, num, chan, src|
-		var lamdoma, n=2, a=1;
-					if(val>0,lamdoma=15);
-		lamdoma.postln;
-		if(~synth.isPlaying,{~synth.set(\x,lamdoma)});
+		var gate, n=2, a=1;
+					if(val>0,gate=15);
+		gate.postln;
+		if(~synth.isPlaying,{~synth.set(\gate,gate)});
 },52);
 	);
 
 	(
 MIDIdef.cc(\midi_switch16,{ |val, num, chan, src|
-         var lamdoma, n=3, a=1;
-				if(val>0,lamdoma=16);
-		lamdoma.postln;
-		if(~synth.isPlaying,{~synth.set(\x,lamdoma)});
+         var gate, n=3, a=1;
+				if(val>0,gate=16);
+		gate.postln;
+		if(~synth.isPlaying,{~synth.set(\gate,gate)});
 },53);
 	);
 
