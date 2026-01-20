@@ -257,9 +257,9 @@ threshold3=(((343/0.07)/freq3).reciprocal.ampdb/2.sqrt).dbamp;
 		sig3=Compander.ar(sig3,control3,threshold3,1.2,1/3,0.03,0.15);
 		sig1=tanh(sig1*1.5);sig2=tanh(sig2*1.5);sig3=tanh(sig3*1.5);
 
-	Out.ar(0,Pan2.ar(Limiter.ar(LeakDC.ar(FreeVerb.ar(sig1,mix.lag(0.01),mix.lag(0.01),mul:gain),mul:mx),0.8,0.01),anglex));
-	Out.ar(0,Pan2.ar(Limiter.ar(LeakDC.ar(FreeVerb.ar(sig2,mix.lag(0.01),mix.lag(0.01),mul:gain),mul:my),0.8,0.01),angley));
-	Out.ar(0,Pan2.ar(Limiter.ar(LeakDC.ar(FreeVerb.ar(sig3,mix.lag(0.01),mix.lag(0.01),mul:gain),mul:mz),0.8,0.01),anglez));
+	Out.ar(0,Pan2.ar(Limiter.ar(LeakDC.ar(FreeVerb.ar(sig1,mix.lag(0.01),room.lag(0.01),mul:gain),mul:mx),0.8,0.01),anglex));
+	Out.ar(0,Pan2.ar(Limiter.ar(LeakDC.ar(FreeVerb.ar(sig2,mix.lag(0.01),room.lag(0.01),mul:gain),mul:my),0.8,0.01),angley));
+	Out.ar(0,Pan2.ar(Limiter.ar(LeakDC.ar(FreeVerb.ar(sig3,mix.lag(0.01),room.lag(0.01),mul:gain),mul:mz),0.8,0.01),anglez));
 
 					/*(
 out1=VBAP.ar(4,FreeVerb.ar(sig1,mix.lag(0.01),room.lag(0.01),mul:mx),~b.bufnum,polytope.theta.raddeg,polytope.phi.raddeg,74);
