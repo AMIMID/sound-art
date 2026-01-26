@@ -136,6 +136,28 @@ wt = signal.asWavetable;
 }.play;
 )*/
 
+		////different kind of freqspec slope modulation _more beaty
+		/*(
+{
+
+    z = Saw.ar(440, mul: 0.2);
+	LeakDC.ar(Slew.ar(z,SinOsc.ar(2,0.degrad,1000).abs ,SinOsc.ar(3,90.degrad,1000).abs))
+
+}.play
+)*/
+
+		///at high freq modulation possible distorion along with gain
+		/*(
+{
+
+    z = Saw.ar(220, mul: 10);
+	LeakDC.ar(Slew.ar(z,SinOsc.ar(220,0.degrad,220*8).abs ,SinOsc.ar(220,90.degrad,220*8).abs))
+
+}.play
+)*/
+///along with the following, which reduces sample of the signals thus intriducing distortion along with overdrive
+
+//{ MantissaMask.ar(SinOsc.ar(220, 0, 1), 0) }.play
 
 (
 SynthDef.new(\synth,{
