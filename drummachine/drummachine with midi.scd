@@ -53,6 +53,16 @@ wt = signal.asWavetable;
 }.play;
 )*/
 
+		////hit delay physical
+		/*(
+{
+    var t, sf;
+    sf = K2A.ar(MouseX.kr > 0.5) > 0;
+    t = TBall.ar(sf, MouseY.kr(0.01, 1.0, 1), 0.01);
+    Pan2.ar(Ringz.ar(t * 10, 1200, 0.1), MouseX.kr(-1, 1));
+}.play;
+)*/
+
 //////kick
 		///////////////set midi sequencer steps as gate on/of for synthdefs, some pots are for synth arguments,
 		///others for change of rhytmic pattern and re evaluation of patterns.
