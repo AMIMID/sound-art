@@ -31,9 +31,9 @@ s.meter;
 	Buffer.freeAll;
 
 (
-~r1 = Buffer.readChannel(s,,channels:0 );
-~r2 = Buffer.readChannel(s,,channels:1 );
-~i3 = Buffer.readChannel(s,,channels:0 );
+~r1 = Buffer.readChannel(s,"/Users/amimid/Desktop/SC_260130_021639.wav",channels:0 );
+~r2 = Buffer.readChannel(s,"/Users/amimid/Desktop/SC_260130_021639.wav",channels:1 );
+~i3 = Buffer.readChannel(s,"/Users/amimid/Desktop/FS.wav",channels:0 );
 		);
 
 		(
@@ -175,12 +175,12 @@ Out.ar(0,Pan2.ar(sig1rl,1,amp1));Out.ar(0,Pan2.ar(sig2rl,1,amp2));Out.ar(0,Pan2.
 				//Out.ar(0,Pan2.ar(sig4rl,anglex,amp4));
 //Out.ar(0,Pan2.ar(sig5rl,anglex,amp5));Out.ar(0,Pan2.ar(sig6rl,anglex,amp6));Out.ar(0,Pan2.ar(sig7rl,anglex,amp7));Out.ar(0,Pan2.ar(sig8rl,anglex,amp8));
 
-Out.ar(0,Pan2.ar(sig1rr,1.neg,amp1a));Out.ar(0,Pan2.ar(sig2rr,1.neg,amp2a));Out.ar(0,Pan2.ar(sig3rr,1.neg,amp3a));
+Out.ar(0,Pan2.ar(sig1rr,1.neg,amp1));Out.ar(0,Pan2.ar(sig2rr,1.neg,amp2));Out.ar(0,Pan2.ar(sig3rr,1.neg,amp3));
 				//Out.ar(0,Pan2.ar(sig4rr,angley,amp4a));
 //Out.ar(0,Pan2.ar(sig5rr,angley,amp5a));Out.ar(0,Pan2.ar(sig6rr,angley,amp6a));Out.ar(0,Pan2.ar(sig7rr,angley,amp7a));Out.ar(0,Pan2.ar(sig8rr,angley,amp8a));
 
-Out.ar(0,Pan2.ar(sig1il,0,amp1aa));Out.ar(0,Pan2.ar(sig2il,0,amp2aa));Out.ar(0,Pan2.ar(sig3il,0,amp3aa));
-Out.ar(0,Pan2.ar(sig1il,0,amp1aa));Out.ar(0,Pan2.ar(sig2il,0,amp2aa));Out.ar(0,Pan2.ar(sig3il,0,amp3aa));
+Out.ar(0,Pan2.ar(sig1il,0,amp4));Out.ar(0,Pan2.ar(sig2il,0,amp5));Out.ar(0,Pan2.ar(sig3il,0,amp6));
+Out.ar(0,Pan2.ar(sig1il,0,amp4));Out.ar(0,Pan2.ar(sig2il,0,amp5));Out.ar(0,Pan2.ar(sig3il,0,amp6));
 				//Out.ar(0,Pan2.ar(sig4il,anglez,amp4aa));
 //Out.ar(0,Pan2.ar(sig5il,anglez,amp5aa));Out.ar(0,Pan2.ar(sig6il,anglez,amp6aa));Out.ar(0,Pan2.ar(sig7il,anglez,amp7aa));Out.ar(0,Pan2.ar(sig8il,anglez,amp8aa));
 
@@ -190,7 +190,7 @@ Out.ar(0,Pan2.ar(sig1il,0,amp1aa));Out.ar(0,Pan2.ar(sig2il,0,amp2aa));Out.ar(0,P
 
 
 5.wait;
-~synth=Synth.new(\re_im,[\amp1,0.33,\amp2,0.5,\amp3,0.2,\amp4,0.1,\amp5,1,\amp6,0.6,\az,pi/4,\el,pi/4).register;
+		~synth=Synth.new(\re_im,[\amp1,0.33,\amp2,0.5,\amp3,0.2,\amp4,0.1,\amp5,1,\amp6,0.6,\az,pi/4,\el,pi/4]).register;
 			//,\amp7,0.3,\amp8,0.4,
 		//\amp1a,1,\amp2a,0.333,\amp3a,1,\amp4a,0.7,\amp5a,0.1,\amp6a,0.8,\amp7a,1,\amp8a,0.7,
 		//	\amp1aa,1,\amp2aa,0.333,\amp3aa,1,\amp4aa,0.7,\amp5aa,0.1,\amp6aa,0.8,\amp7aa,1,\amp8aa,0.7,\az,0,\el,pi/4).register;//s.record
@@ -205,6 +205,7 @@ MIDIdef.cc(\midi_pot1,{ |val, num, chan, src|
 
 	a1=val.linlin(0,127,0,1).round(0.000001);
 		a1.postln;
+					"i".postln;
 		if(~synth.isPlaying,{~synth.set(\amp1,a1)});
 },26);
 				);
@@ -213,6 +214,7 @@ MIDIdef.cc(\midi_pot2,{ |val, num, chan, src|
 		var a2;
 		a2=val.linlin(0,127,0,1).round(0.000001);
 		a2.postln;
+					"i".postln;
 		if(~synth.isPlaying,{~synth.set(\amp2,a2)});
 },27);
 	);
@@ -221,6 +223,7 @@ MIDIdef.cc(\midi_pot3,{ |val, num, chan, src|
 		var a3;
 	a3=val.linlin(0,127,0,1).round(0.000001);
 		a3.postln;
+					"i".postln;
 		if(~synth.isPlaying,{~synth.set(\amp3,a3)});
 },28);
 	);
@@ -229,6 +232,7 @@ MIDIdef.cc(\midi_pot4,{ |val, num, chan, src|
 		var a4;
 	a4=val.linlin(0,127,0,1).round(0.000001);
 		a4.postln;
+					"r".postln;
 		if(~synth.isPlaying,{~synth.set(\amp4,a4)});
 },29);
 	);
@@ -238,6 +242,7 @@ MIDIdef.cc(\midi_pot5,{ |val, num, chan, src|
 		var a5;
 	a5=val.linlin(0,127,0,1).round(0.000001);
 		a5.postln;
+					"r".postln;
 		if(~synth.isPlaying,{~synth.(\amp5,a5)});
 },30);
 	);
@@ -247,6 +252,7 @@ MIDIdef.cc(\midi_pot6,{ |val, num, chan, src|
 		 var a6;
 	a6=val.linlin(0,127,0,1).round(0.00001);
 		a6.postln;
+					"r".postln;
 		if(~synth.isPlaying,{~synth.set(\amp6,a6)});
 },31);
 	);
@@ -402,8 +408,11 @@ MIDIdef.cc(\midi_pot6,{ |val, num, chan, src|
 
 )
 });
-	Tdef(\drone).play;
+	//Tdef(\drone).play;
 }
 )
 )
-s.record(duration:7200-(60*35)-(60*36));
+(
+~synth=Synth.new(\re_im,[\amp1,0.33,\amp2,0.5,\amp3,0.2,\amp4,0.1,\amp5,1,\amp6,0.6,\az,pi/4,\el,pi/4]).register;
+s.record(duration:7200);
+)
