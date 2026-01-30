@@ -60,7 +60,7 @@ SynthDef.new(\re_im, {
     var sig1rl,sig2rl,sig3rl,sig4rl,sig5rl,sig6rl,sig7rl,sig8rl;
 	var sig1rr,sig2rr,sig3rr,sig4rr,sig5rr,sig6rr,sig7rr,sig8rr;
     var sig1il,sig2il,sig3il,sig4il,sig5il,sig6il,sig7il,sig8il;
-	var sph, anglex,angley,anglez,in1,in2,in3,in4,n=0;
+	var sph, anglex,angley,anglez,in1,in2,in3,in4,n=0,chain1,chain2,chain3;
 	var frames=~frames,silver=45,golden=45,l=1,r=1.neg,g=((1+5.sqrt)/2),s=(1+2.sqrt);
 
 
@@ -129,12 +129,12 @@ chain3il = chain3.pvcollect(frames,
 
 	/*az=SinOsc.ar(azimuth,elevation).theta;
 				el=SinOsc.ar(azimuth,elevation).phi;*/
-		sph=Spherical.ar(1,az,el);
+		//sph=Spherical.ar(1,az,el);
 
 
-anglex=exp(Complex(0,1)*sph.theta).real*exp(Complex(0,1)*sph.phi).real;
-angley=exp(Complex(0,1)*sph.theta).imag*exp(Complex(0,1)*sph.phi).real;
-anglez=exp(Complex(0,1)*sph.phi).imag;
+//anglex=exp(Complex(0,1)*sph.theta).real*exp(Complex(0,1)*sph.phi).real;
+//angley=exp(Complex(0,1)*sph.theta).imag*exp(Complex(0,1)*sph.phi).real;
+//anglez=exp(Complex(0,1)*sph.phi).imag;
 
 
 sig1rl=IFFT(chain1rl);sig2rl=IFFT(chain2rl);sig3rl=IFFT(chain3rl);
@@ -175,12 +175,12 @@ Out.ar(0,Pan2.ar(sig1rl,1,amp1));Out.ar(0,Pan2.ar(sig2rl,1,amp2));Out.ar(0,Pan2.
 				//Out.ar(0,Pan2.ar(sig4rl,anglex,amp4));
 //Out.ar(0,Pan2.ar(sig5rl,anglex,amp5));Out.ar(0,Pan2.ar(sig6rl,anglex,amp6));Out.ar(0,Pan2.ar(sig7rl,anglex,amp7));Out.ar(0,Pan2.ar(sig8rl,anglex,amp8));
 
-Out.ar(0,Pan2.ar(sig1rr,1.neg,amp1a));Out.ar(0,Pan2.ar(sig2rr,angley,amp2a));Out.ar(0,Pan2.ar(sig3rr,1.neg,amp3a));
+Out.ar(0,Pan2.ar(sig1rr,1.neg,amp1a));Out.ar(0,Pan2.ar(sig2rr,1.neg,amp2a));Out.ar(0,Pan2.ar(sig3rr,1.neg,amp3a));
 				//Out.ar(0,Pan2.ar(sig4rr,angley,amp4a));
 //Out.ar(0,Pan2.ar(sig5rr,angley,amp5a));Out.ar(0,Pan2.ar(sig6rr,angley,amp6a));Out.ar(0,Pan2.ar(sig7rr,angley,amp7a));Out.ar(0,Pan2.ar(sig8rr,angley,amp8a));
 
-Out.ar(0,Pan2.ar(sig1il,anglex,amp1aa));Out.ar(0,Pan2.ar(sig2il,anglex,amp2aa));Out.ar(0,Pan2.ar(sig3il,anglex,amp3aa));
-Out.ar(0,Pan2.ar(sig1il,angley.neg,amp1aa));Out.ar(0,Pan2.ar(sig2il,angley.neg,amp2aa));Out.ar(0,Pan2.ar(sig3il,angley.neg,amp3aa));
+Out.ar(0,Pan2.ar(sig1il,0,amp1aa));Out.ar(0,Pan2.ar(sig2il,0,amp2aa));Out.ar(0,Pan2.ar(sig3il,0,amp3aa));
+Out.ar(0,Pan2.ar(sig1il,0,amp1aa));Out.ar(0,Pan2.ar(sig2il,0,amp2aa));Out.ar(0,Pan2.ar(sig3il,0,amp3aa));
 				//Out.ar(0,Pan2.ar(sig4il,anglez,amp4aa));
 //Out.ar(0,Pan2.ar(sig5il,anglez,amp5aa));Out.ar(0,Pan2.ar(sig6il,anglez,amp6aa));Out.ar(0,Pan2.ar(sig7il,anglez,amp7aa));Out.ar(0,Pan2.ar(sig8il,anglez,amp8aa));
 
