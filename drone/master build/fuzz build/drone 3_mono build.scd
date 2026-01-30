@@ -147,14 +147,14 @@ SynthDef.new(\synth,{
 	var magx,magy,magz,magqx,magqy,mod_anglex,anglex,angley,anglez,phasex,phasey,phasez,rq1,rq2,rq3,rq4,rq5,rq6;
 	var mod_angley,mod_anglez,mx,my,mz,mqx,mqy,mag,magq,spread=1,mq=(m-1),choice,nn=0,lfo;
 
-fund=32*(9/8);
+fund=12*(9/8);
 lamdoma=(x.lag(0.01)+a.lag(0.01))/x.lag(0.01);
 
-polytope=Spherical(lamdoma*6,Select.kr(brain.lag(0.01),~az),Select.kr(brain.lag(0.01),~el));
+polytope=Spherical(lamdoma*24,Select.kr(brain.lag(0.01),~az),Select.kr(brain.lag(0.01),~el));
 
-b_x=2.pow(polytope.x/12);
-b_y=2.pow(polytope.y/12);
-b_z=2.pow(polytope.z/12);
+b_x=2.pow(polytope.x.round(1)/12);
+b_y=2.pow(polytope.y.round(1)/12);
+b_z=2.pow(polytope.z.round(1)/12);
 
 
 anglex=(exp(Complex(0,1)*polytope.theta).real*exp(Complex(0,1)*polytope.phi).real).round(0.00001);
@@ -209,13 +209,13 @@ cos((polytope.phi.round(0.00001)).wrap((pi/2).neg,(pi/2))))))).rho/(2.sqrt)).pow
 
 ton=2.pow((tone.lag(0.01))/992).round(0.0001);
 
-freq1=(fund*ton)*b_x;
-freq2=(fund*ton)*b_y;
-freq3=(fund*ton)*b_z;
+freq1=(fund*ton)*b_x*lamdoma;
+freq2=(fund*ton)*b_y*lamdoma;
+freq3=(fund*ton)*b_z*lamdoma;
 
-amp1=ton.reciprocal*b_x.reciprocal;
-amp2=ton.reciprocal*b_y.reciprocal;
-amp3=ton.reciprocal*b_z.reciprocal;
+amp1=ton.reciprocal*b_x.reciprocal*lamdoma.reciprocal;
+amp2=ton.reciprocal*b_y.reciprocal*lamdoma.reciprocal;
+amp3=ton.reciprocal*b_z.reciprocal*lamdoma.reciprocal;
 
 
 band_osc1=SinOsc.kr(b_x*2.pow(band.lag(0.01)/992),phase:phasex).exprange(496,16256);
@@ -332,7 +332,7 @@ MIDIdef.cc(\midi_pot4,{ |val, num, chan, src|
 		(
 MIDIdef.cc(\midi_pot5,{ |val, num, chan, src|
 		var band;
-	band=val.linlin(0,127,(992*4).neg,992*8).round(1).asInteger;
+	band=val.linlin(0,127,(992*16).neg,992*8).round(1).asInteger;
 		band.postln;
 		if(~synth.isPlaying,{~synth.set(\band,band)});
 },28);
