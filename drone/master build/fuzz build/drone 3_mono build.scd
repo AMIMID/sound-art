@@ -275,13 +275,13 @@ threshold3=(((343/0.3)/fund).reciprocal.ampdb/2.sqrt).dbamp;
 					gain2=gain*rq2.sqrt.reciprocal;
 					gain3=gain*rq3.sqrt.reciprocal;
 
-					Out.ar(0,Limiter.ar(LeakDC.ar(FreeVerb.ar(sig1,mix.lag(0.01),room.lag(0.01),mul:gain1),mul:loc1.abs),0.9,0.01));
-					Out.ar(0,Limiter.ar(LeakDC.ar(FreeVerb.ar(sig2,mix.lag(0.01),room.lag(0.01),mul:gain2),mul:loc2.abs),0.9,0.01));
-					Out.ar(0,Limiter.ar(LeakDC.ar(FreeVerb.ar(sig3,mix.lag(0.01),room.lag(0.01),mul:gain3),mul:loc3.abs),0.9,0.01));
+					//Out.ar(0,Limiter.ar(LeakDC.ar(FreeVerb.ar(sig1,mix.lag(0.01),room.lag(0.01),mul:gain1),mul:loc1.abs),0.9,0.01));
+					//Out.ar(0,Limiter.ar(LeakDC.ar(FreeVerb.ar(sig2,mix.lag(0.01),room.lag(0.01),mul:gain2),mul:loc2.abs),0.9,0.01));
+					//Out.ar(0,Limiter.ar(LeakDC.ar(FreeVerb.ar(sig3,mix.lag(0.01),room.lag(0.01),mul:gain3),mul:loc3.abs),0.9,0.01));
 
-	//Out.ar(0,Pan2.ar(Limiter.ar(LeakDC.ar(FreeVerb.ar(sig1,mix.lag(0.01),room.lag(0.01),mul:gain1),mul:mx),0.8,0.01),loc1));
-	//Out.ar(0,Pan2.ar(Limiter.ar(LeakDC.ar(FreeVerb.ar(sig2,mix.lag(0.01),room.lag(0.01),mul:gain2),mul:my),0.8,0.01),loc2);
-	//Out.ar(0,Pan2.ar(Limiter.ar(LeakDC.ar(FreeVerb.ar(sig3,mix.lag(0.01),room.lag(0.01),mul:gain3),mul:mz),0.8,0.01),loc3));
+	Out.ar(0,Pan2.ar(Limiter.ar(LeakDC.ar(FreeVerb.ar(sig1,mix.lag(0.01),room.lag(0.01),mul:gain1)),0.8,0.01),loc1));
+	Out.ar(0,Pan2.ar(Limiter.ar(LeakDC.ar(FreeVerb.ar(sig2,mix.lag(0.01),room.lag(0.01),mul:gain2)),0.8,0.01),loc2);
+	Out.ar(0,Pan2.ar(Limiter.ar(LeakDC.ar(FreeVerb.ar(sig3,mix.lag(0.01),room.lag(0.01),mul:gain3)),0.8,0.01),loc3));
 
 
 			}
@@ -302,7 +302,7 @@ MIDIdef.cc(\midi_pot1,{ |val, num, chan, src|
 
 		gain.postln;
 		if(~synth.isPlaying,{~synth.set(\gain,gain)});
-},20);
+},25);
 				);
 	(
 MIDIdef.cc(\midi_pot2,{ |val, num, chan, src|
@@ -310,7 +310,7 @@ MIDIdef.cc(\midi_pot2,{ |val, num, chan, src|
 		pan=val.linlin(0,127,(992*4).neg,(992*4)).round(0.00001).round(1).asInteger;
 		pan.postln;
 		if(~synth.isPlaying,{~synth.set(\pan,pan)});
-},21);
+},26);
 	);
 
 				(
@@ -321,7 +321,7 @@ MIDIdef.cc(\midi_pot3,{ |val, num, chan, src|
 
 		a.postln;
 		if(~synth.isPlaying,{~synth.set(\a,a)});
-},26);
+},27);
 	);
 
 	(
@@ -330,7 +330,7 @@ MIDIdef.cc(\midi_pot4,{ |val, num, chan, src|
 					low=val.linlin(0,127,0,(992*4)).round(1).asInteger;
 		low.postln;
 		if(~synth.isPlaying,{~synth.set(\low,low)});
-},27);
+},28);
 	);
 
 		(
@@ -339,7 +339,7 @@ MIDIdef.cc(\midi_pot5,{ |val, num, chan, src|
 	band=val.linlin(0,127,(992*16).neg,992*8).round(1).asInteger;
 		band.postln;
 		if(~synth.isPlaying,{~synth.set(\band,band)});
-},28);
+},29);
 	);
 					(
 MIDIdef.cc(\midi_pot6,{ |val, num, chan, src|
@@ -347,7 +347,7 @@ MIDIdef.cc(\midi_pot6,{ |val, num, chan, src|
 		tone=val.linlin(0,127,0,992*8).round(1).asInteger;
 		tone.postln;
 		if(~synth.isPlaying,{~synth.set(\tone,tone)});
-},29);
+},30);
 	);
 					(
 MIDIdef.cc(\midi_pot7,{ |val, num, chan, src|
@@ -372,7 +372,7 @@ MIDIdef.cc(\midi_pot9,{ |val, num, chan, src|
 		sph=val.linlin(0,127,0,3).round(1).asInteger;
 		sph.postln;
 		if(~synth.isPlaying,{~synth.set(\m,sph)});
-},36);
+},33);
 	);
 
 
@@ -382,7 +382,7 @@ MIDIdef.cc(\midi_switch1,{ |val, num, chan, src|
 				if(val>0,lamdoma=1);
 		lamdoma.postln;
 		if(~synth.isPlaying,{~synth.set(\x,lamdoma)});
-},38);
+},14);
 	);
 	(
 MIDIdef.cc(\midi_switch2,{ |val, num, chan, src|
@@ -390,7 +390,7 @@ MIDIdef.cc(\midi_switch2,{ |val, num, chan, src|
 					if(val>0,lamdoma=2);
 		lamdoma.postln;
 		if(~synth.isPlaying,{~synth.set(\x,lamdoma)});
-},39);
+},15);
 	);
 		(
 MIDIdef.cc(\midi_switch3,{ |val, num, chan, src|
@@ -398,7 +398,7 @@ MIDIdef.cc(\midi_switch3,{ |val, num, chan, src|
 					if(val>0,lamdoma=3);
 		lamdoma.postln;
 		if(~synth.isPlaying,{~synth.set(\x,lamdoma)});
-},40);
+},16);
 	);
 
 	(
@@ -407,7 +407,7 @@ MIDIdef.cc(\midi_switch4,{ |val, num, chan, src|
 				if(val>0,lamdoma=4);
 		lamdoma.postln;
 		if(~synth.isPlaying,{~synth.set(\x,lamdoma)});
-},41);
+},17);
 	);
 		(
 MIDIdef.cc(\midi_switch5,{ |val, num, chan, src|
@@ -415,7 +415,7 @@ MIDIdef.cc(\midi_switch5,{ |val, num, chan, src|
 				if(val>0,lamdoma=5);
 		lamdoma.postln;
 		if(~synth.isPlaying,{~synth.set(\x,lamdoma)});
-},42);
+},18);
 	);
 					(
 MIDIdef.cc(\midi_switch6,{ |val, num, chan, src|
@@ -423,7 +423,7 @@ MIDIdef.cc(\midi_switch6,{ |val, num, chan, src|
 					if(val>0,lamdoma=6);
 		lamdoma.postln;
 		if(~synth.isPlaying,{~synth.set(\x,lamdoma)});
-},43);
+},19);
 					);
 	(
 MIDIdef.cc(\midi_switch7,{ |val, num, chan, src|
@@ -431,7 +431,7 @@ MIDIdef.cc(\midi_switch7,{ |val, num, chan, src|
 				if(val>0,lamdoma=7);
 		lamdoma.postln;
 		if(~synth.isPlaying,{~synth.set(\x,lamdoma)});
-},44);
+},20);
 	);
 	(
 MIDIdef.cc(\midi_switch8,{ |val, num, chan, src|
@@ -439,7 +439,7 @@ MIDIdef.cc(\midi_switch8,{ |val, num, chan, src|
 						if(val>0,lamdoma=8);
 		lamdoma.postln;
 		if(~synth.isPlaying,{~synth.set(\x,lamdoma)});
-},45);
+},21);
 	);
 		(
 MIDIdef.cc(\midi_switch9,{ |val, num, chan, src|
@@ -447,7 +447,7 @@ MIDIdef.cc(\midi_switch9,{ |val, num, chan, src|
 					if(val>0,lamdoma=9);
 		lamdoma.postln;
 		if(~synth.isPlaying,{~synth.set(\x,lamdoma)});
-},46);
+},22);
 	);
 
 	(
@@ -456,7 +456,7 @@ MIDIdef.cc(\midi_switch10,{ |val, num, chan, src|
 				if(val>0,lamdoma=10);
 		lamdoma.postln;
 		if(~synth.isPlaying,{~synth.set(\x,lamdoma)});
-},47);
+},23);
 	);
 		(
 MIDIdef.cc(\midi_switch11,{ |val, num, chan, src|
@@ -464,7 +464,7 @@ MIDIdef.cc(\midi_switch11,{ |val, num, chan, src|
 				if(val>0,lamdoma=11);
 		lamdoma.postln;
 		if(~synth.isPlaying,{~synth.set(\x,lamdoma)});
-},48);
+},24);
 	);
 					(
 MIDIdef.cc(\midi_switch12,{ |val, num, chan, src|
@@ -472,7 +472,7 @@ MIDIdef.cc(\midi_switch12,{ |val, num, chan, src|
 					if(val>0,lamdoma=12);
 		lamdoma.postln;
 		if(~synth.isPlaying,{~synth.set(\x,lamdoma)});
-},49);
+},13);
 						);
 	(
 MIDIdef.cc(\midi_switch13,{ |val, num, chan, src|
@@ -480,7 +480,7 @@ MIDIdef.cc(\midi_switch13,{ |val, num, chan, src|
 				if(val>0,lamdoma=13);
 		lamdoma.postln;
 		if(~synth.isPlaying,{~synth.set(\x,lamdoma)});
-},50);
+},12);
 	);
 	(
 MIDIdef.cc(\midi_switch14,{ |val, num, chan, src|
@@ -488,7 +488,7 @@ MIDIdef.cc(\midi_switch14,{ |val, num, chan, src|
 				if(val>0,lamdoma=14);
 		lamdoma.postln;
 		if(~synth.isPlaying,{~synth.set(\x,lamdoma)});
-},51);
+},11);
 	);
 		(
 MIDIdef.cc(\midi_switch15,{ |val, num, chan, src|
@@ -496,7 +496,7 @@ MIDIdef.cc(\midi_switch15,{ |val, num, chan, src|
 					if(val>0,lamdoma=15);
 		lamdoma.postln;
 		if(~synth.isPlaying,{~synth.set(\x,lamdoma)});
-},52);
+},10);
 	);
 
 	(
@@ -505,7 +505,7 @@ MIDIdef.cc(\midi_switch16,{ |val, num, chan, src|
 				if(val>0,lamdoma=16);
 		lamdoma.postln;
 		if(~synth.isPlaying,{~synth.set(\x,lamdoma)});
-},53);
+},9);
 	);
 
 )
