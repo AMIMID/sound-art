@@ -328,7 +328,18 @@ Out.ar(0,Pan2.ar(Limiter.ar(LeakDC.ar(FreeVerb.ar(sig3,mix.lag(0.01),room.lag(0.
 3.wait;
 ~synth=Synth.new(\synth,[\gain,10,\tone,0,\low,0,\a,1,\pan,0.1,\band,(992*2).neg,\x,1,\m,1,\rq,1,\az,0,\el,0]).register;//s.record
 
-
+(
+		~s=Pdef(\1, Pbind(\instrument, \synth,
+			\dur,Pseq(~dur1,inf),
+				\amp,10,
+				\n,24,
+				\pan,1,
+			\low,0,
+				\noise,0.001,
+				\decay,1,
+				\attack,0.01;
+		))
+)
 
 2.wait;
 (
