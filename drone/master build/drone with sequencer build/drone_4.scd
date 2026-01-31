@@ -37,128 +37,42 @@ s.meter;
 /////////////osc polytope3
 	(
 {
-var  sph1,sph2,sph3,sph4,sph5,sph6,sph7,m_x=9,m_y=9,m_z=9,qx,qy,mq=m_x-1;
-var az1=0,el1=0,az2=0,el2=0,az3=0,el3=0,mag,mag_x,mag_y,mag_z,mag_qx,mag_qy;
-var az4=0,el4=0,az5=0,el5=0,az6=0,el6=0,az7=0,el7=0;
-var azimuth,elevation,magnitudex,magnitudey,magnitudez,angle=0,n=12;
-var sphx,sphy,sphz,azx,elx,azy,ely,azz,elz,plx=1,ply=1,plz=1;
-var ellipsis=[1,1,1],spread=1,silver_r=(1+2.sqrt);
+var  sph1,sph2,g=((1+5.sqrt)/2),s=(1+2.sqrt);
+var az1=0,el1=0,az2=0,el2=0;
+var azimuth,elevation,angle=0,n=12;
 var mag1=1,mag2=1,mag3=1,mag4=1,mag5=1,mag6=1,mag7=1;
-	~az=[];~el=[];~magx=[];~magy=[];~magz=[];~qx=[];~qy=[];
+	~az=[];~el=[];
 
-//	spread = if(m_z < 1) { 1 / m_z } { m_z };
-
-	128.do{
-azimuth=64.collect{
-			az1 = (az1+(2pi-(2pi/silver_r))).wrap(pi.neg,pi);
-		   el1 = (el1+(pi-(pi/silver_r))).wrap((pi/2).neg,(pi/2));
+	32.do{
+azimuth=32.collect{
+			az1 = (az1+(2pi-(2pi/s))).wrap(pi.neg,pi);
+		   el1 = (el1+(pi-(pi/s))).wrap((pi/2).neg,(pi/2));
 
 //	mag1=(mag1+(1-(1/1.6180339887499))).wrap(0,1);
 sph1=(Spherical(mag1,(az1+angle).wrap(pi.neg,pi),(el1+angle).wrap((pi/2).neg,(pi/2)))).theta.round(0.000000000001);
 
 	};
 
-elevation=64.collect{
-				az2 = (az2+(2pi-(2pi/silver_r))).wrap(pi.neg,pi);
-			el2 = (el2+(pi-(pi/silver_r))).wrap((pi/2).neg,(pi/2));
+elevation=32.collect{
+				az2 = (az2+(2pi-(2pi/s))).wrap(pi.neg,pi);
+			el2 = (el2+(pi-(pi/s))).wrap((pi/2).neg,(pi/2));
 
 	//mag2=(mag2+(1-(1/1.6180339887499))).wrap(0,1);
 		sph2=(Spherical(mag2,(az2+angle).wrap(pi.neg,pi),(el2+angle).wrap((pi/2).neg,(pi/2)))).phi.round(0.000000000001);
 
 	};
 
-magnitudex=	64.collect{
-			az3 = (az3+(2pi-(2pi/silver_r))).wrap(pi.neg,pi);
-			el3 = (el3+(pi-(pi/silver_r))).wrap((pi/2).neg,(pi/2));
 
-	//mag3=(mag3+(1-(1/1.6180339887499))).wrap(0,1);
-	sph3=(Spherical(mag3,(az3+angle).wrap(pi.neg,pi),(el3+angle).wrap((pi/2).neg,(pi/2))));
-
-	 mag_x=((Complex(cos((sph3.theta.round(0.000000000001)*m_x).wrap(pi.neg,pi)),cos((sph3.theta.round(0.000000000001)*m_x).wrap(pi.neg,pi))).rho/(2.sqrt)).pow(spread)*
-			(Complex(cos((sph3.phi.round(0.000000000001)).wrap((pi/2).neg,(pi/2))),cos((sph3.phi.round(0.000000000001)).wrap((pi/2).neg,(pi/2)))).rho/(2.sqrt)).pow(spread));
-
-				};
-
-magnitudey=	64.collect{
-			az4 = (az4+(2pi-(2pi/silver_r))).wrap(pi.neg,pi);
-				el4 = (el4+(pi-(pi/silver_r))).wrap((pi/2).neg,(pi/2));
-
-	//mag4=(mag4+(1-(1/1.6180339887499))).wrap(0,1);
-	sph4=(Spherical(mag4,(az4+angle).wrap(pi.neg,pi),(el4+angle).wrap((pi/2).neg,(pi/2))));
-
-		 mag_y=((Complex(sin((sph4.theta.round(0.000000000001)*m_y).wrap(pi.neg,pi)),sin((sph4.theta.round(0.000000000001)*m_y).wrap(pi.neg,pi))).rho/(2.sqrt)).pow(spread)*
-		 (Complex(cos((sph4.phi.round(0.000000000001)).wrap((pi/2).neg,(pi/2))),cos((sph4.phi.round(0.000000000001)).wrap((pi/2).neg,(pi/2)))).rho/(2.sqrt)).pow(spread));
-				};
-
-
-qx=	64.collect{
-			az5 = (az5+(2pi-(2pi/silver_r))).wrap(pi.neg,pi);
-			el5 = (el5+(pi-(pi/silver_r))).wrap((pi/2).neg,(pi/2));
-
-		//mag5=(mag5+(1-(1/1.6180339887499))).wrap(0,1);
-	sph5=(Spherical(mag5,(az5+angle).wrap(pi.neg,pi),(el5+angle).wrap((pi/2).neg,(pi/2))));
-
-
-mag_qx=((((Complex(cos(((sph5.theta.round(0.000000000001))*mq).wrap(pi.neg,pi)),
-cos(((sph5.theta.round(0.000000000001))*mq).wrap(pi.neg,pi))))*
-(Complex(sin((sph5.phi.round(0.000000000001)*(mq-1)).wrap((pi/2).neg,(pi/2))),
-sin((sph5.phi.round(0.000000000001)*(mq-1)).wrap((pi/2).neg,(pi/2)))))*
-(Complex(cos((sph5.phi.round(0.000000000001)).wrap((pi/2).neg,(pi/2))),
-cos((sph5.phi.round(0.000000000001)).wrap((pi/2).neg,(pi/2))))))).rho/(2.sqrt)).pow(spread);
-				};
-
-
-qy=	64.collect{
-			az6 = (az6+(2pi-(2pi/silver_r))).wrap(pi.neg,pi);
-			el6 = (el6+(pi-(pi/silver_r))).wrap((pi/2).neg,(pi/2));
-
-	//mag6=(mag6+(1-(1/1.6180339887499))).wrap(0,1);
-	sph6=(Spherical(mag6,(az6+angle).wrap(pi.neg,pi),(el6+angle).wrap((pi/2).neg,(pi/2))));
-
- mag_qy=((((Complex(sin(((sph6.theta.round(0.000000000001))*mq).wrap(pi.neg,pi)),
-sin(((sph6.theta.round(0.000000000001))*mq).wrap(pi.neg,pi))))*
-(Complex(sin((sph6.phi.round(0.000000000001)*(mq-1)).wrap((pi/2).neg,(pi/2))),
-sin((sph6.phi.round(0.000000000001)*(mq-1)).wrap((pi/2).neg,(pi/2)))))*
-(Complex(cos((sph6.phi.round(0.000000000001)).wrap((pi/2).neg,(pi/2))),
-cos((sph6.phi.round(0.000000000001)).wrap((pi/2).neg,(pi/2))))))).rho/(2.sqrt)).pow(spread);
-				};
-
-
-magnitudez=	64.collect{
-			az7 = (az7+(2pi-(2pi/silver_r))).wrap(pi.neg,pi);
-			el7 = (el7+(pi-(pi/silver_r))).wrap((pi/2).neg,(pi/2));
-
-//mag7=(mag7+(1-(1/1.6180339887499))).wrap(0,1);
-sph7=(Spherical(mag7,(az7+angle).wrap(pi.neg,pi),(el7+angle).wrap((pi/2).neg,(pi/2))));
-
-//if(
-//m_z.even,
-mag_z=(Complex(sin((sph7.phi.round(0.000000000001)*m_z).wrap((pi/2).neg,(pi/2))),sin((sph7.phi.round(0.000000000001)*m_z).wrap((pi/2).neg,(pi/2)))).rho/(2.sqrt)).pow(spread)
-			//,
-//mag_z=(Complex(sin((sph7.phi.round(0.000000000001)*m_z).wrap((pi/2).neg,(pi/2))),sin((sph7.phi.round(0.000000000001)*m_z).wrap((pi/2).neg,(pi/2)))).rho(2.sqrt)).pow(spread);
-			//);
-////z axis   ambi..  sin for odd numbers, cos for even
-				};
-
-angle=(angle+(2pi-(2pi/silver_r))).wrap(pi.neg,pi);
+angle=(angle+(2pi-(2pi/g))).wrap(pi.neg,pi);
 ~az=~az++azimuth;~el=~el++elevation;
-~magx=~magx++magnitudex;~magy=~magy++magnitudey;~magz=~magz++magnitudez;
-~qx=~qx++qx;~qy=~qy++qy;
-		az1=0;el1=0;az2=0;el2=0;az3=0;el3=0;
-		az4=0;el4=0;az5=0;el5=0;az6=0;el6=0;az7=0;el7=0;
+	az1=0;el1=0;az2=0;el2=0;
 	}
 }.value;
 );
-		/////check value range
-		/*(var m,a,b,c; {m=MouseX.kr(0,1023).round(1).asInteger;
-			a=Spherical(60,Select.kr(m,~az),Select.kr(m,~el)).z.abs;
-			b=Spherical(60,Select.kr(m,~az),Select.kr(m,~el)).x.abs;
-			c=Spherical(60,Select.kr(m,~az),Select.kr(m,~el)).y.abs;
-			(2.pow(a/50)).poll;
-			(2.pow(b/50)).poll;
-			(2.pow(c/50)).poll;
-		}.play
-		)*/
+
+
+		//.//control array
+
 
 ////// wavetables
 
@@ -490,15 +404,15 @@ MIDIdef.cc(\midi_pot1,{ |val, num, chan, src|
 
 		gain.postln;
 		if(~synth.isPlaying,{~synth.set(\gain,gain)});
-},20);
+},26);
 				);
 	(
 MIDIdef.cc(\midi_pot2,{ |val, num, chan, src|
 		var pan;
-		pan=val.linlin(0,127,(992*4).neg,(992*4)).round(0.00001).round(1).asInteger;
+		pan=val.linlin(0,127,(992*8).neg,(992*8)).round(0.00001).round(1).asInteger;
 		pan.postln;
 		if(~synth.isPlaying,{~synth.set(\pan,pan)});
-},21);
+},27);
 	);
 
 				(
@@ -509,7 +423,7 @@ MIDIdef.cc(\midi_pot3,{ |val, num, chan, src|
 
 		a.postln;
 		if(~synth.isPlaying,{~synth.set(\a,a)});
-},26);
+},38);
 	);
 
 	(
@@ -518,7 +432,7 @@ MIDIdef.cc(\midi_pot4,{ |val, num, chan, src|
 					low=val.linlin(0,127,0,(992*4)).round(1).asInteger;
 		low.postln;
 		if(~synth.isPlaying,{~synth.set(\low,low)});
-},27);
+},28);
 	);
 
 		(
@@ -527,7 +441,7 @@ MIDIdef.cc(\midi_pot5,{ |val, num, chan, src|
 	band=val.linlin(0,127,(992*16).neg,992*8).round(1).asInteger;
 		band.postln;
 		if(~synth.isPlaying,{~synth.set(\band,band)});
-},28);
+},29);
 	);
 					(
 MIDIdef.cc(\midi_pot6,{ |val, num, chan, src|
@@ -535,15 +449,15 @@ MIDIdef.cc(\midi_pot6,{ |val, num, chan, src|
 		tone=val.linlin(0,127,0,992*8).round(1).asInteger;
 		tone.postln;
 		if(~synth.isPlaying,{~synth.set(\tone,tone)});
-},29);
+},31);
 	);
 					(
 MIDIdef.cc(\midi_pot7,{ |val, num, chan, src|
 		var loc;
-		loc=val.linlin(0,127,0,8191).round(1).asInteger;
+		loc=val.linlin(0,127,0,1021).round(1).asInteger;
 		loc.postln;
 		if(~synth.isPlaying,{~synth.set(\brain,loc)});
-},31);
+},30);
 	);
 								(
 MIDIdef.cc(\midi_pot8,{ |val, num, chan, src|
@@ -560,7 +474,7 @@ MIDIdef.cc(\midi_pot9,{ |val, num, chan, src|
 		sph=val.linlin(0,127,0,3).round(1).asInteger;
 		sph.postln;
 		if(~synth.isPlaying,{~synth.set(\m,sph)});
-},36);
+},33);
 	);
 
 
@@ -570,7 +484,7 @@ MIDIdef.cc(\midi_switch1,{ |val, num, chan, src|
 				if(val>0,lamdoma=1);
 		lamdoma.postln;
 		if(~synth.isPlaying,{~synth.set(\x,lamdoma)});
-},38);
+},14);
 	);
 	(
 MIDIdef.cc(\midi_switch2,{ |val, num, chan, src|
@@ -578,7 +492,7 @@ MIDIdef.cc(\midi_switch2,{ |val, num, chan, src|
 					if(val>0,lamdoma=2);
 		lamdoma.postln;
 		if(~synth.isPlaying,{~synth.set(\x,lamdoma)});
-},39);
+},15);
 	);
 		(
 MIDIdef.cc(\midi_switch3,{ |val, num, chan, src|
@@ -586,7 +500,7 @@ MIDIdef.cc(\midi_switch3,{ |val, num, chan, src|
 					if(val>0,lamdoma=3);
 		lamdoma.postln;
 		if(~synth.isPlaying,{~synth.set(\x,lamdoma)});
-},40);
+},16);
 	);
 
 	(
@@ -595,7 +509,7 @@ MIDIdef.cc(\midi_switch4,{ |val, num, chan, src|
 				if(val>0,lamdoma=4);
 		lamdoma.postln;
 		if(~synth.isPlaying,{~synth.set(\x,lamdoma)});
-},41);
+},17);
 	);
 		(
 MIDIdef.cc(\midi_switch5,{ |val, num, chan, src|
@@ -603,7 +517,7 @@ MIDIdef.cc(\midi_switch5,{ |val, num, chan, src|
 				if(val>0,lamdoma=5);
 		lamdoma.postln;
 		if(~synth.isPlaying,{~synth.set(\x,lamdoma)});
-},42);
+},18);
 	);
 					(
 MIDIdef.cc(\midi_switch6,{ |val, num, chan, src|
@@ -611,7 +525,7 @@ MIDIdef.cc(\midi_switch6,{ |val, num, chan, src|
 					if(val>0,lamdoma=6);
 		lamdoma.postln;
 		if(~synth.isPlaying,{~synth.set(\x,lamdoma)});
-},43);
+},19);
 					);
 	(
 MIDIdef.cc(\midi_switch7,{ |val, num, chan, src|
@@ -619,7 +533,7 @@ MIDIdef.cc(\midi_switch7,{ |val, num, chan, src|
 				if(val>0,lamdoma=7);
 		lamdoma.postln;
 		if(~synth.isPlaying,{~synth.set(\x,lamdoma)});
-},44);
+},20);
 	);
 	(
 MIDIdef.cc(\midi_switch8,{ |val, num, chan, src|
@@ -627,7 +541,7 @@ MIDIdef.cc(\midi_switch8,{ |val, num, chan, src|
 						if(val>0,lamdoma=8);
 		lamdoma.postln;
 		if(~synth.isPlaying,{~synth.set(\x,lamdoma)});
-},45);
+},21);
 	);
 		(
 MIDIdef.cc(\midi_switch9,{ |val, num, chan, src|
@@ -635,7 +549,7 @@ MIDIdef.cc(\midi_switch9,{ |val, num, chan, src|
 					if(val>0,lamdoma=9);
 		lamdoma.postln;
 		if(~synth.isPlaying,{~synth.set(\x,lamdoma)});
-},46);
+},22);
 	);
 
 	(
@@ -644,7 +558,7 @@ MIDIdef.cc(\midi_switch10,{ |val, num, chan, src|
 				if(val>0,lamdoma=10);
 		lamdoma.postln;
 		if(~synth.isPlaying,{~synth.set(\x,lamdoma)});
-},47);
+},23);
 	);
 		(
 MIDIdef.cc(\midi_switch11,{ |val, num, chan, src|
@@ -652,7 +566,7 @@ MIDIdef.cc(\midi_switch11,{ |val, num, chan, src|
 				if(val>0,lamdoma=11);
 		lamdoma.postln;
 		if(~synth.isPlaying,{~synth.set(\x,lamdoma)});
-},48);
+},24);
 	);
 					(
 MIDIdef.cc(\midi_switch12,{ |val, num, chan, src|
@@ -660,7 +574,7 @@ MIDIdef.cc(\midi_switch12,{ |val, num, chan, src|
 					if(val>0,lamdoma=12);
 		lamdoma.postln;
 		if(~synth.isPlaying,{~synth.set(\x,lamdoma)});
-},49);
+},13);
 						);
 	(
 MIDIdef.cc(\midi_switch13,{ |val, num, chan, src|
@@ -668,7 +582,7 @@ MIDIdef.cc(\midi_switch13,{ |val, num, chan, src|
 				if(val>0,lamdoma=13);
 		lamdoma.postln;
 		if(~synth.isPlaying,{~synth.set(\x,lamdoma)});
-},50);
+},12);
 	);
 	(
 MIDIdef.cc(\midi_switch14,{ |val, num, chan, src|
@@ -676,7 +590,7 @@ MIDIdef.cc(\midi_switch14,{ |val, num, chan, src|
 				if(val>0,lamdoma=14);
 		lamdoma.postln;
 		if(~synth.isPlaying,{~synth.set(\x,lamdoma)});
-},51);
+},11);
 	);
 		(
 MIDIdef.cc(\midi_switch15,{ |val, num, chan, src|
@@ -684,7 +598,7 @@ MIDIdef.cc(\midi_switch15,{ |val, num, chan, src|
 					if(val>0,lamdoma=15);
 		lamdoma.postln;
 		if(~synth.isPlaying,{~synth.set(\x,lamdoma)});
-},52);
+},10);
 	);
 
 	(
@@ -693,7 +607,7 @@ MIDIdef.cc(\midi_switch16,{ |val, num, chan, src|
 				if(val>0,lamdoma=16);
 		lamdoma.postln;
 		if(~synth.isPlaying,{~synth.set(\x,lamdoma)});
-},53);
+},9);
 	);
 
 )
