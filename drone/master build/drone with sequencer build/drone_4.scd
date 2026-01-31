@@ -35,44 +35,6 @@ s.meter;
 	 ~b = Buffer.loadCollection(s, ~a.getSetsAndMatrices);
 );*/
 /////////////osc polytope3
-	(
-{
-var  sph1,sph2,g=((1+5.sqrt)/2),s=(1+2.sqrt);
-var az1=0,el1=0,az2=0,el2=0;
-var azimuth,elevation,angle=0,n=12;
-var mag1=1,mag2=1,mag3=1,mag4=1,mag5=1,mag6=1,mag7=1;
-	~az=[];~el=[];
-
-	32.do{
-azimuth=32.collect{
-			az1 = (az1+(2pi-(2pi/s))).wrap(pi.neg,pi);
-		   el1 = (el1+(pi-(pi/s))).wrap((pi/2).neg,(pi/2));
-
-//	mag1=(mag1+(1-(1/1.6180339887499))).wrap(0,1);
-sph1=(Spherical(mag1,(az1+angle).wrap(pi.neg,pi),(el1+angle).wrap((pi/2).neg,(pi/2)))).theta.round(0.000000000001);
-
-	};
-
-elevation=32.collect{
-				az2 = (az2+(2pi-(2pi/s))).wrap(pi.neg,pi);
-			el2 = (el2+(pi-(pi/s))).wrap((pi/2).neg,(pi/2));
-
-	//mag2=(mag2+(1-(1/1.6180339887499))).wrap(0,1);
-		sph2=(Spherical(mag2,(az2+angle).wrap(pi.neg,pi),(el2+angle).wrap((pi/2).neg,(pi/2)))).phi.round(0.000000000001);
-
-	};
-
-
-angle=(angle+(2pi-(2pi/g))).wrap(pi.neg,pi);
-~az=~az++azimuth;~el=~el++elevation;
-	az1=0;el1=0;az2=0;el2=0;
-	}
-}.value;
-);
-
-
-		//.//control array
-
 
 ////// wavetables
 
@@ -82,25 +44,6 @@ angle=(angle+(2pi-(2pi/g))).wrap(pi.neg,pi);
 ~bufferSize = 4096*8;
 ~signalSize = 2048*8;
 );
-		/*(
-(
-			{
-var steps = 256;
-
-~nVals = steps.collect { |i|
-    i.linexp(0, steps-1, 1, 64)
-};
-			~nVals;
-			}.value;
-		);
-(
-~n=1.neg;~array=256.collect{~n=~n+1;~nVals.[~n]};
-~a=(0-(pi/256)); ~ph=256.collect{~a=~a+(pi/256);};
-~bufferSize = 4096*8;
-~signalSize = 2048*8;
-)
-)*/
-
 
 
 		(
@@ -129,17 +72,19 @@ wt = signal.asWavetable;
 (
 SynthDef.new(\synth,{
 
-	arg gain=1,low=992,tone=0,band=1,x=1,a=1,brain=1,rq=0.1,pan=1,m=2,mix=1,room=1;
+	arg gain=1,low=992,tone=0,band=1,x=1,a=1,rq=0.1,pan=1,m=2,az,el;
 	var lamdoma,freq1,freq2,freq3,fund,amp1,amp2,amp3,alpha,cell_az,cell_el,x_pos,y_pos,control1,control2,control3;
 	var sig1,sig2,bank=6,out1,out2,band_osc1,band_osc2,ton,threshold1,threshold2,threshold3,phase1,phase2,phase3;
-	var band_osc3,band_osc4,band_osc5,band_osc6,sig3,out3,cell_tria,b_x,b_y,b_z,polytope,gain1,gain2,gain3;
+	var band_osc3,band_osc4,band_osc5,band_osc6,sig3,out3,cell_tria,b_x,b_y,b_z,polytope,gain1,gain2,gain3,mix=0.4,room=0.7;
 	var magx,magy,magz,magqx,magqy,mod_anglex,anglex,angley,anglez,phasex,phasey,phasez,rq1,rq2,rq3,rq4,rq5,rq6;
 	var mod_angley,mod_anglez,mx,my,mz,mqx,mqy,mag,magq,spread=1,mq=(m-1),choice,nn=0,lfo,sph1,loc1,loc2,loc3;
 
-fund=32*(9/8);
+fund=16*(9/8);
 lamdoma=(x.lag(0.01)+a.lag(0.01))/x.lag(0.01);
 
-polytope=Spherical(lamdoma*28,Select.kr(brain.lag(0.01),~az),Select.kr(brain.lag(0.01),~el));
+
+polytope = Spherical(lamdoma * 56, az, el);
+
 
 b_x=2.pow(polytope.x.round(1)/56);
 b_y=2.pow(polytope.y.round(1)/56);
@@ -222,17 +167,17 @@ band_osc5=SinOsc.kr(b_y*2.pow(band.lag(0.01)/992),phase:phasey.neg).exprange(496
 band_osc6=SinOsc.kr(b_z*2.pow(band.lag(0.01)/992),phase:phasez.neg).exprange(496,16256);
 
 rq1=Select.kr(band.linlin((992*16).neg,((992*16).neg+1),0,1).round(1).asInteger,
-			[DC.ar(rq),SinOsc.kr(b_x*2.pow(band.lag(0.01)/992),phase:phasex,mul:rq).exprange(rq,1)]);
+			[DC.ar(rq),SinOsc.kr(b_x*2.pow(band.lag(0.01)/992),phase:phasex,mul:rq).exprange(0.001,1)]);
 rq2=Select.kr(band.linlin((992*16).neg,((992*16).neg+1),0,1).round(1).asInteger,
-			[DC.ar(rq),SinOsc.kr(b_y*2.pow(band.lag(0.01)/992),phase:phasey,mul:rq).exprange(rq,1)]);
+			[DC.ar(rq),SinOsc.kr(b_y*2.pow(band.lag(0.01)/992),phase:phasey,mul:rq).exprange(0.001,1)]);
 rq3=Select.kr(band.linlin((992*16).neg,((992*16).neg+1),0,1).round(1).asInteger,
-			[DC.ar(rq),SinOsc.kr(b_z*2.pow(band.lag(0.01)/992),phase:phasez,mul:rq).exprange(rq,1)]);
+			[DC.ar(rq),SinOsc.kr(b_z*2.pow(band.lag(0.01)/992),phase:phasez,mul:rq).exprange(0.001,1)]);
 rq4=Select.kr(band.linlin((992*16).neg,((992*16).neg+1),0,1).round(1).asInteger,
-			[DC.ar(rq),SinOsc.kr(b_x*2.pow(band.lag(0.01)/992),phase:phasex.neg,mul:rq).exprange(rq,1)]);
+			[DC.ar(rq),SinOsc.kr(b_x*2.pow(band.lag(0.01)/992),phase:phasex.neg,mul:rq).exprange(0.001,1)]);
 rq5=Select.kr(band.linlin((992*16).neg,((992*16).neg+1),0,1).round(1).asInteger,
-			[DC.ar(rq),SinOsc.kr(b_y*2.pow(band.lag(0.01)/992),phase:phasey.neg,mul:rq).exprange(rq,1)]);
+			[DC.ar(rq),SinOsc.kr(b_y*2.pow(band.lag(0.01)/992),phase:phasey.neg,mul:rq).exprange(0.001,1)]);
 rq6=Select.kr(band.linlin((992*16).neg,((992*16).neg+1),0,1).round(1).asInteger,
-			[DC.ar(rq),SinOsc.kr(b_z*2.pow(band.lag(0.01)/992),phase:phasez.neg,mul:rq).exprange(rq,1)]);
+			[DC.ar(rq),SinOsc.kr(b_z*2.pow(band.lag(0.01)/992),phase:phasez.neg,mul:rq).exprange(0.001,1)]);
 
 
 control1=SinOsc.ar(freq1,phase:phasex,mul:amp1);
@@ -279,44 +224,7 @@ Out.ar(0,Pan2.ar(Limiter.ar(LeakDC.ar(FreeVerb.ar(sig3,mix.lag(0.01),room.lag(0.
 }).add;);
 
 3.wait;
-~synth=Synth.new(\synth,[\gain,10,\tone,992*2,\low,0,\a,1,\pan,0,\band,(992*2).neg,\x,1,\brain,576,\m,1,\rq,0.001,\mix,0,\room,0]).register;//s.record
-		///if a and x are button then rest are 8 midi pots, reverb external on amp or pedal, if a is pot then 8 pots plus slider for gain
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-			~ccBus = Bus.control(s, 1);
-~ccBus.set(0.5);
-
-MIDIdef.cc(\busCC, { |val|
-    ~ccBus.set(val.linlin(0, 127, 0, 1));
-}, 1);
-
-
-		(
-r = Routine({
-    var v;
-    loop {
-        ~ccBus.get({ |val|
-            v = val;
-        });
-        (v * 0.3).postln;
-        0.2.wait;
-    }
-}).play;
-)
-
+~synth=Synth.new(\synth,[\gain,10,\tone,0,\low,0,\a,1,\pan,0.1,\band,(992*2).neg,\x,1,\m,1,\rq,1,\az,0,\el,0]).register;//s.record
 
 
 	////durs
@@ -375,20 +283,29 @@ m3=m3+1;
   //  if (x == 0) { Rest(2) } { x }
 //	}
 }.value;
-);
-
-
-
-/////sequence
-
-
-
-TempoClock.default.tempo_(4);
-
-(
-~r.play;
 )
 
+TempoClock.default.tempo_(4);
+			~ccBus = Bus.control(s, 1);
+~ccBus.set(0.5);
+
+MIDIdef.cc(\busCC, { |val|
+    ~ccBus.set(val.linlin(0, 127, 0, 1));
+}, 1);
+
+
+		(
+r = Routine({
+    var v;
+    loop {
+        ~ccBus.get({ |val|
+            v = val;
+        });
+        (v * 0.3).postln;
+        0.2.wait;
+    }
+}).play;
+)
 
 
 
@@ -412,7 +329,7 @@ MIDIdef.cc(\midi_pot2,{ |val, num, chan, src|
 		pan=val.linlin(0,127,(992*8).neg,(992*8)).round(0.00001).round(1).asInteger;
 		pan.postln;
 		if(~synth.isPlaying,{~synth.set(\pan,pan)});
-},27);
+},40);
 	);
 
 				(
@@ -432,7 +349,7 @@ MIDIdef.cc(\midi_pot4,{ |val, num, chan, src|
 					low=val.linlin(0,127,0,(992*4)).round(1).asInteger;
 		low.postln;
 		if(~synth.isPlaying,{~synth.set(\low,low)});
-},28);
+},39);
 	);
 
 		(
@@ -446,21 +363,14 @@ MIDIdef.cc(\midi_pot5,{ |val, num, chan, src|
 					(
 MIDIdef.cc(\midi_pot6,{ |val, num, chan, src|
 		var tone;
-		tone=val.linlin(0,127,0,992*8).round(1).asInteger;
+		tone=val.linlin(0,127,0,992*4).round(1).asInteger;
 		tone.postln;
 		if(~synth.isPlaying,{~synth.set(\tone,tone)});
 },31);
 	);
-					(
-MIDIdef.cc(\midi_pot7,{ |val, num, chan, src|
-		var loc;
-		loc=val.linlin(0,127,0,1021).round(1).asInteger;
-		loc.postln;
-		if(~synth.isPlaying,{~synth.set(\brain,loc)});
-},30);
-	);
+
 								(
-MIDIdef.cc(\midi_pot8,{ |val, num, chan, src|
+MIDIdef.cc(\midi_pot7,{ |val, num, chan, src|
 		var rq;
 		rq=val.linlin(0,127,0.1,1).round(0.00001);
 		rq.postln;
@@ -469,12 +379,30 @@ MIDIdef.cc(\midi_pot8,{ |val, num, chan, src|
 	);
 
 						(
-MIDIdef.cc(\midi_pot9,{ |val, num, chan, src|
+MIDIdef.cc(\midi_pot8,{ |val, num, chan, src|
 		var sph;
 		sph=val.linlin(0,127,0,3).round(1).asInteger;
 		sph.postln;
 		if(~synth.isPlaying,{~synth.set(\m,sph)});
 },33);
+	);
+
+									(
+MIDIdef.cc(\midi_pot9,{ |val, num, chan, src|
+		var el;
+					el=val.linlin(0,127,(pi/2).neg,(pi/2));
+		el.postln;
+		if(~synth.isPlaying,{~synth.set(\el,el)});
+},28);
+	);
+
+									(
+MIDIdef.cc(\midi_pot10,{ |val, num, chan, src|
+		var az;
+		az=val.linlin(0,127,pi.neg,pi);
+		az.postln;
+		if(~synth.isPlaying,{~synth.set(\az,az)});
+},27);
 	);
 
 
