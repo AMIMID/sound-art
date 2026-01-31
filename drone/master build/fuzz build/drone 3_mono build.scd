@@ -209,7 +209,9 @@ cos((polytope.phi.round(0.00001)).wrap((pi/2).neg,(pi/2))))))).rho/(2.sqrt)).pow
 					sph1=Spherical(mx,polytope.theta,polytope.phi);
 
 					loc1=sph1.x; loc2=sph1.y; loc3=sph1.z;
-					phase1=Complex(0,loc1).theta;phase2=Complex(0,loc2).theta;phase3=Complex(0,=).theta;
+					phase1=Complex(0,loc1).theta;
+					phase2=Complex(0,loc2).theta;
+					phase3=Complex(0,loc3).theta;
 
 
 ton=2.pow((tone.lag(0.01))/992).round(0.0001);
@@ -280,7 +282,7 @@ threshold3=(((343/0.3)/fund).reciprocal.ampdb/2.sqrt).dbamp;
 					//Out.ar(0,Limiter.ar(LeakDC.ar(FreeVerb.ar(sig3,mix.lag(0.01),room.lag(0.01),mul:gain3),mul:loc3.abs),0.9,0.01));
 
 	Out.ar(0,Pan2.ar(Limiter.ar(LeakDC.ar(FreeVerb.ar(sig1,mix.lag(0.01),room.lag(0.01),mul:gain1)),0.8,0.01),loc1));
-	Out.ar(0,Pan2.ar(Limiter.ar(LeakDC.ar(FreeVerb.ar(sig2,mix.lag(0.01),room.lag(0.01),mul:gain2)),0.8,0.01),loc2);
+					Out.ar(0,Pan2.ar(Limiter.ar(LeakDC.ar(FreeVerb.ar(sig2,mix.lag(0.01),room.lag(0.01),mul:gain2)),0.8,0.01),loc2));
 	Out.ar(0,Pan2.ar(Limiter.ar(LeakDC.ar(FreeVerb.ar(sig3,mix.lag(0.01),room.lag(0.01),mul:gain3)),0.8,0.01),loc3));
 
 
