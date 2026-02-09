@@ -256,7 +256,7 @@ cos((polytope.phi.round(0.00001)).wrap((pi/2).neg,(pi/2))))))).rho/(2.sqrt)).pow
 
 					sph1=Spherical(mx,polytope.theta,polytope.phi);
 
-					loc1=sph1.x*10; loc2=sph1.y*10; loc3=sph1.z*10;
+					loc1=sph1.x; loc2=sph1.y; loc3=sph1.z;
 				///	phase1=Complex(0,loc1).theta;
 				//	phase2=Complex(0,loc2).theta;
 				//	phase3=Complex(0,loc3).theta;
