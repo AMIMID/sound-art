@@ -133,7 +133,7 @@ cos((polytope.phi.round(0.00001)).wrap((pi/2).neg,(pi/2))))))).rho/(2.sqrt)).pow
 					my=(Cartesian(0,magy.value,0).rho);
 					//mqy=(Cartesian(0,magqy.value,0).rho);
 					mz=(Cartesian(0,0,magz.value).rho);
-					mag=(Cartesian(magx.value,magy.value,0).rho);
+					mag=(Cartesian(magx.value,magy.value,magz.value).rho);
 					//magq=(Cartesian(magqx.value,magqy.value,0).rho);
 
 
