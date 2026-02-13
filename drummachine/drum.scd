@@ -67,10 +67,12 @@ wt = signal.asWavetable;
 	(
  (
 SynthDef(\kick, {
-	arg amp=1/8,n=12,pan=1,low=0,noise=0.001,decay=1/2,attack=0.001,az=0,el=0,m=1,az1=0,el1=0,az2=0,el2=0,az3=0,el3=0,temp_mag1=56,temp_mag2=56,temp_mag3=56;
+	arg amp=1/8,n=12,pan=1,low=0,noise=0.001,decay=1/2,attack=0.001,az=0,el=0,m=1,az1=0,el1=0,az2=0,el2=0,az3=0,el3=0,
+					temp_mag1=56,temp_mag2=56,temp_mag3=56,azx=0,azy=0,elx=0,ely=0;
     var env,freq,anglex,angley,anglez,mod_anglex,mod_angley,mod_anglez,mx,my,mz,magx,magz,magy;
 	var sph,phase,threshold,ton,phase1,phase2,phase3,sph1,loc1,loc2,loc3,mag,fund;
 	var sig1,sig2,sig3,phasex,phasey,phasez,control1,control2,control3,axis1,axis2,axis3;
+		var amb_w,amb_x,amb_y,amb_z,out,amb_sig1,amb_sig2,amb_sig3;
 
 			ton=2.pow(n/992);
 					fund=32*(9/8);
@@ -135,13 +137,19 @@ sig1 = sig1 + (sig1 * BrownNoise.ar(noise*loc1)); sig2 = sig2 + (sig2 * BrownNoi
 		sig1=tanh(sig1*1.5);sig2=tanh(sig2*1.5);sig3=tanh(sig2*1.5);
 
 
-		Out.ar(3, sig1*env*loc1.abs);
-		Out.ar(4, sig2*env*loc2.abs);
-		Out.ar(5, sig3*env*loc3.abs);
+	amb_sig1= (sig1*env*loc1.abs);
+	amb_sig2= (sig2*env*loc2.abs);
+	amb_sig3= (sig3*env*loc3.abs);
 
-								Out.kr(~controlBus_1.index,A2K.kr(sig1*env*loc1.abs*1000));
-				Out.kr(~controlBus_2.index,A2K.kr(sig2*env*loc1.abs*1000));
-				Out.kr(~controlBus_3.index,A2K.kr(sig3*env*loc1.abs*1000));
+							amb_w=(amb_sig1+amb_sig2+amb_sig3)/2.sqrt;
+					amb_x=amb_sig1;
+					amb_y=amb_sig2;
+					amb_z=amb_sig3;
+
+					out= Out.ar(0,BFDecode1.ar1(amb_w, amb_x, amb_y, amb_z, [azx, azy], [elx,ely],4 ));
+						//		Out.kr(~controlBus_1.index,A2K.kr(sig1*env*loc1.abs*1000));
+			//	Out.kr(~controlBus_2.index,A2K.kr(sig2*env*loc1.abs*1000));
+			//	Out.kr(~controlBus_3.index,A2K.kr(sig3*env*loc1.abs*1000));
 
 }).add;);
 
@@ -207,7 +215,7 @@ m3=m3+1;
 	(
 		~a=Pdef(\1, Pbind(\instrument, \kick,
 			\dur,Pseq(~dur1,inf),
-				\amp,5,
+				\amp,1/2.sqrt,
 				\n,496,
 				\pan,5,
 					\m,3,
@@ -223,7 +231,11 @@ m3=m3+1;
 					\temp_mag2,pi.rand2,
 					\temp_mag3,pi.rand2,
 				\decay,1,
-				\attack,0.01;
+				\attack,0.01,
+					\azx,0,
+					\azy,pi/2,
+					\elx,pi/4,
+					\ely,pi/4;
 		))
 );
 
