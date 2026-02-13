@@ -165,62 +165,37 @@ axis=i+j+k;
 )*/
 
 	////durs
-	({var m1=1.neg, m2=1.neg, m3=1.neg,a,b,c,n=0,bank=6,time=16.reciprocal,beat=1;
+	({var m1=1.neg, m2=1.neg, m3=1.neg,a,b,c,n=0,bank=6,time=32.reciprocal,beat=1,r=0;
 
-~dur1=[];~dur2=[];~dur3=[];
+~dur1=[];~dur2=[];~dur3=[]; ~dx=[];~dy=[]; ~dz=[];
 
+					3.do{
 ~x=bank.collect{
 m1=m1+1;
-					b=Spherical(beat,~az.[m1],~el.[m1]).rotate(0).x.round(0.00001);
+					b=Spherical(beat,~az.[m1],~el.[m1]).rotate(r).x.round(0.00001);
 	2.pow(b).round(time);
 };
 ~y=bank.collect{
 m2=m2+1;
-	c=Spherical(beat,~az.[m2],~el.[m2]).rotate(0).y.round(0.00001);
+	c=Spherical(beat,~az.[m2],~el.[m2]).rotate(r).y.round(0.00001);
 	2.pow(c).round(time);
 };
 ~z=bank.collect{
 m3=m3+1;
-	d=Spherical(beat,~az.[m3],~el.[m3]).rotate(0).z.round(0.00001);
+	d=Spherical(beat,~az.[m3],~el.[m3]).rotate(r).z.round(0.00001);
 	2.pow(d).round(time);
-};
-		bank.do{ ~dur1=~dur1++~x.[n];n=n+1;};n=0;
-		bank.do{ ~dur2=~dur2++~y.[n];n=n+1;};n=0;
-		bank.do{ ~dur3=~dur3++~z.[n];n=n+1;};n=0;
+}; m1=1.neg; m2=1.neg; m3=1.neg; ~dx=~dx++~x; ~dy=~dy++~y;  ~dz=~dz++~z;   ~x=[]; ~y=[]; ~z=[];  r=r+90.degrad; };
+
+				18.do{ ~dur1=~dur1++~dx.[n];n=n+1;};n=0;
+		18.do{ ~dur2=~dur2++~dy.[n];n=n+1;};n=0;
+		18.do{ ~dur3=~dur3++~dz.[n];n=n+1;};n=0;
 	//	bank.do{~durs=~durs++~x.[n]++~y.[n]++~z.[n];n=n+1;}
 //	~dur = ~duri.collect { |x|
   //  if (x == 0) { Rest(2) } { x }
 //	}
 }.value;
 );
-			({var m1=1.neg, m2=1.neg, m3=1.neg,a,b,c,n=0,bank=6,time=16.reciprocal,beat=1;
 
-~dur4=[];~dur5=[];~dur6=[];
-
-~x1=bank.collect{
-m1=m1+1;
-	b=Spherical(beat,~az.[m1],~el.[m1]).rotate(90.degrad).x.round(0.00001);
-	2.pow(b).round(time);
-};
-~y1=bank.collect{
-m2=m2+1;
-	c=Spherical(beat,~az.[m2],~el.[m2]).rotate(90.degrad).y.round(0.00001);
-	2.pow(c).round(time);
-};
-~z1=bank.collect{
-m3=m3+1;
-	d=Spherical(beat,~az.[m3],~el.[m3]).rotate(90.degrad).z.round(0.00001);
-	2.pow(d).round(time);
-};
-		bank.do{ ~dur4=~dur4++~x1.[n];n=n+1;};n=0;
-		bank.do{ ~dur5=~dur5++~y1.[n];n=n+1;};n=0;
-		bank.do{ ~dur6=~dur6++~z1.[n];n=n+1;};n=0;
-	//	bank.do{~durs=~durs++~x.[n]++~y.[n]++~z.[n];n=n+1;}
-//	~dur = ~duri.collect { |x|
-  //  if (x == 0) { Rest(2) } { x }
-//	}
-}.value;
-);
 
 
 
@@ -228,43 +203,32 @@ m3=m3+1;
 	(
 		~a=Pdef(\1, Pbind(\instrument, \kick,
 			\dur,Pseq(~dur1,inf),
-				\amp,7,
+				\amp,5,
 				\n,0,
 				\pan,5,
-					\m,1,
+					\m,3,
 			\low,0,
 				\noise,0.001,
-					\az1,Pexprand(0.0001,(pi/2),inf),
-					\el1,Pexprand(0.0001,(pi/2),inf),
-					\az2,Pexprand(0.0001,(pi/2),inf),
-					\el2,Pexprand(0.0001,(pi/2),inf),
-					\az3,Pexprand(0.0001,(pi/2),inf),
-					\el3,Pexprand(0.0001,(pi/2),inf),
-			\temp_mag1,Pexprand(0.0001,(pi/2),inf),
-					\temp_mag2,Pexprand(0.0001,(pi/2),inf),
-					\temp_mag3,Pexprand(0.0001,(pi/2),inf),
+					\az1,pi.rand2,
+					\el1,pi.rand2,
+					\az2,pi.rand2,
+					\el2,pi.rand2,
+					\az3,pi.rand2,
+					\el3,pi.rand2,
+			\temp_mag1,pi.rand2,
+					\temp_mag2,pi.rand2,
+					\temp_mag3,pi.rand2,
 				\decay,1,
 				\attack,0.01;
 		))
 );
 
-(
-		~b=Pdef(\2, Pbind(\instrument, \kick,
-			\dur,Pseq(~dur2,inf),
-		))
-);
-(
-		~c=Pdef(\3, Pbind(\instrument, \kick,
-			\dur,Pseq(~dur3,inf),
-		))
-);
-
 
 );
 
 
 
-TempoClock.default.tempo_(4);
+TempoClock.default.tempo_(3);
 
 (
 ~a.play;
