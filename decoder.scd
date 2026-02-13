@@ -15,7 +15,7 @@
 	z=InFeedback.ar(5);
 
     // B-format decode to stereo with speakers at different distances
-    BFDecode1.ar1(w, x, y, z, [0.degrad, 90.degrad], 0,4 ]);
+    BFDecode1.ar1(w, x, y, z, [0.degrad, 90.degrad], 0,4 );
 
 }.scope(2);
 )
