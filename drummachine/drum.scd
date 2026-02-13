@@ -3,7 +3,7 @@
 (
 (
 s.options.numWireBufs = 1024*2;
-s.options.numOutputBusChannels=6;
+s.options.numOutputBusChannels=3;
 s.options.numInputBusChannels=0;
 s.options.memSize = 8192*4;
 s.options.blockSize = 64;
