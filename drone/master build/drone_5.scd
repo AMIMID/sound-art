@@ -405,7 +405,7 @@ MIDIdef.cc(\midi_switch6,{ |val, num, chan, src|
 					);
 
 )
-	)});
+	});
 	Tdef(\drone).play;
 }
 )
