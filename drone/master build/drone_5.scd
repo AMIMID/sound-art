@@ -77,6 +77,7 @@ s.meter;
 
 ////// wavetables
 
+		//oscillator table
 		(
 ~n=1.neg;~array=992.collect{~n=~n+1;2.pow(~n/992)};
 ~a=(0-(pi/496)); ~ph=992.collect{~a=~a+(pi/496);};
@@ -96,23 +97,33 @@ wt = signal.asWavetable;
 //signal.plot;
 		}.value;
 );
+
+
+		/////distortion table
+		(
+		~transfer_function= Env([0.8.neg,0,0.8],[1,1],[8,8.neg]).asSignal(1024);
+			~transfer_function=~transfer_function+(Signal.sineFill(~signalSize,~array,~ph)/1);
+		~transfer_function=~transfer_function.normalize;
+			//~transfer_function.plot;
+			~dist=Buffer.loadCollection(s,~tf.asWavetableNoWrap);
+		)
+
+
+
+
 		////sound
 (
 SynthDef.new(\synth,{
 
-	arg gain=1,low=992,tone=0,x=1,pan=1,mix=0.3,a=1,oct1=1,oct2=1,oct3=1,angle=0,panx=1,pany=1,panz=1,fu=16,drive=1,spread=1,azx=0,azy=0,elx=0,ely=0;
-	var rq=1,m=2,room=0.5,attack,decay,curve,band,azf=0,elf=0,q,r1,r2,r3,sq1,sq2,sq3,rotationx,rotationy,rotationz,c,cloud=1;
+	arg gain=1,low=992,tone=0,x=1,pan=1,mix=0.3,a=1,oct1=1,oct2=1,oct3=1,angle=0,panx=1,pany=1,panz=1,fu=16,drive=1,spread=1,azx=0,azy=0,elx=0,ely=0,overdrive=0.1,axisx=1,axisy=1,axisz=1,drone_amp=1;
+	var rq=1,m=2,room=0.5,attack,decay,curve,band,azf=0,elf=0,q,r1,r2,r3,sq1,sq2,sq3,rotationx,rotationy,rotationz,cloud=1;
 	var az1,el1,az2,el2,az3,el3,temp_mag1,temp_mag2,temp_mag3,core=(9/8).rand;
 	var lamdoma,freq1,freq2,freq3,fund,amp1,amp2,amp3,alpha,cell_az,cell_el,x_pos,y_pos,control1,control2,control3;
 	var sig1,sig2,bank=6,out1,out2,band_osc1,band_osc2,ton,threshold1,threshold2,threshold3,phase1,phase2,phase3;
 	var band_osc3,band_osc4,band_osc5,band_osc6,sig3,out3,cell_tria,b_x,b_y,b_z,polytope,gain1,gain2,gain3,env,azimuth,elevation;
 	var magx,magy,magz,magqx,magqy,mod_anglex,anglex,angley,anglez,phasex,phasey,phasez,rq1,rq2,rq3,rq4,rq5,rq6;
 	var mod_angley,mod_anglez,mx,my,mz,mqx,mqy,mag,magq,mq=(m-1),lfo,sph1,loc1,loc2,loc3,axis1,axis2,axis3,g=((1+5.sqrt)/2),s=(1+2.sqrt);
-	var amb_w,amb_x,amb_y,amb_z,out,amb_sig1,amb_sig2,amb_sig3,control_ch1=0,control_ch2=3,control_ch3=6,az,el,axis=[1,1,1].normalizeSum.sqrt;
-	var axis_x=[1,0,0].normalizeSum.sqrt,axis_y=[0,1,0].normalizeSum.sqrt,axis_z=[0,0,1].normalizeSum.sqrt;
-	var i1=Quaternion(0, axis_x.[0], 0, 0),j1=Quaternion(0, 0, axis_x.[1], 0),k1=Quaternion(0, 0, 0, axis_x.[2]);
-    var i2=Quaternion(0, axis_y.[0], 0, 0),j2=Quaternion(0, 0, axis_y.[1], 0),k2=Quaternion(0, 0, 0, axis_y.[2]);
-	var i3=Quaternion(0, axis_z.[0], 0, 0),j3=Quaternion(0, 0, axis_z.[1], 0),k3=Quaternion(0, 0, 0, axis_z.[2]);
+	var amb_w,amb_x,amb_y,amb_z,out,amb_sig1,amb_sig2,amb_sig3,axis,cx,cy,cz;
 	var axi1,axi2,axi3,ds1,ds2,ds3,f1,f2,f3,g1,g2,g3;
 
 fund=fu*(9/8);
@@ -120,41 +131,21 @@ lamdoma=(x.lag(0.01)+a.lag(0.01))/x.lag(0.01);
 
 						lfo=2.pow(pan/992);
 					band=pan;
-					spread=lfo.reciprocal;
-
-			azf = (azf+(2pi-(2pi/s))).wrap(pi.neg,pi);
-		   elf = (elf+(pi-(pi/s))).wrap((pi/2).neg,(pi/2));
 
 					temp_mag1=992*oct1;
 					temp_mag2=992*oct2;
 					temp_mag3=992*oct3;
 
-	axi1=i1+j1+k1;
-	axi2=i2+j2+k2;
-	axi3=i3+j3+k3;
+				axis=[axisx,axisy,axisz].normalizeSum.sqrt;
 
-				c=Cartesian(axis.[0],axis.[1],axis.[2]);
+				cx=Cartesian(axis.[0],axis.[0],axis.[0]);
+				cy=Cartesian(axis.[1],axis.[1],axis.[1]);
+				cz=Cartesian(axis.[2],axis.[2],axis.[2]);
 
-q=Quaternion(0,c.x.round(0.00001),c.y.round(0.00001),c.z.round(0.00001));
 
-r1=((axi1*exp(Complex(0,1)*angle).imag)+exp(Complex(0,1)*angle).real);
-r2=((axi2*exp(Complex(0,1)*angle).imag)+exp(Complex(0,1)*angle).real);
-r3=((axi3*exp(Complex(0,1)*angle).imag)+exp(Complex(0,1)*angle).real);
-
-rotationx=r1*q*r1.conjugate;
-rotationy=r1*q*r2.conjugate;
-rotationz=r1*q*r3.conjugate;
-
-sq1= Cartesian(rotationx.b,rotationx.c,rotationx.d);
-sq2= Cartesian(rotationy.b,rotationy.c,rotationy.d);
-sq3= Cartesian(rotationz.b,rotationz.c,rotationz.d);
-
-					az1=sq1.theta;
-					el1=sq1.phi;
-					az2=sq2.theta;
-					el2=sq2.phi;
-					az3=sq3.theta;
-					el3=sq3.phi;
+					az1=cx.theta; el1=cy.phi;
+					az2=cy.theta; el2=cy.phi;
+					az3=cz.theta; el3=cz.phi;
 
 				cloud.do{
 
@@ -270,9 +261,9 @@ control1=SinOsc.ar(freq1,phase:phasex,mul:amp1);
 control2=SinOsc.ar(freq2,phase:phasey,mul:amp2);
 control3=SinOsc.ar(freq3,phase:phasez,mul:amp3);
 
-ds1=(LPF.ar((Osc.ar(~w1.bufnum,f1,phase:phasex,mul:100).abs*SinOsc.ar(f1,phase:phasex)),f1*2.pow(low.lag(0.01)/992),g1/6));
-ds2=(LPF.ar((Osc.ar(~w1.bufnum,f2,phase:phasey,mul:100).abs*SinOsc.ar(f2,phase:phasey)),f2*2.pow(low.lag(0.01)/992),g2/6));
-ds3=(LPF.ar((Osc.ar(~w1.bufnum,f3,phase:phasez,mul:100).abs*SinOsc.ar(f3,phase:phasez)),f3*2.pow(low.lag(0.01)/992),g3/6));
+ds1=(LPF.ar((Osc.ar(~w1.bufnum,f1,phase:phasex,mul:100).abs*SinOsc.ar(f1,phase:phasex)),f1*2.pow(low.lag(0.01)/992),g1/drone_amp));
+ds2=(LPF.ar((Osc.ar(~w1.bufnum,f2,phase:phasey,mul:100).abs*SinOsc.ar(f2,phase:phasey)),f2*2.pow(low.lag(0.01)/992),g2/drone_amp));
+ds3=(LPF.ar((Osc.ar(~w1.bufnum,f3,phase:phasez,mul:100).abs*SinOsc.ar(f3,phase:phasez)),f3*2.pow(low.lag(0.01)/992),g3/drone_amp));
 
 sig1=(LPF.ar((Osc.ar(~w1.bufnum,freq1,phase:phasex,mul:100).abs*SinOsc.ar(freq1,phase:phasex)),freq1*2.pow(low.lag(0.01)/992),amp1)+ds1);
 sig2=(LPF.ar((Osc.ar(~w1.bufnum,freq2,phase:phasey,mul:100).abs*SinOsc.ar(freq2,phase:phasey)),freq2*2.pow(low.lag(0.01)/992),amp2)+ds2);
@@ -305,11 +296,15 @@ threshold3=(((343/0.3)/fund).reciprocal.ampdb/2.sqrt).dbamp;
 
 		sig1 = (sig1 * drive) / (1 + (sig1 * drive).abs);  sig2 = (sig2 * drive) / (1 + (sig2 * drive).abs);  sig3 = (sig3 * drive) / (1 + (sig3 * drive).abs);
 
+		sig1=Shaper.ar(~dist,sig1*overdrive,drive.reciprocal);
+		sig2=Shaper.ar(~dist,sig2*overdrive,drive.reciprocal);
+		sig3=Shaper.ar(~dist,sig3*overdrive,drive.reciprocal);
+
 
 	///final out
-					gain1=gain*rq1.sqrt.reciprocal*fu.reciprocal*drive.reciprocal;
-					gain2=gain*rq2.sqrt.reciprocal*fu.reciprocal*drive.reciprocal;
-					gain3=gain*rq3.sqrt.reciprocal*fu.reciprocal*drive.reciprocal;
+					gain1=gain*rq1.sqrt.reciprocal*fu.reciprocal*overdrive.reciprocal;
+					gain2=gain*rq2.sqrt.reciprocal*fu.reciprocal*overdrive.reciprocal;
+					gain3=gain*rq3.sqrt.reciprocal*fu.reciprocal*overdrive.reciprocal;
 
 					///three channel
 				//	Out.ar(0,Limiter.ar(LeakDC.ar(FreeVerb.ar(sig1,mix.lag(0.01),room.lag(0.01),mul:gain1*loc1.abs)),0.9,0.01));
@@ -350,16 +345,17 @@ threshold3=(((343/0.3)/fund).reciprocal.ampdb/2.sqrt).dbamp;
 			Out.kr(~controlBus_y, mod_angley);
 			Out.kr(~controlBus_z, mod_anglez);
 
-					control_ch1=control_ch1+1;
-					control_ch2=control_ch2+1;
-					control_ch3=control_ch3+1;
+
+						azf = (azf+(2pi-(2pi/s))).wrap(pi.neg,pi);
+		   elf = (elf+(pi-(pi/s))).wrap((pi/2).neg,(pi/2))
 				};
 
 }).add;);
 
 5.wait;
 
-		~synth=Synth.new(\synth,[\gain,128,\drive,16,\fu,32,\tone,0,\low,0,\pan,(992*16).neg,\mix,0.3,\x,1,\a,1,\oct1,1,\oct2,1,\oct3,1,\az,pi/2,\el,pi/2,\angle,pi/2,\panx,1,\pany,1,\panz,1,\spread,1,\azx=0,\azy=0,\elx=0,\ely=0]).register;//s.record
+		~synth=Synth.new(\synth,[\gain,10,\drive,2,\overdrive,0.1,\fu,32,\tone,0,\low,0,\pan,(992*16).neg,\mix,0.3,\drone_amp,1,
+			\x,1,\a,1,\oct1,1,\oct2,1,\oct3,1,\angle,pi/2,\panx,1,\pany,1,\panz,1,\spread,1,\azx,0,\azy,pi/2,\elx,0,\ely,\axisx,1,\axisy,1,\axisz,1;]).register;//s.record
 
 
 2.wait;
@@ -370,7 +366,7 @@ MIDIIn.connectAll;
 MIDIdef.cc(\midi_pot1,{ |val, num, chan, src|
 		var gain;
 	//[val, num, chan, src].postln;
-	gain=val.linlin(0,127,0,256).round(0.000001);
+	gain=val.linlin(0,127,0,10).round(0.000001);
 
 		gain.postln;
 		if(~synth.isPlaying,{~synth.set(\gain,gain)});
