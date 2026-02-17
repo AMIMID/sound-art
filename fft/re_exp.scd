@@ -34,7 +34,7 @@ Buffer.freeAll
 
 (
 			{
-var steps = 256;
+var steps = 8;
 
 ~nVals = steps.collect { |i|
     i.linexp(0, steps-1, 0.18, 463).round
@@ -197,6 +197,7 @@ Synth(\re);
 )
 
 
+////////////////diffusion on array of pints
 (
 {
 var  sph1,sph2,sph3,sph4,sph5,sph6,sph7,m_x=9,m_y=9,m_z=9,qx,qy,mq=m_x-1;
@@ -210,7 +211,7 @@ var mag1=1,mag2=1,mag3=1,mag4=1,mag5=1,mag6=1,mag7=1;
 
 //	spread = if(m_z < 1) { 1 / m_z } { m_z };
 
-	16.do{
+	8.do{
 azimuth=32.collect{
 			az1 = (az1+(2pi-(2pi/silver_r))).wrap(pi.neg,pi);
 		   el1 = (el1+(pi-(pi/silver_r))).wrap((pi/2).neg,(pi/2));
@@ -310,4 +311,77 @@ angle=(angle+(2pi-(2pi/silver_r))).wrap(pi.neg,pi);
 		az4=0;el4=0;az5=0;el5=0;az6=0;el6=0;az7=0;el7=0;
 	}
 }.value;
+)
+
+(
+			{
+var steps = 256;
+
+~nVals = steps.collect { |i|
+    i.linexp(0, steps-1, 0.18, 256).round
+};
+			~nVals.asInteger;
+			}.value;
+		)
+
+
+(
+SynthDef.new(\re, {
+	var chain1rl, chain1rr;
+    var sig1rl,sig1rr;
+    var sph1,sph2;
+	var anglex1,angley1,anglez1,anglex2,angley2,anglez2;
+	var frames=~frames,silver=45,golden=45,g=((1+5.sqrt)/2),s=(1+2.sqrt);
+	var in1,in2,chain1,chain2,spread=1;
+	var az1,el1,az2,el2;
+	var pan1,pan2,n=0;
+
+     in1 = PlayBuf.ar(1, ~c1.bufnum, BufRateScale.kr(~c1.bufnum), loop: 0, doneAction:2);
+	in2 = PlayBuf.ar(1, ~c2.bufnum, BufRateScale.kr(~c2.bufnum), loop: 0, doneAction:2);
+
+	chain1 = FFT(LocalBuf(frames), in1);
+	chain2 = FFT(LocalBuf(frames), in2);
+
+
+	256.do{
+
+		chain1rl = chain1.pvcollect(frames,
+						{|mag, phase, index| [mag, (phase)]; }, frombin: ~nVals.[n], tobin: ~nVals.[n], zeroothers: 1);
+
+chain1rr = chain2.pvcollect(frames,
+			{|mag, phase, index| [mag, (phase)]; },  frombin: ~nVals.[n], tobin: ~nVals.[n], zeroothers: 1);
+
+	sig1rl=IFFT(chain1rl);
+sig1rr=IFFT(chain1rr);
+
+
+		sph1=Spherical(1,~az.[n],~el.[n]);
+	sph2=Spherical(1,~az.[n],~el.[n]);
+
+anglex1=exp(Complex(0,1)*sph1.theta).real*exp(Complex(0,1)*sph1.phi).real;
+angley1=exp(Complex(0,1)*sph1.theta).imag*exp(Complex(0,1)*sph1.phi).real;
+anglez1=exp(Complex(0,1)*sph1.phi).imag;
+anglex2=exp(Complex(0,1)*sph2.theta).real*exp(Complex(0,1)*sph2.phi).real;
+angley2=exp(Complex(0,1)*sph2.theta).imag*exp(Complex(0,1)*sph2.phi).real;
+anglez2=exp(Complex(0,1)*sph2.phi).imag;
+
+	pan1=Cartesian(anglex1,angley1,anglez1);
+	pan2=Cartesian(anglex2,angley2,anglez2);
+
+Out.ar(0,VBAP.ar(8,LeakDC.ar(sig1rl),~b.bufnum,pan1.theta.raddeg,pan1.phi.raddeg,spread));
+
+Out.ar(0,VBAP.ar(8,LeakDC.ar(sig1rr),~b.bufnum,pan2.theta.raddeg,pan2.phi.raddeg,spread));
+
+		n=n+1;
+	};
+
+}).add;
+)
+
+
+
+
+(
+Synth(\re);
+//s.record(numChannels:8,duration:(8*60));
 )
