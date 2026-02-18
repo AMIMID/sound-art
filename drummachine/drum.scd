@@ -110,9 +110,9 @@ magz=((Complex(cos(((sph.phi+mod_anglez).round(0.00001)*m).wrap((pi/2).neg,(pi/2
 
 mx=(Cartesian(magx.value,0,0).rho);my=(Cartesian(0,magy.value,0).rho);mz=(Cartesian(0,0,magz.value).rho);
 
-phasex=Complex(0,mx.value).theta;
-phasey=Complex(0,my.value).theta;
-phasez=Complex(0,mz.value).theta;
+phasex=Complex(1,mx.value).theta;
+phasey=Complex(1,my.value).theta;
+phasez=Complex(1,mz.value).theta;
 									mag=(Cartesian(magx.value,magy.value,magz.value).rho);
 									sph1=Spherical(mag,sph.theta,sph.phi);
 			loc1=sph1.x;
