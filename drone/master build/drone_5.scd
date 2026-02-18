@@ -35,7 +35,7 @@ s.meter;
 ~a = VBAPSpeakerArray.new(3,
 [[45, 35.264390.neg], [135, 35.264390.neg], [45.neg, 35.264390.neg], [135.neg, 35.264390.neg],[45,35.264390],[135,35.264390],[45.neg,35.264390],[135.neg,35.264390]]);
 	 ~b = Buffer.loadCollection(s, ~a.getSetsAndMatrices);
-)
+);
 
 
 ///animation buses
@@ -105,8 +105,8 @@ wt = signal.asWavetable;
 			~transfer_function=~transfer_function+(Signal.sineFill(~signalSize,~array,~ph)/1);
 		~transfer_function=~transfer_function.normalize;
 			//~transfer_function.plot;
-			~dist=Buffer.loadCollection(s,~tf.asWavetableNoWrap);
-		)
+			~dist=Buffer.loadCollection(s,~transfer_function.asWavetableNoWrap);
+		);
 
 
 
@@ -115,7 +115,8 @@ wt = signal.asWavetable;
 (
 SynthDef.new(\synth,{
 
-	arg gain=1,low=992,tone=0,x=1,pan=1,mix=0.3,a=1,oct1=1,oct2=1,oct3=1,angle=0,panx=1,pany=1,panz=1,fu=16,drive=1,spread=1,azx=0,azy=0,elx=0,ely=0,overdrive=0.1,axisx=1,axisy=1,axisz=1,drone_amp=1;
+	arg gain=1,low=992,tone=0,x=1,pan=1,mix=0.3,a=1,oct1=1,oct2=1,oct3=1,angle=0,panx=1,pany=1,panz=1,
+				fu=16,drive=1,spread=1,azx=0,azy=0,elx=0,ely=0,overdrive=0.1,axisx=1,axisy=1,axisz=1,drone_amp=1,rz=100;
 	var rq=1,m=2,room=0.5,attack,decay,curve,band,azf=0,elf=0,q,r1,r2,r3,sq1,sq2,sq3,rotationx,rotationy,rotationz,cloud=1;
 	var az1,el1,az2,el2,az3,el3,temp_mag1,temp_mag2,temp_mag3,core=(9/8).rand;
 	var lamdoma,freq1,freq2,freq3,fund,amp1,amp2,amp3,alpha,cell_az,cell_el,x_pos,y_pos,control1,control2,control3;
@@ -261,13 +262,13 @@ control1=SinOsc.ar(freq1,phase:phasex,mul:amp1);
 control2=SinOsc.ar(freq2,phase:phasey,mul:amp2);
 control3=SinOsc.ar(freq3,phase:phasez,mul:amp3);
 
-ds1=(LPF.ar((Osc.ar(~w1.bufnum,f1,phase:phasex,mul:100).abs*SinOsc.ar(f1,phase:phasex)),f1*2.pow(low.lag(0.01)/992),g1/drone_amp));
-ds2=(LPF.ar((Osc.ar(~w1.bufnum,f2,phase:phasey,mul:100).abs*SinOsc.ar(f2,phase:phasey)),f2*2.pow(low.lag(0.01)/992),g2/drone_amp));
-ds3=(LPF.ar((Osc.ar(~w1.bufnum,f3,phase:phasez,mul:100).abs*SinOsc.ar(f3,phase:phasez)),f3*2.pow(low.lag(0.01)/992),g3/drone_amp));
+ds1=(LPF.ar((Osc.ar(~w1.bufnum,f1,phase:phasex,mul:rz).abs*SinOsc.ar(f1,phase:phasex)),f1*2.pow(low.lag(0.01)/992),g1/drone_amp));
+ds2=(LPF.ar((Osc.ar(~w1.bufnum,f2,phase:phasey,mul:rz).abs*SinOsc.ar(f2,phase:phasey)),f2*2.pow(low.lag(0.01)/992),g2/drone_amp));
+ds3=(LPF.ar((Osc.ar(~w1.bufnum,f3,phase:phasez,mul:rz).abs*SinOsc.ar(f3,phase:phasez)),f3*2.pow(low.lag(0.01)/992),g3/drone_amp));
 
-sig1=(LPF.ar((Osc.ar(~w1.bufnum,freq1,phase:phasex,mul:100).abs*SinOsc.ar(freq1,phase:phasex)),freq1*2.pow(low.lag(0.01)/992),amp1)+ds1);
-sig2=(LPF.ar((Osc.ar(~w1.bufnum,freq2,phase:phasey,mul:100).abs*SinOsc.ar(freq2,phase:phasey)),freq2*2.pow(low.lag(0.01)/992),amp2)+ds2);
-sig3=(LPF.ar((Osc.ar(~w1.bufnum,freq3,phase:phasez,mul:100).abs*SinOsc.ar(freq3,phase:phasez)),freq3*2.pow(low.lag(0.01)/992),amp3)+ds3);
+					sig1=(LPF.ar((Osc.ar(~w1.bufnum,freq1,phase:phasex,mul:rz).abs*Shaper.ar(~dist,SinOsc.ar(freq1,phase:phasex,mul:2.pow(overdrive/992)))),freq1*2.pow(low.lag(0.01)/992),amp1)+ds1);
+					sig2=(LPF.ar((Osc.ar(~w1.bufnum,freq2,phase:phasey,mul:rz).abs*Shaper.ar(~dist,SinOsc.ar(freq2,phase:phasey,mul:2.pow(overdrive/992)))),freq2*2.pow(low.lag(0.01)/992),amp2)+ds2);
+					sig3=(LPF.ar((Osc.ar(~w1.bufnum,freq3,phase:phasez,mul:rz).abs*Shaper.ar(~dist,SinOsc.ar(freq3,phase:phasez,mul:2.pow(overdrive/992)))),freq3*2.pow(low.lag(0.01)/992),amp3)+ds3);
 
 	sig1=Select.ar(band.linlin((992*16).neg,((992*16).neg+1),0,1).round(1).asInteger,
 						[sig1,BPF.ar(BRF.ar(sig1,band_osc1.lag(0.1),rq1),band_osc4.lag(0.1),rq4)]);
@@ -292,19 +293,17 @@ threshold3=(((343/0.3)/fund).reciprocal.ampdb/2.sqrt).dbamp;
 
 		sig1 = sig1.softclip.distort; sig2 = sig2.softclip.distort;  sig3 = sig3.softclip.distort;
 
-		sig1=tanh(sig1*drive);sig2=tanh(sig2*drive);sig3=tanh(sig3*drive);
+		sig1 = (tanh(sig1*2.pow(drive/992))) / (1 + (tanh(sig1*2.pow(drive/992))).abs);
 
-		sig1 = (sig1 * drive) / (1 + (sig1 * drive).abs);  sig2 = (sig2 * drive) / (1 + (sig2 * drive).abs);  sig3 = (sig3 * drive) / (1 + (sig3 * drive).abs);
+		sig2 =  (tanh(sig2*2.pow(drive/992))) / (1 + (tanh(sig2*2.pow(drive/992))).abs);
 
-		sig1=Shaper.ar(~dist,sig1*overdrive,drive.reciprocal);
-		sig2=Shaper.ar(~dist,sig2*overdrive,drive.reciprocal);
-		sig3=Shaper.ar(~dist,sig3*overdrive,drive.reciprocal);
+	sig3 =  (tanh(sig3*2.pow(drive/992))) / (1 + (tanh(sig3*2.pow(drive/992))).abs);
 
 
 	///final out
-					gain1=gain*rq1.sqrt.reciprocal*fu.reciprocal*overdrive.reciprocal;
-					gain2=gain*rq2.sqrt.reciprocal*fu.reciprocal*overdrive.reciprocal;
-					gain3=gain*rq3.sqrt.reciprocal*fu.reciprocal*overdrive.reciprocal;
+					gain1=gain*rq1.sqrt.reciprocal*fu.reciprocal;//*(2.pow(drive/992)).reciprocal;
+					gain2=gain*rq2.sqrt.reciprocal*fu.reciprocal;//*(2.pow(drive/992)).reciprocal;
+					gain3=gain*rq3.sqrt.reciprocal*fu.reciprocal;//*(2.pow(drive/992)).reciprocal;
 
 					///three channel
 				//	Out.ar(0,Limiter.ar(LeakDC.ar(FreeVerb.ar(sig1,mix.lag(0.01),room.lag(0.01),mul:gain1*loc1.abs)),0.9,0.01));
@@ -354,7 +353,7 @@ threshold3=(((343/0.3)/fund).reciprocal.ampdb/2.sqrt).dbamp;
 
 5.wait;
 
-		~synth=Synth.new(\synth,[\gain,10,\drive,2,\overdrive,0.1,\fu,32,\tone,0,\low,0,\pan,(992*16).neg,\mix,0.3,\drone_amp,1,
+		~synth=Synth.new(\synth,[\gain,10,\drive,992*4,\overdrive,992*1,\fu,32,\tone,0,\low,0,\pan,(992*16).neg,\mix,0.3,\drone_amp,1,\rz,100,
 			\x,1,\a,1,\oct1,1,\oct2,1,\oct3,1,\angle,pi/2,\panx,1,\pany,1,\panz,1,\spread,1,\azx,0,\azy,pi/2,\elx,0,\ely,\axisx,1,\axisy,1,\axisz,1;]).register;//s.record
 
 
