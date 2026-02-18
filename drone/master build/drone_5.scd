@@ -317,8 +317,8 @@ threshold3=(((343/0.3)/fund).reciprocal.ampdb/2.sqrt).dbamp;
 
 				///3d vbap expansion
 //Out.ar(0,VBAP.ar(8,Limiter.ar(LeakDC.ar(FreeVerb.ar(sig1,mix.lag(0.01),room.lag(0.01),mul:gain1*loc1.abs)),0.9,0.01),~b,sph1.theta.raddeg,sph1.phi.raddeg,width:spread));
-//Out.ar(0,VBAP.ar(8,Limiter.ar(LeakDC.ar(FreeVerb.ar(sig1,mix.lag(0.01),room.lag(0.01),mul:gain1*loc1.abs)),0.9,0.01),~b,sph1.theta.raddeg,sph1.phi.raddeg,,width:spread));
-//Out.ar(0,VBAP.ar(8,Limiter.ar(LeakDC.ar(FreeVerb.ar(sig1,mix.lag(0.01),room.lag(0.01),mul:gain1*loc1.abs)),0.9,0.01),~b,sph1.theta.raddeg,sph1.phi.raddeg,,width:spread));
+//Out.ar(0,VBAP.ar(8,Limiter.ar(LeakDC.ar(FreeVerb.ar(sig2,mix.lag(0.01),room.lag(0.01),mul:gain1*loc2.abs)),0.9,0.01),~b,sph1.theta.raddeg,sph1.phi.raddeg,,width:spread));
+//Out.ar(0,VBAP.ar(8,Limiter.ar(LeakDC.ar(FreeVerb.ar(sig3,mix.lag(0.01),room.lag(0.01),mul:gain1*loc3.abs)),0.9,0.01),~b,sph1.theta.raddeg,sph1.phi.raddeg,,width:spread));
 
 
 ///anbisonic decoded on stereo
