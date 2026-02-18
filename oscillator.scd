@@ -79,7 +79,7 @@ signal.plot;
 
 (
 {
-	var freq=6*32, b=1,f=1,rz=100,amp=1;
+	var freq=6*32, b=1,f=1,rz=10000,amp=1;
 
 Out.ar(0,LPF.ar((Osc.ar(~w.bufnum,freq,phase:0.degrad,mul:rz).abs*SinOsc.ar(freq,phase:0.degrad)),freq*f.round(1),amp));
 Out.ar(1,LPF.ar((Osc.ar(~w.bufnum,freq,phase:90.degrad,mul:rz).abs*SinOsc.ar(freq,phase:90.degrad)),freq*f.round(1),amp));
@@ -210,7 +210,59 @@ var freq=110, b=55,amp=1/8;
 )*/
 
 
+///distortion
+
+
+(
+~n=1.neg;~array=992.collect{~n=~n+1;2.pow(~n/992)};
+~a=(0-(pi/496)); ~ph=992.collect{~a=~a+(pi/496);};
+~bufferSize = 4096*8;
+~signalSize = 2048*8;
+)
+
+
+(
+		~transfer_function= Env([0.8.neg,0,0.8],[1,1],[8,8.neg]).asSignal(1024);
+			~transfer_function=~transfer_function+(Signal.sineFill(~signalSize,~array,~ph)/1);
+		~transfer_function=~transfer_function.normalize;
+			//~transfer_function.plot;
+			~dist=Buffer.loadCollection(s,~transfer_function.asWavetableNoWrap);
+		)
 
 
 
+(
+Buffer.freeAll;
+~w= Buffer.alloc(s,~bufferSize);
+		{
+	var signal,wt;
+	signal=Signal.sineFill(~signalSize,~array,~ph);
 
+wt = signal.asWavetable;
+~w.loadCollection(wt);
+signal.plot;
+		}.value;
+)
+
+{Shaper.ar(~dist,SinOsc.ar(220,mul:MouseX.kr(0.001,1)))}.play
+
+
+(
+{
+	var freq=6*32, b=1,f=1,rz=10,amp=1;
+Out.ar(0,LPF.ar((Osc.ar(~w.bufnum,freq,phase:0.degrad,mul:rz).abs*Shaper.ar(~dist,SinOsc.ar(freq,phase:0.degrad,mul:MouseX.kr(0.001,1)),rz)),freq*f.round(1),amp));
+Out.ar(1,LPF.ar((Osc.ar(~w.bufnum,freq,phase:0.degrad,mul:rz).abs*Shaper.ar(~dist,SinOsc.ar(freq,phase:0.degrad,mul:MouseX.kr(0.001,1)),rz)),freq*f.round(1),amp));
+}.play;
+)
+
+
+(
+{
+	var freq=6*32, b=1,f=1,rz=10,amp=1,sig;
+
+	sig=LPF.ar((Osc.ar(~w.bufnum,freq,phase:0.degrad,mul:rz).abs*SinOsc.ar(freq,phase:0.degrad,mul:rz)),freq*f.round(1),amp);
+
+	Out.ar(0,Shaper.ar(~dist,sig,MouseX.kr(0.01,0.9)));
+	//Out.ar(0,sig);
+}.play;
+)
