@@ -357,7 +357,7 @@ threshold3=(((343/0.3)/fund).reciprocal.ampdb/2.sqrt).dbamp;
 5.wait;
 
 		~synth=Synth.new(\synth,[\gain,10,\drive,992*4,\overdrive,992*1,\fu,32,\tone,0,\low,0,\pan,(992*16).neg,\mix,0.3,\drone_amp,1,\rz,100,\room,1
-			\x,1,\a,1,\oct1,1,\oct2,1,\oct3,1,\angle,pi/2,\panx,1,\pany,1,\panz,1,\spread,1,\azx,0,\azy,pi/2,\elx,0,\ely,\axisx1,1,\axisy1,1,\axisz1,1\axisx2,1,\axisy2,1,\axisz2,1,\axisx3,1,\axisy3,1,\axisz3,1;]).register;//s.record
+			\x,1,\a,1,\oct1,1,\oct2,1,\oct3,1,\angle,pi/2,\panx,1,\pany,1,\panz,1,\spread,1,\azx,0,\azy,pi/2,\elx,0,\ely,0,\axisx1,1,\axisy1,1,\axisz1,1\axisx2,1,\axisy2,1,\axisz2,1,\axisx3,1,\axisy3,1,\axisz3,1;]).register;//s.record
 
 
 2.wait;
