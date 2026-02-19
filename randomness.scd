@@ -41,3 +41,95 @@ Array.fill(4, r.value);
 ////archimedes
 
 
+
+////////////////////true randomness
+
+(
+var trueRand;
+trueRand = Pipe.new("head -c 4 /dev/urandom", "r");
+trueRand.getInt32.postln;
+trueRand.close;
+)
+
+
+thisThread.randSeed = trueRandomNumber;
+
+
+
+
+
+
+(
+{
+    var in, amp;
+    in  = SoundIn.ar(0);              // mic input
+    amp = Amplitude.kr(in, 0.01, 0.05);
+    amp.poll(10);                     // watch it
+    Silent.ar
+}.play;
+)
+
+
+
+(
+{
+    var in, amp, diff, quant;
+
+    in   = SoundIn.ar(0);
+    amp  = Amplitude.kr(in, 0.01, 0.05);
+
+    diff = HPZ1.kr(amp);          // first derivative (change detector)
+    quant = (diff * 100000).round(1);  // amplify + quantize
+
+    quant.poll(10);
+    Silent.ar
+}.play;
+)
+
+
+
+
+(
+{
+    var in, amp, diff, q, hash;
+
+    in   = SoundIn.ar(0);
+    amp  = Amplitude.kr(in, 0.01, 0.05);
+
+    diff = HPZ1.kr(amp);
+    q    = (diff * 1e6).round(1);
+
+    // chaotic nonlinear transform
+    hash = (q * 1664525 + 1013904223) % 2147483647;
+
+    hash = hash.abs / 2147483647;   // normalize 0–1
+
+    hash.poll(10);
+
+    Silent.ar
+}.play;
+)
+
+
+
+(
+SynthDef(\entropy, {
+    var in, amp, diff, q;
+
+    in  = SoundIn.ar(0);
+    amp = Amplitude.kr(in);
+    diff = HPZ1.kr(amp);
+    q = (diff * 1e6).round(1);
+
+    SendReply.kr(Impulse.kr(5), "/entropy", [q]);
+}).add;
+)
+
+o = OSCFunc({ |msg|
+    var val = msg[3].asInteger.abs;
+    thisThread.randSeed = val;
+    ("New seed: " ++ val).postln;
+}, "/entropy");
+
+
+
