@@ -346,9 +346,9 @@ threshold3=(((343/0.3)/fund).reciprocal.ampdb/2.sqrt).dbamp;
 
 5.wait;
 
-		~synth=Synth.new(\synth,[\gain,20,\drive,0,\overdrive,0,\fu,16,\tone,992,\low,992*0,\pan,(992*16).neg,
-			\mix,1,\drone_amp,1,\rz,100,\room,1,\m,3,\pann,(992*3).neg,
-			\x,1,\a,1,\oct1,0,\oct2,0,\oct3,0,\panx,1,\pany,1,\panz,1,\spread,1,
+		~synth=Synth.new(\synth,[\gain,20,\drive,496,\overdrive,992,\fu,16,\tone,56*1,\low,992*0,\pan,(992*16).neg,
+			\mix,0.3,\drone_amp,1,\rz,100,\room,1,\m,1,\pann,(992*3).neg,
+			\x,1,\a,3,\oct1,0,\oct2,0,\oct3,0,\panx,1,\pany,1,\panz,1,\spread,1,
 			\azx,0,\azy,pi/2,\elx,0,\ely,0,
 			\axisx1,0999.rand,\axisy1,0999.rand,\axisz1,0999.rand,
 			\axisx2,0999.rand,\axisy2,0999.rand,\axisz2,0999.rand,
@@ -483,7 +483,7 @@ SerialPort.devices;
 );
 	~s= Routine({loop{
 
-	thisThread.randSeed = ~val;
+	//thisThread.randSeed = ~val;
 		~val.postln;
 	/*(
 MIDIFunc.noteOn({  |val, num, chan, src|
@@ -493,9 +493,9 @@ ton.postln;
 		~synth.set(\tone, ton)	;
 });
 )*/
-	~synth.set(\a, 11.rand)	;
+	~synth.set(\tone, (56).rand)	;
 
-1.wait
+2.wait
 };
 });
 );
@@ -539,7 +539,7 @@ s.waitForBoot{
  (
 SynthDef(\kick, {
 	arg gain=1/8,tone=12,pan=1,low=0,noise=0.001,decay=1/2,attack=0.001,az=0,el=0,m=1,rz=1000,
-					temp_mag1=56,temp_mag2=56,temp_mag3=56,azx=0,azy=0,elx=0,ely=0,fu,mix=1,room=1,drive=1;
+					temp_mag1=56,temp_mag2=56,temp_mag3=56,azx=0,azy=0,elx=0,ely=0,fu,mix=1,room=1,drive=1,
 				axisx1=1,axisy1=1,axisz1=1,axisx2=1,axisy2=1,axisz2=1,axisx3=1,axisy3=1,axisz3=1;
     var env,freq,anglex,angley,anglez,mod_anglex,mod_angley,mod_anglez,mx,my,mz,magx,magz,magy;
 	var sph,phase,threshold,ton,phase1,phase2,phase3,sph1,loc1,loc2,loc3,mag,fund,freqq;
@@ -734,7 +734,7 @@ m3=m3+1;
 					\axisz2,1,
 					\axisx3,1,
 					\axisy3,1,
-					\axisz3,1
+					\axisz3,1,
 			\temp_mag1,992,
 					\temp_mag2,992,
 					\temp_mag3,992,
