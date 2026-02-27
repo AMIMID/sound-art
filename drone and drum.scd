@@ -118,9 +118,9 @@ wt = signal.asWavetable;
 SynthDef.new(\synth,{
 
 	arg gain=1,low=992,tone=0,x=1,pan=1,mix=0.3,a=1,panx=1,pany=1,panz=1,room=0.5,m=2,
-				fu=32,drive=1,spread=1,drone_amp=1,rz=100,pann=0,az=0,el=0,azr=0;
+				fu=32,drive=1,spread=1,drone_amp=1,rz=100,pann=0,az=0,el=0,azr=0,cloud=1;
 
-	var rq=1,attack,decay,curve,band,azf=0,elf=0,q,r1,r2,r3,sq1,sq2,sq3,rotationx,rotationy,rotationz,cloud=3,core=(9/8).rand;
+	var rq=1,attack,decay,curve,band,azf=0,elf=0,q,r1,r2,r3,sq1,sq2,sq3,rotationx,rotationy,rotationz,core=(9/8).rand;
 	var lamdoma,freq1,freq2,freq3,fund,amp1,amp2,amp3,alpha,cell_az,cell_el,x_pos,y_pos,control1,control2,control3;
 	var sig1,sig2,bank=6,out1,out2,band_osc1,band_osc2,ton,threshold1,threshold2,threshold3,phase1,phase2,phase3;
 	var band_osc3,band_osc4,band_osc5,band_osc6,sig3,out3,cell_tria,b_x,b_y,b_z,polytope,gain1,gain2,gain3,env,azimuth,elevation;
@@ -167,13 +167,13 @@ cross = [
 
 				cloud.do{
 
-				axis=Spherical(992,(sph_object.theta+azf).wrap(pi,pi.neg),  (sph_object.phi+elf).wrap((pi/2),(pi/2).neg));
+				axis=Spherical(12,(sph_object.theta+azf).wrap(pi,pi.neg),  (sph_object.phi+elf).wrap((pi/2),(pi/2).neg));
 
 				polytope=Cartesian(axis.x,axis.y,axis.z);
 
-b_x=2.pow(polytope.x.round(1)/992);
-b_y=2.pow(polytope.y.round(1)/992);
-b_z=2.pow(polytope.z.round(1)/992);
+b_x=2.pow(polytope.x.round(1)/12);
+b_y=2.pow(polytope.y.round(1)/12);
+b_z=2.pow(polytope.z.round(1)/12);
 
 
 anglex=(exp(Complex(0,1)*polytope.theta).real*exp(Complex(0,1)*polytope.phi).real).round(0.00001);
@@ -301,7 +301,7 @@ threshold3=(((343/0.3)/fund).reciprocal.ampdb/2.sqrt).dbamp;
 
 	///distortion
 
-		sig1 = sig1.softclip.distort; sig2 = sig2.softclip.distort;  sig3 = sig3.softclip.distort;
+	sig1 = sig1.softclip.distort; sig2 = sig2.softclip.distort;  sig3 = sig3.softclip.distort;
 
 		sig1 = (tanh(sig1*2.pow(drive/992))) / (1 + (tanh(sig1*2.pow(drive/992))).abs);
 
@@ -594,9 +594,10 @@ TempoClock.default.tempo_(2);
 		//	\axisx2,0999.rand,\axisy2,0999.rand,\axisz2,0999.rand,
 		//	\axisx3,0999.rand,\axisy3,0999.rand,\axisz3,0999.rand]).register;//s.record
 
-		~synth=Synth(\synth).register;
+~synth=Synth(\synth[\cloud,1]).register;
 
 ~dr.play;
+
 
 (
 MIDIClient.init;
@@ -752,7 +753,7 @@ MIDIdef.cc(\midi_pot16,{ |val, num, chan, src|
 			(
 MIDIdef.cc(\midi_slider1,{ |val, num, chan, src|
 		var gain;
-	gain=val.linlin(0,127,0,50).round(0.0001);
+	gain=val.linlin(0,127,0,10).round(0.0001);
 		gain.postln;
 		if(~synth.isPlaying,{~synth.set(\gain,gain)});
 },19);
@@ -770,7 +771,7 @@ MIDIdef.cc(\midi_slider2,{ |val, num, chan, src|
 														(
 MIDIdef.cc(\midi_slider3,{ |val, num, chan, src|
 		var t;
-		t=val.linlin(0,127,1/8,8).round(1/8);
+		t=val.linlin(0,127,1/8,16).round(1/8);
 		t.postln;
 		TempoClock.default.tempo_(t);
 
@@ -867,7 +868,7 @@ a.postln;
 					(
 MIDIdef.cc(\midi_seq_pot1,{ |val, num, chan, src|
 		var s1;
-		s1=val.linlin(0,127,0,56*4).round(1).asInteger;
+		s1=val.linlin(0,127,0,56*2).round(1).asInteger;
 		s1.postln;
 		~s1=s1;
 },18);
@@ -876,7 +877,7 @@ MIDIdef.cc(\midi_seq_pot1,{ |val, num, chan, src|
 				(
 MIDIdef.cc(\midi_seq_pot2,{ |val, num, chan, src|
          var s2;
-					s2=val.linlin(0,127,0,56*4).round(1).asInteger;
+					s2=val.linlin(0,127,0,56*2).round(1).asInteger;
 		s2.postln;
 		~s2=s2;
 },22);
@@ -885,7 +886,7 @@ MIDIdef.cc(\midi_seq_pot2,{ |val, num, chan, src|
 									(
 MIDIdef.cc(\midi_seq_pot3,{ |val, num, chan, src|
 		var s3;
-			s3=val.linlin(0,127,0,56*4).round(1).asInteger;
+			s3=val.linlin(0,127,0,56*2).round(1).asInteger;
 		s3.postln;
 		~s3=s3;
 },26);
@@ -894,7 +895,7 @@ MIDIdef.cc(\midi_seq_pot3,{ |val, num, chan, src|
 												(
 MIDIdef.cc(\midi_seq_pot4,{ |val, num, chan, src|
 		var s4;
-			s4=val.linlin(0,127,0,56*4).round(1).asInteger;
+			s4=val.linlin(0,127,0,56*2).round(1).asInteger;
 		s4.postln;
 		~s4=s4;
 },30);
@@ -903,7 +904,7 @@ MIDIdef.cc(\midi_seq_pot4,{ |val, num, chan, src|
 														(
 MIDIdef.cc(\midi_seq_pot5,{ |val, num, chan, src|
 		var s5;
-			s5=val.linlin(0,127,0,56*4).round(1).asInteger;
+			s5=val.linlin(0,127,0,56*2).round(1).asInteger;
 		s5.postln;
 		~s5=s5;
 },48);
@@ -912,7 +913,7 @@ MIDIdef.cc(\midi_seq_pot5,{ |val, num, chan, src|
 														(
 MIDIdef.cc(\midi_seq_pot6,{ |val, num, chan, src|
 		var s6;
-			s6=val.linlin(0,127,0,56*4).round(1).asInteger;
+			s6=val.linlin(0,127,0,56*2).round(1).asInteger;
 		s6.postln;
 		~s6=s6;
 },52);
@@ -921,7 +922,7 @@ MIDIdef.cc(\midi_seq_pot6,{ |val, num, chan, src|
 														(
 MIDIdef.cc(\midi_seq_pot7,{ |val, num, chan, src|
 		var s7;
-			s7=val.linlin(0,127,0,56*4).round(1).asInteger;
+			s7=val.linlin(0,127,0,56*2).round(1).asInteger;
 		s7.postln;
 		~s7=s7;
 },56);
@@ -930,7 +931,7 @@ MIDIdef.cc(\midi_seq_pot7,{ |val, num, chan, src|
 																	(
 MIDIdef.cc(\midi_seq_pot8,{ |val, num, chan, src|
 		var s8;
-			s8=val.linlin(0,127,0,56*4).round(1).asInteger;
+			s8=val.linlin(0,127,0,56*2).round(1).asInteger;
 		s8.postln;
 		~s8=s8;
 },60);
@@ -988,7 +989,7 @@ SerialPort.devices;
 )
 /////////////sequencer with midi
 (
-~seq = Pseq(~dur1, inf).asStream;
+~seq = Pseq(~dur1/1, inf).asStream;
 	~s= Routine({loop{
 
 
@@ -1041,21 +1042,21 @@ SerialPort.devices;
 
 		~dr=Pdef(\1, Pbind(\instrument, \kick,
 			\dur,Pseq(~dur1,inf),
-				\gain,64,
+				\gain,40,
 				\tone,992*1,
-				\pan,496,
+				\pan,0,
 					\m,2,
 			\low,0,
 				\noise,0.001,
-\az,0,
+\az,pi,
 	\azr,0,
 	\el,0,
 				\decay,2,
 				\attack,0.01,
 
 					\rz,100,
-					\mix,1,
-					\room,0.5;
+					\mix,0.1,
+					\room,1;
 		))
 )
 
