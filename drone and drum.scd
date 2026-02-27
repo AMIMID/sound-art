@@ -118,7 +118,7 @@ wt = signal.asWavetable;
 SynthDef.new(\synth,{
 
 	arg gain=1,low=992,tone=0,x=1,pan=1,mix=0.3,a=1,panx=1,pany=1,panz=1,room=0.5,m=2,
-				fu=16,drive=1,spread=1,drone_amp=1,rz=100,pann=0,az=0,el=0,azr=0;
+				fu=32,drive=1,spread=1,drone_amp=1,rz=100,pann=0,az=0,el=0,azr=0;
 
 	var rq=1,attack,decay,curve,band,azf=0,elf=0,q,r1,r2,r3,sq1,sq2,sq3,rotationx,rotationy,rotationz,cloud=3,core=(9/8).rand;
 	var lamdoma,freq1,freq2,freq3,fund,amp1,amp2,amp3,alpha,cell_az,cell_el,x_pos,y_pos,control1,control2,control3;
@@ -606,7 +606,7 @@ MIDIIn.connectAll;
 					(
 MIDIdef.cc(\midi_pot1,{ |val, num, chan, src|
 		var drive;
-		drive=val.linlin(0,127,0,(992*4)).round(1).asInteger;
+		drive=val.linlin(0,127,(992*2).neg,(992*4)).round(1).asInteger;
 		drive.postln;
 		if(~synth.isPlaying,{~synth.set(\drive,drive)});
 },16);
@@ -615,7 +615,7 @@ MIDIdef.cc(\midi_pot1,{ |val, num, chan, src|
 				(
 MIDIdef.cc(\midi_pot2,{ |val, num, chan, src|
          var low;
-					low=val.linlin(0,127,(992*4).neg,(992*4)).round(1).asInteger;
+					low=val.linlin(0,127,0,(992*4)).round(1).asInteger;
 		low.postln;
 		if(~synth.isPlaying,{~synth.set(\low,low)});
 },20);
@@ -752,7 +752,7 @@ MIDIdef.cc(\midi_pot16,{ |val, num, chan, src|
 			(
 MIDIdef.cc(\midi_slider1,{ |val, num, chan, src|
 		var gain;
-	gain=val.linlin(0,127,0,100).round(0.0001);
+	gain=val.linlin(0,127,0,50).round(0.0001);
 		gain.postln;
 		if(~synth.isPlaying,{~synth.set(\gain,gain)});
 },19);
