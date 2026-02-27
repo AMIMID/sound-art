@@ -162,19 +162,18 @@ cross = [
 
 				tensor=axisx+axisy+axisz;
 
-			//	sph_object=Cartesian(tensor.[0],tensor.[1],tensor.[2]);
-				sph_object=Spherical(1,az,el);
+				sph_object=Cartesian(tensor.[0],tensor.[1],tensor.[2]);
 
 
 				cloud.do{
 
-				axis=Spherical(56,(sph_object.theta+azf).wrap(pi,pi.neg),  (sph_object.phi+elf).wrap((pi/2),(pi/2).neg));
+				axis=Spherical(992,(sph_object.theta+azf).wrap(pi,pi.neg),  (sph_object.phi+elf).wrap((pi/2),(pi/2).neg));
 
 				polytope=Cartesian(axis.x,axis.y,axis.z);
 
-b_x=2.pow(polytope.x.round(1)/56);
-b_y=2.pow(polytope.y.round(1)/56);
-b_z=2.pow(polytope.z.round(1)/56);
+b_x=2.pow(polytope.x.round(0.0001)/992);
+b_y=2.pow(polytope.y.round(0.0001)/992);
+b_z=2.pow(polytope.z.round(0.0001)/992);
 
 
 anglex=(exp(Complex(0,1)*polytope.theta).real*exp(Complex(0,1)*polytope.phi).real).round(0.00001);
@@ -187,8 +186,8 @@ phase3=Complex(1,anglez).theta;
 
 
 mod_anglex=SinOsc.ar(lfon,phase1).range(pi.neg,pi);
-mod_angley=SinOsc.ar(lfon,phase2).range(pi.neg,pi);
-mod_anglez=SinOsc.ar(lfon,phase3).range((pi/2).neg,(pi/2));
+					mod_angley=SinOsc.ar(lfon*(2/3),phase2).range(pi.neg,pi);
+					mod_anglez=SinOsc.ar(lfon*(1/2),phase3).range((pi/2).neg,(pi/2));
 
 					(
 		magx=((Complex(cos(((polytope.theta+mod_anglex).round(0.00001)*m).wrap(pi.neg,pi)),cos((((polytope.theta+mod_anglex).round(0.00001)*m)).wrap(pi.neg,pi))).rho/(2.sqrt))*(Complex(cos((polytope.phi.round(0.00001)).wrap((pi/2).neg,(pi/2))),cos((polytope.phi.round(0.00001)).wrap((pi/2).neg,(pi/2)))).rho/(2.sqrt));
@@ -765,21 +764,31 @@ MIDIdef.cc(\midi_slider1,{ |val, num, chan, src|
 											(
 MIDIdef.cc(\midi_slider2,{ |val, num, chan, src|
 		var m;
-		m=val.linlin(0,127,1,5).round(1).asInteger;
+		m=val.linlin(0,127,1,16).round(1).asInteger;
 		m.postln;
 		if(~synth.isPlaying,{~synth.set(\m,m)});
 },23);
 	);
 
 														(
-MIDIdef.cc(\midi_slider3,{ |val, num, chan, src|
+MIDIdef.cc(\midi_slider,{ |val, num, chan, src|
 		var t;
 		t=val.linlin(0,127,1/8,16).round(1/8);
 		t.postln;
 		TempoClock.default.tempo_(t);
 
-},27);
+},62);
 	);
+
+(
+MIDIdef.cc(\midi_slider3,{ |val, num, chan, src|
+		var cl;
+		cl=val.linlin(0,127,1,5).round(1).asInteger;
+		cl.postln;
+		if(~synth.isPlaying,{~synth.set(\cloud,cl)});
+
+},27);
+	)
 );
 
 (
@@ -944,6 +953,11 @@ MIDIdef.cc(\midi_seq_pot8,{ |val, num, chan, src|
 
 )
 
+
+
+~synth=Synth(\synth,[\cloud,5]).register;
+
+
 			////sequencer
 ////sesor ased randomnes
 SerialPort.devices;
@@ -1035,7 +1049,8 @@ SerialPort.devices;
 
 
 
-
+~dr.play;
+~dr.pause
 
 
 
