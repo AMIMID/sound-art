@@ -137,7 +137,7 @@ SynthDef.new(\synth,{
 	arg gain=1,low=992,tone=0,x=1,pan=1,mix=0.3,a=1,panx=1,pany=1,panz=1,room=0.5,m=2,
 				fu=32,drive=1,spread=1,drone_amp=1,rz=100,pann=0,az=0,el=0,azr=0,dron=0;
 
-	var rq=1,cloud=31,attack,decay,curve,band,azf=0,elf=0,q,r1,r2,r3,sq1,sq2,sq3,rotationx,rotationy,rotationz,core=(9/8).rand;
+	var rq=1,cloud=1,attack,decay,curve,band,azf=0,elf=0,q,r1,r2,r3,sq1,sq2,sq3,rotationx,rotationy,rotationz,core=(9/8).rand;
 	var lamdoma,freq1,freq2,freq3,fund,amp1,amp2,amp3,alpha,cell_az,cell_el,x_pos,y_pos,control1,control2,control3;
 	var sig1,sig2,bank=6,out1,out2,band_osc1,band_osc2,ton,threshold1,threshold2,threshold3,phase1,phase2,phase3;
 	var band_osc3,band_osc4,band_osc5,band_osc6,sig3,out3,cell_tria,b_x,b_y,b_z,polytope,gain1,gain2,gain3,env,azimuth,elevation;
@@ -494,7 +494,7 @@ MIDIdef.cc(\midi_pot7,{ |val, num, chan, src|
 																	(
 MIDIdef.cc(\midi_pot8,{ |val, num, chan, src|
 		var spread;
-			spread=val.linlin(0,127,0,100).round(0.0001);
+			spread=val.linlin(0,127,1,3).round(0.0001);
 		spread.postln;
 		if(~synth.isPlaying,{~synth.set(\spread,spread)});
 },58);
@@ -504,7 +504,7 @@ MIDIdef.cc(\midi_pot8,{ |val, num, chan, src|
 												(
 MIDIdef.cc(\midi_pot9,{ |val, num, chan, src|
 		var panx;
-			panx=val.linlin(0,127,1,3).round(0.0001);
+			panx=val.linlin(0,127,0.001,1).round(0.0001);
 		panx.postln;
 		if(~synth.isPlaying,{~synth.set(\panx,panx)});
 },17);
@@ -513,7 +513,7 @@ MIDIdef.cc(\midi_pot9,{ |val, num, chan, src|
 													(
 MIDIdef.cc(\midi_pot10,{ |val, num, chan, src|
 		var pany;
-			pany=val.linlin(0,127,1,3).round(0.0001);
+			pany=val.linlin(0,127,0.001,1).round(0.0001);
 		pany.postln;
 		if(~synth.isPlaying,{~synth.set(\pany,pany)});
 },21);
@@ -522,7 +522,7 @@ MIDIdef.cc(\midi_pot10,{ |val, num, chan, src|
 														(
 MIDIdef.cc(\midi_pot11,{ |val, num, chan, src|
 		var panz;
-			panz=val.linlin(0,127,1,3).round(1).asInteger;
+			panz=val.linlin(0,127,0.001,1).round(0.0001);
 		panz.postln;
 		if(~synth.isPlaying,{~synth.set(\panz,panz)});
 },25);
@@ -661,7 +661,7 @@ MIDIdef.cc(\midi_switch1,{ |val, num, chan, src|
 		var a;
 				if(val>0,a=1);
 a.postln;
-		if(~synth.isPlaying,{~synth.set(\a, x)});
+		if(~synth.isPlaying,{~synth.set(\a, a)});
 
 },1);
 	);
@@ -670,7 +670,7 @@ MIDIdef.cc(\midi_switch2,{ |val, num, chan, src|
 		 var a;
 					if(val>0,a=2);
 a.postln;
-		if(~synth.isPlaying,{~synth.set(\a, x)});
+		if(~synth.isPlaying,{~synth.set(\a, a)});
 
 },3);
 	);
@@ -679,7 +679,7 @@ MIDIdef.cc(\midi_switch3,{ |val, num, chan, src|
 			var a;
 					if(val>0,a=3);
 a.postln;
-		if(~synth.isPlaying,{~synth.set(\a, x)});
+		if(~synth.isPlaying,{~synth.set(\a, a)});
 
 },4);
 	);
@@ -689,7 +689,7 @@ MIDIdef.cc(\midi_switch4,{ |val, num, chan, src|
          	var a;
 				if(val>0,a=4);
 a.postln;
-		if(~synth.isPlaying,{~synth.set(\a, x)});
+		if(~synth.isPlaying,{~synth.set(\a, a)});
 
 },6);
 	);
@@ -698,7 +698,7 @@ MIDIdef.cc(\midi_switch5,{ |val, num, chan, src|
 		var a;
 				if(val>0,a=5);
 a.postln;
-		if(~synth.isPlaying,{~synth.set(\a, x)});
+		if(~synth.isPlaying,{~synth.set(\a, a)});
 
 },7);
 	);
@@ -707,7 +707,7 @@ MIDIdef.cc(\midi_switch6,{ |val, num, chan, src|
 		 var a;
 					if(val>0,a=6);
 a.postln;
-		if(~synth.isPlaying,{~synth.set(\a, x)});
+		if(~synth.isPlaying,{~synth.set(\a, a)});
 
 },9);
 	);
@@ -716,7 +716,7 @@ MIDIdef.cc(\midi_switch7,{ |val, num, chan, src|
 			var a;
 					if(val>0,a=7);
 a.postln;
-		if(~synth.isPlaying,{~synth.set(\a, x)});
+		if(~synth.isPlaying,{~synth.set(\a, a)});
 
 },10);
 	);
@@ -726,7 +726,7 @@ MIDIdef.cc(\midi_switch8,{ |val, num, chan, src|
          	var a;
 				if(val>0,a=8);
 a.postln;
-		if(~synth.isPlaying,{~synth.set(\a, x)});
+		if(~synth.isPlaying,{~synth.set(\a, a)});
 
 },12);
 	);
@@ -735,7 +735,7 @@ MIDIdef.cc(\midi_switch9,{ |val, num, chan, src|
 		var a;
 				if(val>0,a=9);
 a.postln;
-		if(~synth.isPlaying,{~synth.set(\a, x)});
+		if(~synth.isPlaying,{~synth.set(\a, a)});
 
 },13);
 	);
@@ -744,7 +744,7 @@ MIDIdef.cc(\midi_switch10,{ |val, num, chan, src|
 		 var a;
 					if(val>0,a=10);
 a.postln;
-		if(~synth.isPlaying,{~synth.set(\a, x)});
+		if(~synth.isPlaying,{~synth.set(\a, a)});
 
 },15);
 	)
@@ -865,7 +865,7 @@ MIDIdef.cc(\midi_seq_pot8,{ |val, num, chan, src|
 )
 /////////////sequencer with midi
 (
-~seq = Pseq(~dur1/2, inf).asStream;
+~seq = Pseq([1/2] ,inf).asStream;
 	~s= Routine({loop{
 
 
