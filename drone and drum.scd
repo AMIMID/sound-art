@@ -339,9 +339,9 @@ threshold3=(((343/0.3)/fund).reciprocal.ampdb/2.sqrt).dbamp;
 
 					////azimuthal multichannel expansion
 
-		Out.kr(0,PanAz.ar(2,Limiter.ar(LeakDC.ar(FreeVerb.ar(sig1,mix.lag(0.01),room.lag(0.01),mul:gain1*loc1.abs)),0.9,0.01),SinOsc.ar(panx,phasex),width:spread));
-		Out.kr(0,PanAz.ar(2,Limiter.ar(LeakDC.ar(FreeVerb.ar(sig2,mix.lag(0.01),room.lag(0.01),mul:gain2*loc2.abs)),0.9,0.01),SinOsc.ar(pany,phasey),width:spread));
-		Out.kr(0,PanAz.ar(2,Limiter.ar(LeakDC.ar(FreeVerb.ar(sig3,mix.lag(0.01),room.lag(0.01),mul:gain3*loc3.abs)),0.9,0.01),SinOsc.ar(panz,phasez),width:spread));
+		Out.ar(0,PanAz.ar(2,Limiter.ar(LeakDC.ar(FreeVerb.ar(sig1,mix.lag(0.01),room.lag(0.01),mul:gain1*loc1.abs)),0.9,0.01),SinOsc.ar(panx,phasex),width:spread));
+		Out.ar(0,PanAz.ar(2,Limiter.ar(LeakDC.ar(FreeVerb.ar(sig2,mix.lag(0.01),room.lag(0.01),mul:gain2*loc2.abs)),0.9,0.01),SinOsc.ar(pany,phasey),width:spread));
+		Out.ar(0,PanAz.ar(2,Limiter.ar(LeakDC.ar(FreeVerb.ar(sig3,mix.lag(0.01),room.lag(0.01),mul:gain3*loc3.abs)),0.9,0.01),SinOsc.ar(panz,phasez),width:spread));
 
 				///3d vbap expansion
 //Out.ar(0,VBAP.ar(6,Limiter.ar(LeakDC.ar(FreeVerb.ar(sig1,mix.lag(0.01),room.lag(0.01),mul:gain1*loc1.abs)),0.9,0.01),~b,spx.theta.raddeg,spx.phi.raddeg,width:spread));
@@ -506,9 +506,9 @@ sig1 = sig1 + (sig1 * BrownNoise.ar(noise*loc1)); sig2 = sig2 + (sig2 * BrownNoi
 				///Out.ar(1,Limiter.ar(LeakDC.ar(FreeVerb.ar((sig2),mix.lag(0.01),room.lag(0.01),mul:env*loc2.abs)),0.9,0.01));
 					//	Out.ar(2,Limiter.ar(LeakDC.ar(FreeVerb.ar((sig3),mix.lag(0.01),room.lag(0.01),mul:env*loc3.abs)),0.9,0.01));
 
-			Out.kr(0,PanAz.ar(2,Limiter.ar(LeakDC.ar(FreeVerb.ar((sig1 ),mix.lag(0.01),room.lag(0.01),mul:env*loc1.abs)),0.9,0.01),SinOsc.ar(panx,phasex),width:spread));
-			Out.kr(0,PanAz.ar(2,Limiter.ar(LeakDC.ar(FreeVerb.ar((sig2),mix.lag(0.01),room.lag(0.01),mul:env*loc2.abs)),0.9,0.01),SinOsc.ar(pany,phasey),width:spread));
-			Out.kr(0,PanAz.ar(2,Limiter.ar(LeakDC.ar(FreeVerb.ar((sig3),mix.lag(0.01),room.lag(0.01),mul:env*loc3.abs)),0.9,0.01),SinOsc.ar(panz,phasez),width:spread));
+			Out.ar(0,PanAz.ar(2,Limiter.ar(LeakDC.ar(FreeVerb.ar((sig1 ),mix.lag(0.01),room.lag(0.01),mul:env*loc1.abs)),0.9,0.01),SinOsc.ar(panx,phasex),width:spread));
+			Out.ar(0,PanAz.ar(2,Limiter.ar(LeakDC.ar(FreeVerb.ar((sig2),mix.lag(0.01),room.lag(0.01),mul:env*loc2.abs)),0.9,0.01),SinOsc.ar(pany,phasey),width:spread));
+			Out.ar(0,PanAz.ar(2,Limiter.ar(LeakDC.ar(FreeVerb.ar((sig3),mix.lag(0.01),room.lag(0.01),mul:env*loc3.abs)),0.9,0.01),SinOsc.ar(panz,phasez),width:spread));
 
 
 }).add);
@@ -609,9 +609,9 @@ TempoClock.default.tempo_(2);
 
 
 (
-~synth=Synth.new(\synth,[\gain,0,\drive,0,\overdrive,0,\fu,32,\tone,0,\low,992*0,\pan,(992*16).neg,
-		\mix,0.3,\drone_amp,1,\rz,100,\room,0,\m,1,\pann,(992*3).neg,
-			\x,1,\a,1,0,\panx,1,\pany,1,\panz,1,\spread,1,
+~synth=Synth.new(\synth,[\gain,1,\drive,992,\fu,32,\tone,0,\low,992*0,\pan,(992*16).neg,
+		\mix,0.3,\drone_amp,1,\rz,100,\room,0.5,\m,1,\pann,(992*3).neg,
+			\x,1,\a,1,\panx,1,\pany,1,\panz,1,\spread,1,
 			\az,0,\el,0,\azr,0,\cloud,1]).register;
 ~dr.play;
 )
@@ -800,9 +800,9 @@ MIDIdef.cc(\midi_slider4,{ |val, num, chan, src|
 		cl=val.linlin(0,127,1,10).round(1).asInteger;
 		cl.postln;
 	~synth.free;
-~synth=Synth.new(\synth,[\gain,0,\drive,0,\overdrive,0,\fu,32,\tone,0,\low,992*0,\pan,(992*16).neg,
-		\mix,0.3,\drone_amp,1,\rz,100,\room,0,\m,1,\pann,(992*3).neg,
-			\x,1,\a,1,0,\panx,1,\pany,1,\panz,1,\spread,1,
+~synth=Synth.new(\synth,[\gain,1,\drive,992,\fu,32,\tone,0,\low,992*0,\pan,(992*16).neg,
+		\mix,0.3,\drone_amp,1,\rz,100,\room,0.5,\m,1,\pann,(992*3).neg,
+			\x,1,\a,1,\panx,1,\pany,1,\panz,1,\spread,1,
 			\az,0,\el,0,\azr,0,\cloud,cl]).register;
 },27);
 	);
