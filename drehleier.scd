@@ -328,9 +328,9 @@ threshold3=(((343/0.3)/fund).reciprocal.ampdb/2.sqrt).dbamp;
 
 
 	///final out
-					gain1=gain*rq1.sqrt.reciprocal;
-					gain2=gain*rq2.sqrt.reciprocal;
-					gain3=gain*rq3.sqrt.reciprocal;
+					gain1=gain*rq1.sqrt.reciprocal*cloud.reciprocal;
+					gain2=gain*rq2.sqrt.reciprocal*cloud.reciprocal;
+					gain3=gain*rq3.sqrt.reciprocal*cloud.reciprocal;
 
 					///three channel
 				//	Out.ar(0,Limiter.ar(LeakDC.ar(FreeVerb.ar(sig1,mix.lag(0.01),room.lag(0.01),mul:gain1*loc1.abs)),0.9,0.01));
@@ -485,7 +485,7 @@ MIDIdef.cc(\midi_pot6,{ |val, num, chan, src|
 														(
 MIDIdef.cc(\midi_pot7,{ |val, num, chan, src|
 		var x;
-			x=val.linlin(0,127,1,16).round(1).asInteger;
+			x=val.linlin(0,127,0,5).round(1).asInteger;
 		x.postln;
 		if(~synth.isPlaying,{~synth.set(\a,x)});
 },54);
