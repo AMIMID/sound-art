@@ -25,7 +25,24 @@ s.scope;
 s.meter;
 	Tdef(\drone, {
 	Buffer.freeAll;
+////sesor ased randomnes
+//SerialPort.devices;
+//~port = SerialPort.new("/dev/cu.usbserial-210",9600)
 
+/*(
+~charArray = [];
+~getValues = Routine.new({
+
+	var ascii;
+	{ascii = ~port.read.asAscii;
+		if(ascii.isDecDigit, {~charArray = ~charArray.add(ascii)});
+		if(ascii == $a,{~val = ~charArray.collect(_.digit).convertDigits;
+			~charArray =[];
+		});
+	}.loop;
+
+}).play;
+);*/
 
 		///vbap
 
@@ -368,7 +385,7 @@ threshold3=(((343/0.3)/fund).reciprocal.ampdb/2.sqrt).dbamp;
 		//////kick
 
  (
-~drone=SynthDef(\kick, {
+~kick=SynthDef(\kick, {
 	arg gain=1/8,tone=12,pan=1,low=0,noise=0.001,decay=1/2,attack=0.001,az=0,azr=0,el=0,m=1,rz=100,
 			fu=32,mix=1,room=1,drive=1,panx=1,pany=1,panz=1,spread=1;
     var env,freq,anglex,angley,anglez,mod_anglex,mod_angley,mod_anglez,mx,my,mz,magx,magz,magy;
@@ -551,7 +568,7 @@ m3=m3+1;
 
 		~dr=Pdef(\1, Pbind(\instrument, \kick,
 			\dur,Pseq(~dur1,inf),
-				\gain,100,
+				\gain,0,
 				\tone,992*0,
 				\pan,992*1,
 					\m,1,
@@ -563,8 +580,11 @@ m3=m3+1;
 				\decay,2,
 				\attack,0.001,
 					\spread,4,
+					\panx,1,
+	\pany,1,
+	\panz,1,
 
-					\rz,200,
+					\rz,100,
 					\mix,0.2,
 					\room,0.5;
 		))
@@ -587,21 +607,15 @@ TempoClock.default.tempo_(2);
 
 
 
-		//~synth=Synth.new(\synth,[\gain,100,\drive,0,\overdrive,0,\fu,16,\tone,0,\low,992*0,\pan,(992*16).neg,
-		//	\mix,0.3,\drone_amp,1,\rz,100,\room,1,\m,1,\pann,(992*3).neg,
-		//	\x,1,\a,1,0,\panx,1,\pany,1,\panz,1,\spread,1,
-		//	\az,0,\el,0,\azr,0]).register;
-			//\axisx1,0999.rand,\axisy1,0999.rand,\axisz1,0999.rand,
-		//	\axisx2,0999.rand,\axisy2,0999.rand,\axisz2,0999.rand,
-		//	\axisx3,0999.rand,\axisy3,0999.rand,\axisz3,0999.rand]).register;//s.record
 
 (
-~synth=Synth(\synth,[\cloud,1]).register;
-
+~synth=Synth.new(\synth,[\gain,0,\drive,0,\overdrive,0,\fu,32,\tone,0,\low,992*0,\pan,(992*16).neg,
+		\mix,0.3,\drone_amp,1,\rz,100,\room,0,\m,1,\pann,(992*3).neg,
+			\x,1,\a,1,0,\panx,1,\pany,1,\panz,1,\spread,1,
+			\az,0,\el,0,\azr,0,\cloud,1]).register;
 ~dr.play;
 )
 
-~synth.store
 (
 MIDIClient.init;
 MIDIIn.connectAll;
@@ -772,7 +786,7 @@ MIDIdef.cc(\midi_slider2,{ |val, num, chan, src|
 	);
 
 														(
-MIDIdef.cc(\midi_slider,{ |val, num, chan, src|
+MIDIdef.cc(\midi_slider3,{ |val, num, chan, src|
 		var t;
 		t=val.linlin(0,127,1/8,16).round(1/8);
 		t.postln;
@@ -780,17 +794,62 @@ MIDIdef.cc(\midi_slider,{ |val, num, chan, src|
 
 },62);
 	);
-
 (
-MIDIdef.cc(\midi_slider3,{ |val, num, chan, src|
+MIDIdef.cc(\midi_slider4,{ |val, num, chan, src|
 		var cl;
 		cl=val.linlin(0,127,1,5).round(1).asInteger;
 		cl.postln;
 	~synth.free;
-~synth=Synth(\synth,[\cloud,cl]).register;
-
+~synth=Synth.new(\synth,[\gain,0,\drive,0,\overdrive,0,\fu,32,\tone,0,\low,992*0,\pan,(992*16).neg,
+		\mix,0.3,\drone_amp,1,\rz,100,\room,0,\m,1,\pann,(992*3).neg,
+			\x,1,\a,1,0,\panx,1,\pany,1,\panz,1,\spread,1,
+			\az,0,\el,0,\azr,0,\cloud,cl]).register;
 },27);
+	);
+(
+MIDIdef.cc(\midi_slider5,{ |val, num, chan, src|
+		var gain;
+	gain=val.linlin(0,127,0,1).round(0.0001);
+		gain.postln;
+		~gain=gain;
+},31);
+			);
+	(
+MIDIdef.cc(\midi_slider6,{ |val, num, chan, src|
+		var tone;
+	tone=val.linlin(0,127,0,992*4).round(1).asInteger;
+		tone.postln;
+~tone=tone;
+},49);
+			);
+
+											(
+MIDIdef.cc(\midi_slider7,{ |val, num, chan, src|
+		var m;
+		m=val.linlin(0,127,1,16).round(1).asInteger;
+		m.postln;
+~m=m;
+},53);
+	);
+
+(
+MIDIdef.cc(\midi_slider8,{ |val, num, chan, src|
+		var low;
+		low=val.linlin(0,127,0,992*4).round(1).asInteger;
+		low.postln;
+~low=low;
+},57);
+	);
+
+	(
+MIDIdef.cc(\midi_slider9,{ |val, num, chan, src|
+		var pan;
+			pan=val.linlin(0,(992*2).neg,0,992*2).round(1).asInteger;
+		pan.postln;
+~pan=pan;
+},61);
 	)
+
 );
 
 (
@@ -961,25 +1020,7 @@ MIDIdef.cc(\midi_seq_pot8,{ |val, num, chan, src|
 
 
 			////sequencer
-////sesor ased randomnes
-SerialPort.devices;
-~port = SerialPort.new("/dev/cu.usbserial-210",9600)
 
-(
-(
-~charArray = [];
-~getValues = Routine.new({
-
-	var ascii;
-	{ascii = ~port.read.asAscii;
-		if(ascii.isDecDigit, {~charArray = ~charArray.add(ascii)});
-		if(ascii == $a,{~val = ~charArray.collect(_.digit).convertDigits;
-			~charArray =[];
-		});
-	}.loop;
-
-}).play;
-);
 	~s= Routine({loop{
 
 	thisThread.randSeed = ~val;
@@ -1063,17 +1104,21 @@ SerialPort.devices;
 
 		~dr=Pdef(\1, Pbind(\instrument, \kick,
 			\dur,Pseq(~dur1,inf),
-				\gain,100,
-				\tone,992*0,
-				\pan,992*1,
-					\m,1,
-			\low,0,
+				\gain,~gian,
+				\tone,~tone,
+				\pan,~pan,
+					\m,~m,
+			\low,~low,
 				\noise,0.0001,
 \az,pi/4,
 	\azr,pi/2,
 	\el,pi/2,
 				\decay,2,
 				\attack,0.001,
+	\spread,3,
+	\panx,1,
+	\pany,1,
+	\panz,1,
 
 					\rz,200,
 					\mix,0.2,
