@@ -1,6 +1,6 @@
 
 (
-s.options.numOutputBusChannels=4;
+s.options.numOutputBusChannels=6;
 s.waitForBoot;
 Buffer.freeAll;
 ~controlBus = Bus.control(s, 1);
@@ -68,10 +68,10 @@ var signal,wt;
 
 SynthDef.new(\player,{
 	arg tempo;
-	Out.kr(~controlBus.index, (Osc.kr(~scale1.bufnum,(1/150)).abs));
-	Out.kr(~controlBus1.index, (Osc.kr(~w1.bufnum,(1/150)).abs));
-		Out.kr(~controlBus2.index, (Osc.kr(~w2.bufnum,(1/150)).abs));
-Out.kr(~controlBus3.index, (Osc.kr(~w3.bufnum,(1/150)).abs));
+	Out.kr(~controlBus.index, (Osc.kr(~scale1.bufnum,(1/50)).abs));
+	Out.kr(~controlBus1.index, (Osc.kr(~w1.bufnum,(1/50)).abs));
+		Out.kr(~controlBus2.index, (Osc.kr(~w2.bufnum,(1/50)).abs));
+Out.kr(~controlBus3.index, (Osc.kr(~w3.bufnum,(1/50)).abs));
 
 }).add;
 )
