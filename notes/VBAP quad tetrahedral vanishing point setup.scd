@@ -25,6 +25,15 @@
 
 
 
+////three point vbap
+(
+~a = VBAPSpeakerArray.new(3, [[pi/2, 0], [0,0],[0,pi/2]]);
+	 ~b = Buffer.loadCollection(s, ~a.getSetsAndMatrices);
+)
+
+
+
+
 
 ///speaker setup configuration is to be an azimuthal quad setup (superposition) or prefered distortions of this, like assymetrical, random position quad setups,
 ///spatial 3d sound tetrahedral spheric or parabolic setups, or other according to listening room, in any case the superposition is a one plane quad of
