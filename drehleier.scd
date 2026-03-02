@@ -419,7 +419,7 @@ m3=m3+1;
 //	}
 }.value;
 );
-.
+
 
 (
 ~synth=Synth.new(\synth,[\gain,1,\drive,992,\fu,32,\tone,0,\low,992*0,\pan,(992*16).neg,
