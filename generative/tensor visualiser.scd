@@ -101,15 +101,16 @@ Slider(w, Rect(1100, 10, 10, 450)).action_{|me|
 
 )
 
-~count=(2*2*4*1)
+~count=(2*2*4*4*4*4)
 
 /////////////
 (
 {
-var scale=1,scale1=1,scale2=1;
+var scale=10,scale1=10,scale2=10;
+var axis=2,matter=2,cloud=2,axis1=4,gravity1=4,axis2=2,gravity2=2;
 var sph1,sph2,sph3,sph4,sph5,sph6,sph7,m_x=1,m_y=1,m_z=1,qx,qy,mq=0,angle=0,n=12,num=1.neg;
 var angle1=0,angle2=0,angle3=0,angle4=0,angle5=0,angle6=0,angle7=0;
-var angle_1=0;angle_2=0;angle_3=0;ngle_4=0;angle_5=0;angle_6=0;angle_7=0;
+var angle_1=0,angle_2=0,angle_3=0,angle_4=0,angle_5=0,angle_6=0,angle_7=0;
 var angle11=0,angle22=0,angle33=0,angle44=0,angle55=0,angle66=0,angle77=0;
 var sphx,sphy,sphz,sphqx,sphqy,az=0,el=0,sph;
 var sph11,sph22,sph33,sph44,sph55,sph66,sph77;
@@ -121,8 +122,8 @@ var az1=0,el1=0,az2=0,el2=0,az3=0,el3=0,az4=0,el4=0,az5=0,el5=0,az6=0,el6=0,az7=
 var az11=0,el11=0,az22=0,el22=0,az33=0,el33=0,az44=0,el44=0,az55=0,el55=0,az66=0,el66=0,az77=0,el77=0;
 var azimuth,elevation,magnitudex,magnitudey,magnitudez,ellipsis=[1,1,1],spread=1;
 var mag,mag_x,mag_y,mag_z,mag_qx,mag_qy;
-var axis=2,matter=2,cloud=2,axis1=2,gravity1=1,axis2=4,gravity2=4;
 var g=((1+5.sqrt)/2),s=(1+2.sqrt);
+
 	~az=[];~el=[];~magx=[];~magy=[];~magz=[];~qx=[];~qy=[];
 //	spread = if(m_z < 1) { 1 / m_z } { m_z };
 
@@ -148,7 +149,9 @@ cloud.do{
 				sph11=(Spherical(1/scale2,(az11+angle1).wrap(pi.neg,pi),(el11+angle+angle1).wrap((pi/2).neg,(pi/2))));
 				(sph1.asCartesian.round(0.000000000001)+sph11.asCartesian.round(0.000000000001)).asSpherical.theta.round(0.000000000001);
 
-			};~az=~az++azimuth;angle1=(angle1+(2pi-(2pi/s))).wrap(0,2pi);}; az11=0; wl11=0;
+			};~az=~az++azimuth;angle1=(angle1+(2pi-(2pi/s))).wrap(0,2pi);}; az11=0; el11=0; angle1=0;
+
+				 angle_1=(angle_1+(2pi-(2pi/s))).wrap(0,2pi);
 		};
 
 cloud.do{
@@ -165,7 +168,9 @@ cloud.do{
 				sph22=(Spherical(1/scale,(az22+angle2).wrap(pi.neg,pi),(el22+angle+angle2).wrap((pi/2).neg,(pi/2))));
 				(sph2.asCartesian.round(0.000000000001)+sph22.asCartesian.round(0.000000000001)).asSpherical.phi.round(0.000000000001);
 
-			};~el=~el++elevation;angle2=(angle2+(2pi-(2pi/s))).wrap(0,2pi);}; az22=0; el22=0;
+				};~el=~el++elevation;angle2=(angle2+(2pi-(2pi/s))).wrap(0,2pi);}; az22=0; el22=0; angle2=0;
+
+						 angle_2=(angle_2+(2pi-(2pi/s))).wrap(0,2pi);
 		};
 
 cloud.do{
@@ -267,14 +272,13 @@ sph7=(Spherical(1,(az7+angle).wrap(pi.neg,pi),(el7+angle).wrap((pi/2).neg,(pi/2)
 
 			};~magz=~magz++magnitudez;angle7=(angle7+(2pi-(2pi/s))).wrap(0,2pi);};
 
-		}; angle=(angle+(2pi-(2pi/s))).wrap(0,2pi);
+		};
 
-					angle1=0;angle2=0;angle3=0;angle4=0;angle5=0;angle6=0;angle7=0;
+	angle_1=0;angle_2=0;angle_3=0;angle_4=0;angle_5=0;angle_6=0;angle_7=0;
 		az1=0;el1=0;az2=0;el2=0;az3=0;el3=0;az4=0;el4=0;az5=0;el5=0;az6=0;el6=0;az7=0;el7=0;
 		};
 
 		angle=(angle+(2pi-(2pi/s))).wrap(0,2pi);
-angle_1=0;angle_2=0;angle_3=0;ngle_4=0;angle_5=0;angle_6=0;angle_7=0;
 		az=0;el=0;
 	}
 }.value;
