@@ -1,6 +1,12 @@
 
 (
-s.options.numOutputBusChannels=5;
+s.options.numWireBufs = 1024*2;
+s.options.numOutputBusChannels=6;
+s.options.numInputBusChannels=0;
+s.options.memSize = 8192*16;
+s.options.blockSize = 64;
+s.options.maxNodes = 1024 * 2;
+s.makeGui(w);
 s.waitForBoot{
 Buffer.freeAll;
 ~controlBus = Bus.control(s, 1);
@@ -8,6 +14,7 @@ Buffer.freeAll;
 ~controlBus2 = Bus.control(s, 1);
 ~controlBus3 = Bus.control(s, 1);
 ~controlBus4 = Bus.control(s, 1);
+~controlBus5 = Bus.control(s, 1);
 
 
 	~scale1= Buffer.alloc(s,2048);
@@ -15,6 +22,8 @@ Buffer.freeAll;
 	~scale= Buffer.alloc(s,2048);
 	~perspective= Buffer.alloc(s,2048);
 	~harm= Buffer.alloc(s,2048);
+
+
 
 {
 var signal,wt;
@@ -67,6 +76,7 @@ SynthDef.new(\player,{
 			Out.kr(~controlBus4.index, (Osc.kr(~scale2.bufnum,(1/100)).abs));
 		Out.kr(~controlBus2.index, (Osc.kr(~perspective.bufnum,(1/100)).abs));
 Out.kr(~controlBus3.index, (Osc.kr(~harm.bufnum,(1/100)).abs));
+			Out.kr(~controlBus5.index, (LFNoise1.kr(1/100).range(pi.neg,pi)));
 
 }).add;
 	);~count=[2,2,2,3,2,4];
@@ -103,7 +113,7 @@ var angle=0,angle1=0,angle11=0;
 var g=((1+5.sqrt)/2),s=(1+2.sqrt);
 
 
-	~az=[];~el=[];~magx=[];~magy=[];~magz=[];~qx=[];
+~az=[];~el=[];~magx=[];~magy=[];~magz=[];~qx=[]; ~cart=[];
 //	spread = if(m_z < 1) { 1 / m_z } { m_z };
 Synth.new(\player);
 data = [];
@@ -117,7 +127,6 @@ a.symbolSize = 3;
 a.symbolColor = Color.white;
 a.background = Color.black;
 
-
   r= Routine({loop{
 
 
@@ -126,6 +135,7 @@ a.background = Color.black;
 	scale2=~controlBus4.getSynchronous;
 	//perspective=~controlBus2.getSynchronous;
 	harm=~controlBus3.getSynchronous;
+	angle=~controlBus5.getSynchronous;
 
 	m_x=m_y=m_z=mq=harm;
 
@@ -530,7 +540,7 @@ az6=0;el6=0;
 
 	~azimuth=~az;
 	~elevation=~el;
-	~magnitude=~magnitude=(~magx.pow(2)+~magy.pow(2)+~magz.pow(2)).sqrt*992;
+	~magnitude=~magnitude=(~magx.pow(2)+~magy.pow(2)+~magz.pow(2)).sqrt*(496/2);
 //~magnitude.postln;
 
 	dota=(~count.[0]*~count.[1]*~count.[2]*~count.[3]*~count.[4]*~count.[5]).collect{
@@ -547,14 +557,15 @@ az6=0;el6=0;
 };
 	//mk=(mk+(1200-(1200/1.6180339887499))).wrap(0,1200);
 	data =data++dota;
+
 	//data.postln;
         // schedule GUI update on AppClock
         AppClock.sched(0, {
             a.data = data;   // ScatterView3d data
             ~v.refresh;
           //  0;               // keep AppClock loop going
-        });(0.1).wait;
-}};
+        }); /*~cart.postln;*/ (0.1).wait;
+};};
 
 );
 r.play;
@@ -562,12 +573,35 @@ r.play;
 
 ~v.animate;
 ~v.drawFunc ={
-Pen.translate(1000,600);
 
-	a.rot(ot,ot,ot);
+    Pen.translate(1000,600);
 
-		ot=ot+0.5.degrad;
-//	ot += 0.01°
+    a.rot(ot,ot,ot);
+
+    ot = ot + 0.5.degrad;
+
+    ~cart = data.collect{|p|
+
+        var x=p[0], y=p[1], z=p[2];
+        var rx,ry,rz;
+
+        // rotate X
+		ry = (y*cos(ot)) - (z*sin(ot));
+		rz = (y*sin(ot) )+ (z*cos(ot));
+        y = ry; z = rz;
+
+        // rotate Y
+		rx = (x*cos(ot)) + (z*sin(ot));
+		rz =( x.neg*sin(ot)) + (z*cos(ot));
+        x = rx; z = rz;
+
+        // rotate Z
+		rx = (x*cos(ot)) -(y*sin(ot));
+		ry = (x*sin(ot)) + (y*cos(ot));
+        x = rx; y = ry;
+
+        [x,y,z]
+    };
 
 };
 //{ while { run } {~v.background_(Color.black); ~v.refresh; (1/100).wait } }.fork(AppClock);

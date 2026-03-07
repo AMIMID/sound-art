@@ -5,7 +5,7 @@
 s.options.numWireBufs = 1024*2;
 s.options.numOutputBusChannels=5;
 s.options.numInputBusChannels=0;
-s.options.memSize = 8192*4;
+s.options.memSize = 8192*16;
 s.options.blockSize = 64;
 s.options.maxNodes = 1024 * 2;
 //s.makeGui(w);
@@ -150,7 +150,7 @@ wt = signal.asWavetable;
 SynthDef.new(\synth,{
 
 	arg gain=1,low=992,tone=0,x=1,pan=1,mix=0.3,a=1,panx=1,pany=1,panz=1,room=0.5,m=2,fund_tone=1,
-				fu=32,drive=1,spread=1,drone_amp=1,pann=0,az=0,el=0,drone=1;
+				fu=32,drive=1,spread=1,drone_amp=1,pann=0,az=0,el=0,drone=1,xx=1,yy=1,zz=1;
 
 	var rq=1,cloud=1,attack,decay,curve,band,azf=0,elf=0,q,r1,r2,r3,sq1,sq2,sq3,rotationx,rotationy,rotationz,core=(9/8).rand;
 	var lamdoma,freq1,freq2,freq3,fund,amp1,amp2,amp3,alpha,cell_az,cell_el,x_pos,y_pos,control1,control2,control3,sc;
@@ -167,14 +167,14 @@ SynthDef.new(\synth,{
 				env=EnvGen.ar(Env.sine(8),doneAction:2);
 fund=fu*(9/8);
 lamdoma=(x.lag(0.001)+a.lag(0.001))/x.lag(0.001);
-				ton=2.pow((tone.lag(0.001))/992).round(0.0001);
+				ton=2.pow((tone.lag(0.001))/496).round(0.0001);
 
 				lfon=2.pow(pann/992);
 					band=pan;
 
 				mq=(m.lag(0.001)+1);
 
-					spr=Spherical(1,az,el);
+				spr=Cartesian(xx,yy,zz);
 				spx=Cartesian(spr.x,0,0);
 				spy=Cartesian(0,spr.y,0);
 				spz=Cartesian(0,0,spr.z);
@@ -196,13 +196,13 @@ lamdoma=(x.lag(0.001)+a.lag(0.001))/x.lag(0.001);
 
 				cloud.do{
 
-				axis=Spherical(sc,(sph_object.theta+azf).wrap(pi,pi.neg),  (sph_object.phi+elf).wrap((pi/2),(pi/2).neg));
+				//axis=Spherical(sc,(sph_object.theta+azf).wrap(pi,pi.neg),  (sph_object.phi+elf).wrap((pi/2),(pi/2).neg));
 
-				polytope=Cartesian(axis.x,axis.y,axis.z);
+				polytope=spr;
 
-b_x=2.pow(polytope.x.round(0.0001)/992);
-b_y=2.pow(polytope.y.round(0.0001)/992);
-b_z=2.pow(polytope.z.round(0.0001)/992);
+b_x=2.pow(polytope.x.round(0.0001)/496);
+b_y=2.pow(polytope.y.round(0.0001)/496);
+b_z=2.pow(polytope.z.round(0.0001)/496);
 
 
 anglex=(exp(Complex(0,1)*polytope.theta).real*exp(Complex(0,1)*polytope.phi).real).round(0.00001);
@@ -461,7 +461,7 @@ i=~count.rand;
 ~synth=Synth.new(\synth,[\gain,1,\drive,992*1,\fu,32,\tone, ~magnitude[i],\low,992*1,\pan,(992*16).neg,
 		\mix,0.3,\drone_amp,10,\room,0.5,\m,2,\pann,(992*8).neg,
 			\x,1,\a,1,\panx,0.02,\pany,0.02,\panz,0.02,\spread,80,
-			\az,~azimuth[i],\el,~elevation[i],\drone,12.neg,\sc,~magnitude[i]]).register;
+						\az,~azimuth[i],\el,~elevation[i],\drone,12.neg,\xx,~cart.[i].[0]/100, \yy,~cart.[i].[1]/100,\zz,~cart.[i].[2]/100]).register;
 
         ~seq.next.wait;
 				//	(1).wait;
