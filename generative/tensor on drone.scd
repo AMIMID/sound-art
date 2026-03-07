@@ -458,10 +458,10 @@ i=~count.rand;
        //     \el, ~elevation[i].lag(0.01)
      //   );
 
-~synth=Synth.new(\synth,[\gain,1,\drive,992*1,\fu,32,\tone, ~magnitude[i],\low,992*1,\pan,(992*16).neg,
+					~synth=Synth.new(\synth,[\gain,1,\drive,992*1,\fu,32,\tone, ~magnitude[i].round(1),\low,992*1,\pan,(992*16).neg,
 		\mix,0.3,\drone_amp,10,\room,0.5,\m,2,\pann,(992*8).neg,
 			\x,1,\a,1,\panx,0.02,\pany,0.02,\panz,0.02,\spread,80,
-						\az,~azimuth[i],\el,~elevation[i],\drone,12.neg,\xx,~cart.[i].[0], \yy,~cart.[i].[1],\zz,~cart.[i].[2]]).register;
+						\az,~azimuth[i],\el,~elevation[i],\drone,12.neg,\xx,~cart.[i].[0].round(1), \yy,~cart.[i].[1].round(1),\zz,~cart.[i].[2].round(1)]).register;
 
         ~seq.next.wait;
 				//	(1).wait;
