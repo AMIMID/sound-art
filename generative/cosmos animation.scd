@@ -18,8 +18,8 @@ Buffer.freeAll;
 
 {
 var signal,wt;
-	//signal=Env([1,10000],[3],[8]);
-		signal=Env([1,1000],[2,1],[8,4.neg]);
+	//signal=Env([1,100],[3],[8]);
+		signal=Env([1,200],[2.9,0.1],[8,4.neg]);
 	wt = signal.asSignal(1024).asWavetable;
 ~scale2.loadCollection(wt);
 //signal.plot;
@@ -27,7 +27,7 @@ var signal,wt;
 		{
 var signal,wt;
 //	signal=Env([1,10000],[3],[12]);
-			signal=Env([1,1000],[2,1],[12,8.neg]);
+			signal=Env([1,300],[2.9,0.1],[12,8.neg]);
 	wt = signal.asSignal(1024).asWavetable;
 ~scale1.loadCollection(wt);
 //signal.plot;
@@ -36,7 +36,7 @@ var signal,wt;
 	{
 var signal,wt;
 	//signal=Env([0.005,1,0.01],[2,1],[4,2.neg]);
-		signal=Env([1,20000,1],[2,1],[4,2.neg]);
+		signal=Env([1,20000,1],[2.9,0.1],[4,2.neg]);
 	wt = signal.asSignal(1024).asWavetable;
 ~scale.loadCollection(wt);
 //signal.plot;
@@ -52,7 +52,7 @@ var signal,wt;
 
 	{
 var signal,wt;
-	signal=Env([1,10],[3],[8]);
+	signal=Env([1,4],[3],[8]);
 	wt = signal.asSignal(1024).asWavetable;
 ~harm.loadCollection(wt);
 //signal.plot;
@@ -62,11 +62,11 @@ var signal,wt;
 (
 SynthDef.new(\player,{
 	arg tempo;
-	Out.kr(~controlBus.index, (Osc.kr(~scale.bufnum,(1/50)).abs));
-	Out.kr(~controlBus1.index, (Osc.kr(~scale1.bufnum,(1/50)).abs));
-			Out.kr(~controlBus4.index, (Osc.kr(~scale2.bufnum,(1/50)).abs));
-		Out.kr(~controlBus2.index, (Osc.kr(~perspective.bufnum,(1/50)).abs));
-Out.kr(~controlBus3.index, (Osc.kr(~harm.bufnum,(1/50)).abs));
+	Out.kr(~controlBus.index, (Osc.kr(~scale.bufnum,(1/40)).abs));
+	Out.kr(~controlBus1.index, (Osc.kr(~scale1.bufnum,(1/40)).abs));
+			Out.kr(~controlBus4.index, (Osc.kr(~scale2.bufnum,(1/40)).abs));
+		Out.kr(~controlBus2.index, (Osc.kr(~perspective.bufnum,(1/40)).abs));
+Out.kr(~controlBus3.index, (Osc.kr(~harm.bufnum,(1/40)).abs));
 
 }).add;
 	);
@@ -88,7 +88,7 @@ var az=0,el=0;
 var sph,mag,r,run = true;
 
 var scale=1,scale1=10,scale2=10,harm,perspective;
-var axis=2,cloud=2,axis1=2,gravity1=2,axis2=6,gravity2=8;
+var axis=2,cloud=2,axis1=2,gravity1=3,axis2=3,gravity2=4;
 var m_x=1,m_y=1,m_z=1,mq=m_x+1;
 var sph1,sph2,sph3,sph4,sph7,sph6;
 var sph11,sph22,sph33,sph44,sph77,sph66;
@@ -519,13 +519,13 @@ az6=0;el6=0;
 }.value;
 );
 
-	dota=(2*2*2*2*6*8).collect{
+	dota=(2*2*2*3*3*4).collect{
 
 	az=~az.[pla];
 	el=~el.[pla];
 	//mag=1000;
 		mag=(Cartesian(~magx.[pla],~magy.[pla],~magz.[pla]).rho);
-		//mag=mag*~magqx.[pl]
+		mag=mag+(Cartesian(~magqx.[pla],0,0).rho);
 	pla=pla+1;
 			//mk=(mk+(1-(1/1.6180339887499))).wrap(0,1);
 			//sph=Spherical(perspective*scale*mag,az,el).asCartesian.asArray;
@@ -539,7 +539,7 @@ az6=0;el6=0;
             a.data = data;   // ScatterView3d data
             ~v.refresh;
           //  0;               // keep AppClock loop going
-        });(0.1).wait;
+        });(0.05).wait;
 }};
 
 );
@@ -552,7 +552,7 @@ Pen.translate(400,400);
 
 	a.rot(ot,ot,ot);
 
-		ot=ot+0.01.degrad;
+		ot=ot+0.5.degrad;
 //	ot += 0.01°
 
 };

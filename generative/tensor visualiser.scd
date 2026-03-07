@@ -63,8 +63,8 @@ data = ~count.collect{
 
 	az=~az.[pl];
 	el=~el.[pl];
-	//magg=~magqx.[pl];
-	magg=1;
+	magg=~magqx.[pl];
+	//magg=1;
 	//mag=1000;
 	mag=(Cartesian(~magx.[pl],~magy.[pl],~magz.[pl]).rho/(2.sqrt));
 
