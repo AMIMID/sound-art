@@ -19,7 +19,7 @@ Buffer.freeAll;
 {
 var signal,wt;
 	//signal=Env([1,100],[3],[8]);
-		signal=Env([1,200],[2.9,0.1],[8,4.neg]);
+		signal=Env([1,400],[3],[10]);
 	wt = signal.asSignal(1024).asWavetable;
 ~scale2.loadCollection(wt);
 //signal.plot;
@@ -27,7 +27,7 @@ var signal,wt;
 		{
 var signal,wt;
 //	signal=Env([1,10000],[3],[12]);
-			signal=Env([1,300],[2.9,0.1],[12,8.neg]);
+			signal=Env([1,500],[3],[12]);
 	wt = signal.asSignal(1024).asWavetable;
 ~scale1.loadCollection(wt);
 //signal.plot;
@@ -82,13 +82,14 @@ Server.freeAll
 //////////////////////////////////////////////////////////////////////animation
 
 (
+~count=[2,2,2,3,2,4];
 var ot=0,dota,pla=0;
 var data;
 var az=0,el=0;
 var sph,mag,r,run = true;
 
 var scale=1,scale1=10,scale2=10,harm,perspective;
-var axis=2,cloud=2,axis1=2,gravity1=3,axis2=3,gravity2=4;
+var axis=~count.[0],cloud=~count.[1],axis1=~count.[2],gravity1=~count.[3],axis2=~count.[4],gravity2=~count.[5];
 var m_x=1,m_y=1,m_z=1,mq=m_x+1;
 var sph1,sph2,sph3,sph4,sph7,sph6;
 var sph11,sph22,sph33,sph44,sph77,sph66;
@@ -519,7 +520,7 @@ az6=0;el6=0;
 }.value;
 );
 
-	dota=(2*2*2*3*3*4).collect{
+	dota=(~count.[0]*~count.[1]*~count.[2]*~count.[3]*~count.[4]*~count.[5]).collect{
 
 	az=~az.[pla];
 	el=~el.[pla];
@@ -539,7 +540,7 @@ az6=0;el6=0;
             a.data = data;   // ScatterView3d data
             ~v.refresh;
           //  0;               // keep AppClock loop going
-        });(0.05).wait;
+        });(0.5).wait;
 }};
 
 );
