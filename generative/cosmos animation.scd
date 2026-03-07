@@ -19,7 +19,7 @@ Buffer.freeAll;
 {
 var signal,wt;
 	//signal=Env([1,100],[3],[8]);
-		signal=Env([1,400],[3],[10]);
+		signal=Env([1,1000],[3],[8]);
 	wt = signal.asSignal(1024).asWavetable;
 ~scale2.loadCollection(wt);
 //signal.plot;
@@ -27,7 +27,7 @@ var signal,wt;
 		{
 var signal,wt;
 //	signal=Env([1,10000],[3],[12]);
-			signal=Env([1,500],[3],[12]);
+			signal=Env([1,1100],[3],[12]);
 	wt = signal.asSignal(1024).asWavetable;
 ~scale1.loadCollection(wt);
 //signal.plot;
@@ -36,7 +36,7 @@ var signal,wt;
 	{
 var signal,wt;
 	//signal=Env([0.005,1,0.01],[2,1],[4,2.neg]);
-		signal=Env([1,20000,1],[2.9,0.1],[4,2.neg]);
+		signal=Env([1,20100,1],[2.9,0.1],[4,2.neg]);
 	wt = signal.asSignal(1024).asWavetable;
 ~scale.loadCollection(wt);
 //signal.plot;
@@ -80,9 +80,8 @@ Server.freeAll
 //el1 = el1 + (targetEl1 - el1) * 0.1;
 
 //////////////////////////////////////////////////////////////////////animation
-
-(
 ~count=[2,2,2,3,2,4];
+(
 var ot=0,dota,pla=0;
 var data;
 var az=0,el=0;
@@ -121,6 +120,7 @@ a.background = Color.black;
 
   r= Routine({loop{
 
+
 		scale=~controlBus.getSynchronous;
 	scale1=~controlBus1.getSynchronous;
 	scale2=~controlBus4.getSynchronous;
@@ -128,6 +128,14 @@ a.background = Color.black;
 	harm=~controlBus3.getSynchronous;
 
 	m_x=m_y=m_z=mq=harm;
+
+	~count=[2,2,2,3,2,4];
+	axis=~count.[0];
+	cloud=~count.[1];
+	axis1=~count.[2];
+	gravity1=~count.[3];
+	axis2=~count.[4];
+	gravity2=~count.[5];
 
         az1=0; el1=0;
         az2=0; el2=0;
@@ -540,7 +548,7 @@ az6=0;el6=0;
             a.data = data;   // ScatterView3d data
             ~v.refresh;
           //  0;               // keep AppClock loop going
-        });(0.5).wait;
+        });(0.1).wait;
 }};
 
 );
