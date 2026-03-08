@@ -164,7 +164,7 @@ SynthDef.new(\synth,{
 	var r_axis, r_v, r, axisr,spr,rot,i,j,k,level=100,spx,spy,spz;
 
 
-				env=EnvGen.ar(Env.sine(4),doneAction:2);
+				env=EnvGen.ar(Env.sine(8),doneAction:2);
 fund=fu*(9/8);
 lamdoma=(x.lag(0.001)+a.lag(0.001))/x.lag(0.001);
 				ton=2.pow((tone.lag(0.001))/56).round(0.0001);
@@ -463,9 +463,9 @@ i= ~cart.size.rand;
        //     \el, ~elevation[i].lag(0.01)
      //   );
 
-					~synth=Synth.new(\synth,[\gain,0.1,\drive,992*2,\fu,32,\tone,
+					~synth=Synth.new(\synth,[\gain,0.5,\drive,992*2,\fu,32,\tone,
 						~magnitude[i].round(1),\low,992*1,\pan,(992*16).neg,
-		\mix,0.6,\drone_amp,1,\room,0.6,\pann,(992*6).neg,\x,2,\a,1,\spread,80,
+		\mix,0.6,\drone_amp,3,\room,0.6,\pann,(992*9).neg,\x,2,\a,1,\spread,90,
 						\az,~azimuth[i],\el,~elevation[i],\drone,12.neg,\xx,
 						~cart.[i].[0].round(1), \yy,~cart.[i].[1].round(1),\zz,~cart.[i].[2].round(1)]).register;
 
@@ -475,7 +475,7 @@ i= ~cart.size.rand;
 		})
 		);
 	~s.play;
-	//	~s.stop;
+//	~s.stop;
 
 	});
 	Tdef(\drone).play;
