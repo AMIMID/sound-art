@@ -665,6 +665,23 @@ MIDIdef.cc(\midi_slider6,{ |val, num, chan, src|
 },31);
 			);
 );
+				(
+MIDIdef.cc(\midi_slider7,{ |val, num, chan, src|
+		var th;
+		th=val.linlin(0,127,pi.neg,pi).round(0.0001);
+		th.postln;
+~r1=th;
+},53);
+	);
+
+(
+MIDIdef.cc(\midi_slider8,{ |val, num, chan, src|
+		var th;
+	th=val.linlin(0,127,pi.neg,pi).round(0.0001);
+		th.postln;
+~r2=th
+},57);
+	);
 
 (
 	(
@@ -833,17 +850,17 @@ MIDIdef.cc(\midi_seq_pot8,{ |val, num, chan, src|
 					1.do{
 ~x=bank.collect{
 m1=m1+1;
-					b=Spherical(beat,~az.[m1],~el.[m1]).rotate(~r).tilt(~r/2).tumble(~r/3).x.round(0.00001);
+					b=Spherical(beat,~az.[m1],~el.[m1]).rotate(~r).tilt(~r1).tumble(~r2).x.round(0.00001);
 	2.pow(b).round(time);
 };
 ~y=bank.collect{
 m2=m2+1;
-	c=Spherical(beat,~az.[m2],~el.[m2]).rotate(~r).tilt(~r/2).tumble(~r/3).y.round(0.00001);
+	c=Spherical(beat,~az.[m2],~el.[m2]).rotate(~r).tilt(~r1).tumble(~r2).y.round(0.00001);
 	2.pow(c).round(time);
 };
 ~z=bank.collect{
 m3=m3+1;
-	d=Spherical(beat,~az.[m3],~el.[m3]).rotate(~r).tilt(~r/2).tumble(~r/3).z.round(0.00001);
+	d=Spherical(beat,~az.[m3],~el.[m3]).rotate(~r).tilt(~r1).tumble(~r2).z.round(0.00001);
 	2.pow(d).round(time);
 }; m1=1.neg; m2=1.neg; m3=1.neg; ~dx=~dx++~x; ~dy=~dy++~y;  ~dz=~dz++~z;   ~x=[]; ~y=[]; ~z=[];  r=r+90.degrad; };
 
