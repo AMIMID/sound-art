@@ -257,7 +257,7 @@ cos((polytope.phi.round(0.00001)).wrap((pi/2).neg,(pi/2))))))).rho/(2.sqrt));
 
 		sph=Spherical(mag,polytope.theta,polytope.phi);
 
-	loc1=1;  loc2=1;  loc3=1;
+	loc1=mx;  loc2=my;  loc3=mz;
 
 phasex=Complex(1,mx.value).theta;
 phasey=Complex(1,my.value).theta;
@@ -330,9 +330,9 @@ threshold3=(((343/0.3)/fund).reciprocal.ampdb/2.sqrt).dbamp;
 		sig2=HPF.ar(sig2, 50);
 		sig3=HPF.ar(sig3, 50);
 
-		sig1=Compander.ar(sig1,control1,threshold1,1.2,1/3,0.03,0.15);
-		sig2=Compander.ar(sig2,control2,threshold2,1.2,1/3,0.03,0.15);
-		sig3=Compander.ar(sig3,control3,threshold3,1.2,1/3,0.03,0.15);
+					sig1=Compander.ar(sig1,control1,threshold1,1.2,1/3,0.03,0.15)+BrownNoise.ar(0.00001);
+		sig2=Compander.ar(sig2,control2,threshold2,1.2,1/3,0.03,0.15)+BrownNoise.ar(0.00001);
+		sig3=Compander.ar(sig3,control3,threshold3,1.2,1/3,0.03,0.15)+BrownNoise.ar(0.00001);
 
 	///distortion
 
