@@ -250,8 +250,8 @@ sin((polytope.phi.round(0.00001)*(mq-1)).wrap((pi/2).neg,(pi/2)))))*
 cos((polytope.phi.round(0.00001)).wrap((pi/2).neg,(pi/2))))))).rho/(2.sqrt));
 	);
 
-					mx=(Cartesian(magx,0,0).rho);
-					my=(Cartesian(0,magy,0).rho);
+					mx=(Cartesian(magx,0,0).rho)*(magqx);
+					my=(Cartesian(0,magy,0).rho)*(magqy);
 					mz=(Cartesian(0,0,magz).rho);
 					mag=(Cartesian(mx,my,mz).rho/2.sqrt)*(magqx) ;
 
@@ -336,13 +336,12 @@ threshold3=(((343/0.3)/fund).reciprocal.ampdb/2.sqrt).dbamp;
 
 	///distortion
 
-	sig1 = sig1.softclip; sig2 = sig2.softclip;  sig3 = sig3.softclip;
 
-		sig1 = (tanh(sig1*2.pow(drive/992))) / (1 + (tanh(sig1*2.pow(drive/992))).abs);
+		sig1 = (tanh(sig1.softclip*2.pow(drive/992))) / (1 + (tanh(sig1.softclip*2.pow(drive/992))).abs);
 
-		sig2 =  (tanh(sig2*2.pow(drive/992))) / (1 + (tanh(sig2*2.pow(drive/992))).abs);
+		sig2 =  (tanh(sig2.softclip*2.pow(drive/992))) / (1 + (tanh(sig2.softclip*2.pow(drive/992))).abs);
 
-	sig3 =  (tanh(sig3*2.pow(drive/992))) / (1 + (tanh(sig3*2.pow(drive/992))).abs);
+	sig3 =  (tanh(sig3.softclip*2.pow(drive/992))) / (1 + (tanh(sig3.softclip*2.pow(drive/992))).abs);
 
 
 	///final out
