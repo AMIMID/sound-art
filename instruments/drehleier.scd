@@ -46,9 +46,14 @@ s.meter;
 		///vbap
 
 		///octahedron
+	//	(
+//~az=[0.degrad,0.degrad,90.degrad,180.degrad,90.neg.degrad,0.degrad];
+//~el=[90.neg.degrad,0.degrad,0.degrad,0.degrad,0.degrad,90.degrad];
+//);
+		//tetr
 		(
-~az=[0.degrad,0.degrad,90.degrad,180.degrad,90.neg.degrad,0.degrad];
-~el=[90.neg.degrad,0.degrad,0.degrad,0.degrad,0.degrad,90.degrad];
+~az=[45.degrad,135.neg.degrad,45.neg.degrad,135.degrad];
+~el=[35.264390.neg.degrad,35.264390.neg.degrad,35.264390.degrad,35.264390.degrad];
 );
 
 /*(
@@ -413,7 +418,7 @@ Out.ar(0,VBAP.ar(4,Limiter.ar(LeakDC.ar(FreeVerb.ar(sig3,mix.lag(0.001),room.lag
 
 
 ////durs
-	({var m1=1.neg, m2=1.neg, m3=1.neg,a,b,c,n=0,bank=6,time=32.reciprocal,beat=1,r=0;
+	({var m1=1.neg, m2=1.neg, m3=1.neg,a,b,c,n=0,bank=4,time=32.reciprocal,beat=1,r=0;
 
 			~dur1=[];~dur2=[];~dur3=[]; ~dx=[];~dy=[]; ~dz=[]; ~durx=[]; ~dury=[]; ~durz=[]; ~dur=[];
 
@@ -434,13 +439,13 @@ m3=m3+1;
 	2.pow(d).round(time);
 }; m1=1.neg; m2=1.neg; m3=1.neg; ~dx=~dx++~x; ~dy=~dy++~y;  ~dz=~dz++~z;   ~x=[]; ~y=[]; ~z=[];  r=r+90.degrad; };
 
-				6.do{ ~dur1=~dur1++~dx.[n];n=n+1;};n=0;
+				bank.do{ ~dur1=~dur1++~dx.[n];n=n+1;};n=0;
 		//	~durx = ~dur1.collect { |x| if (x == 0) { Rest(2) } { x }};
 
-		6.do{ ~dur2=~dur2++~dy.[n];n=n+1;};n=0;
+		bank.do{ ~dur2=~dur2++~dy.[n];n=n+1;};n=0;
 			//	~dury = ~dur2.collect { |x| if (x == 0) { Rest(2) } { x }};
 
-		6.do{ ~dur3=~dur3++~dz.[n];n=n+1;};n=0;
+		bank.do{ ~dur3=~dur3++~dz.[n];n=n+1;};n=0;
 			//	~durz = ~dur3.collect { |x| if (x == 0) { Rest(2) } { x }};
 
 			~dur=~dur++~dur1++~dur2++~dur3;
@@ -642,6 +647,15 @@ MIDIdef.cc(\midi_slider4,{ |val, num, chan, src|
 		if(~synth.isPlaying,{~synth.set(\tone,cl)});
 },27);
 	);
+
+				(
+MIDIdef.cc(\midi_slider5,{ |val, num, chan, src|
+		var th;
+	th=val.linlin(0,127,pi.neg,pi).round(0.0001);
+		th.postln;
+~r=th;
+},49);
+			);
 					(
 MIDIdef.cc(\midi_slider6,{ |val, num, chan, src|
 		var drone;
@@ -806,11 +820,46 @@ MIDIdef.cc(\midi_seq_pot8,{ |val, num, chan, src|
 
 );
 		/////////////sequencer with midi
-(
-//~seq = Pseq(~dur ,inf).asStream;
-			~seq = Pseq(~dur1 ,inf).asStream;
+({
+			var m1=1.neg, m2=1.neg, m3=1.neg,a,b,c,n=0,bank=4,time=32.reciprocal,beat=1,r=0;
+		//	~r=0;
+		//	~seq = Pseq([1] ,inf).asStream;
 	~s= Routine({loop{
 
+				(
+
+			~dur1=[];~dur2=[];~dur3=[]; ~dx=[];~dy=[]; ~dz=[]; ~durx=[]; ~dury=[]; ~durz=[]; ~dur=[];
+
+					1.do{
+~x=bank.collect{
+m1=m1+1;
+					b=Spherical(beat,~az.[m1],~el.[m1]).rotate(~r).tilt(~r/2).tumble(~r/3).x.round(0.00001);
+	2.pow(b).round(time);
+};
+~y=bank.collect{
+m2=m2+1;
+	c=Spherical(beat,~az.[m2],~el.[m2]).rotate(~r).tilt(~r/2).tumble(~r/3).y.round(0.00001);
+	2.pow(c).round(time);
+};
+~z=bank.collect{
+m3=m3+1;
+	d=Spherical(beat,~az.[m3],~el.[m3]).rotate(~r).tilt(~r/2).tumble(~r/3).z.round(0.00001);
+	2.pow(d).round(time);
+}; m1=1.neg; m2=1.neg; m3=1.neg; ~dx=~dx++~x; ~dy=~dy++~y;  ~dz=~dz++~z;   ~x=[]; ~y=[]; ~z=[];  r=r+90.degrad; };
+
+				bank.do{ ~dur1=~dur1++~dx.[n];n=n+1;};n=0;
+		//	~durx = ~dur1.collect { |x| if (x == 0) { Rest(2) } { x }};
+
+		bank.do{ ~dur2=~dur2++~dy.[n];n=n+1;};n=0;
+			//	~dury = ~dur2.collect { |x| if (x == 0) { Rest(2) } { x }};
+
+		bank.do{ ~dur3=~dur3++~dz.[n];n=n+1;};n=0;
+			//	~durz = ~dur3.collect { |x| if (x == 0) { Rest(2) } { x }};
+
+			~dur=~dur++~dur1++~dur2++~dur3;
+);
+
+				~seq = Pseq(~dur ,inf).asStream;
 
 	~synth.set(\tone, ~s1)	;
 
@@ -845,7 +894,7 @@ MIDIdef.cc(\midi_seq_pot8,{ |val, num, chan, src|
 	    ~seq.next.wait;
 };
 });
-);
+		}.value);
 	~s.play;
 
 
@@ -856,7 +905,12 @@ MIDIdef.cc(\midi_seq_pot8,{ |val, num, chan, src|
 )
 ~s.stop
 
-
+(
+~synth=Synth.new(\synth,[\gain,1,\drive,992*2,\fu,32,\tone,0,\low,992*0,\pan,(992*16).neg,
+		\mix,0.3,\drone_amp,1,\room,0.5,\m,1,\pann,(992*16).neg,
+			\x,1,\a,1,\panx,0.01,\pany,0.01,\panz,0.01,\spread,100,
+			\az,pi/4,\el,pi/8,\azr,992,\dron,0,\drone,1,\sc,1]).register;
+)
 
 			////sequencer
 
@@ -875,13 +929,13 @@ MIDIdef.cc(\midi_seq_pot8,{ |val, num, chan, src|
 	~s.play;
 /////server based randomes
 (
-~seq = Pseq(~dur1, inf).asStream;
+~seq = Pseq(~dur, inf).asStream;
 	~s= Routine({loop{
 
 
 	~synth.set(\tone, (56).rand)	;
 
-    ~seq.next.wait;\
+    ~seq.next.wait;
 };
 });
 )
