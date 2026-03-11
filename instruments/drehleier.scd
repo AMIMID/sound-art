@@ -170,7 +170,7 @@ SynthDef.new(\synth,{
 fund=fu*(9/8);
 lamdoma=(x.lag(0.001)+a.lag(0.001))/x.lag(0.001);
 
-ton=2.pow(Select.kr(tone.lag(0.001).linlin(0, 14, 0, 24), ~scale) /12).round(0.0001)*2.pow(dron.lag(0.001)/56);
+ton=2.pow(Select.kr(tone.lag(0.001).linlin(0, 14, 0, 24), ~scale) /12).round(0.0001)*2.pow(dron.lag(0.001)/992);
 
 
 		//		ton=2.pow((tone.lag(0.001))/56).round(0.0001)*2.pow(dron.lag(0.001)/56);
@@ -493,7 +493,7 @@ MIDIdef.cc(\midi_pot4,{ |val, num, chan, src|
 														(
 MIDIdef.cc(\midi_pot5,{ |val, num, chan, src|
 		var dron;
-			dron=val.linlin(0,127,0,56*4).round(1).asInteger;
+			dron=val.linlin(0,127,0,992*3).round(1).asInteger;
 		dron.postln;
 		if(~synth.isPlaying,{~synth.set(\dron,dron)});
 },46);
@@ -566,7 +566,7 @@ MIDIdef.cc(\midi_pot12,{ |val, num, chan, src|
 													(
 MIDIdef.cc(\midi_pot13,{ |val, num, chan, src|
 		var theta;
-			theta=val.linlin(0,127,1,992*2).round(1).asInteger;
+			theta=val.linlin(0,127,1,992).round(1).asInteger;
 		theta.postln;
 		if(~synth.isPlaying,{~synth.set(\sc,theta)});
 },47);
