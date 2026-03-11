@@ -2,7 +2,7 @@
 (
 (
 s.options.numWireBufs = 1024*2;
-s.options.numOutputBusChannels=3;
+s.options.numOutputBusChannels=4;
 s.options.numInputBusChannels=0;
 s.options.memSize = 8192*4;
 s.options.blockSize = 64;
@@ -58,18 +58,18 @@ s.meter;
 );*/
 
 /////tetrahedron
-		/*(
-~a = VBAPSpeakerArray .new3,(
+		(
+~a = VBAPSpeakerArray .new(3,
 [[45.degrad,35.264390.neg.degrad], [135.neg.degrad,35.264390.neg.degrad], [45.neg.degrad,35.264390.degrad], [135.degrad,35.264390.degrad]]);
 	 ~b = Buffer.loadCollection(s, ~a.getSetsAndMatrices);
-);*/
+);
 
 ///three channel setup
-		(
-~a = VBAPSpeakerArray.new(3,
-				[[0,0],[0,pi/2],[pi/2,0]]);
-	 ~b = Buffer.loadCollection(s, ~a.getSetsAndMatrices);
-);
+		//(
+//~a = VBAPSpeakerArray.new(3,
+//				[[0,0],[0,pi/2],[pi/2,0]]);
+//	 ~b = Buffer.loadCollection(s, ~a.getSetsAndMatrices);
+//);
 
 
 ///animation buses
@@ -207,9 +207,9 @@ ton=2.pow(Select.kr(tone.lag(0.001).linlin(0, 14, 0, 24), ~scale) /12).round(0.0
 
 				polytope=Cartesian(axis.x,axis.y,axis.z);
 
-b_x=2.pow(polytope.x.round(1)/992);
-b_y=2.pow(polytope.y.round(1)/992);
-b_z=2.pow(polytope.z.round(1)/992);
+b_x=2.pow(Select.kr(polytope.x.linlin(0, 14, 0, 24), ~scale) /12);
+b_y=2.pow(Select.kr(polytope.y.linlin(0, 14, 0, 24), ~scale) /12);
+b_z=2.pow(Select.kr(polytope.z.linlin(0, 14, 0, 24), ~scale) /12);
 
 
 anglex=(exp(Complex(0,1)*polytope.theta).real*exp(Complex(0,1)*polytope.phi).real).round(0.00001);
@@ -330,7 +330,7 @@ threshold3=(((343/0.3)/fund).reciprocal.ampdb/2.sqrt).dbamp;
 		sig2=HPF.ar(sig2, 50);
 		sig3=HPF.ar(sig3, 50);
 
-					sig1=Compander.ar(sig1,control1,threshold1,1.2,1/3,0.03,0.15)+BrownNoise.ar(0.00001);
+		sig1=Compander.ar(sig1,control1,threshold1,1.2,1/3,0.03,0.15)+BrownNoise.ar(0.00001);
 		sig2=Compander.ar(sig2,control2,threshold2,1.2,1/3,0.03,0.15)+BrownNoise.ar(0.00001);
 		sig3=Compander.ar(sig3,control3,threshold3,1.2,1/3,0.03,0.15)+BrownNoise.ar(0.00001);
 
@@ -360,13 +360,13 @@ threshold3=(((343/0.3)/fund).reciprocal.ampdb/2.sqrt).dbamp;
 //Out.ar(0,PanAz.ar(2,Limiter.ar(LeakDC.ar(FreeVerb.ar(sig3,mix.lag(0.001),room.lag(0.001),mul:gain3*loc3.abs)),0.9,0.01),SinOsc.ar(panz,phasez),width:spread));
 
 				/////3d vbap expansion
-					Out.ar(0,VBAP.ar(3,Limiter.ar(LeakDC.ar(FreeVerb.ar(sig1,mix.lag(0.001),room.lag(0.001),mul:gain1*loc1.abs)),0.9,0.01),~b,(spx.theta.raddeg+SinOsc.ar(panx,phasex).range(180,180.neg)).wrap(180,180.neg),
+					Out.ar(0,VBAP.ar(4,Limiter.ar(LeakDC.ar(FreeVerb.ar(sig1,mix.lag(0.001),room.lag(0.001),mul:gain1*loc1.abs)),0.9,0.01),~b,(spx.theta.raddeg+SinOsc.ar(panx,phasex).range(180,180.neg)).wrap(180,180.neg),
 					(spx.phi.raddeg+SinOsc.ar(panx,phasex).range(90,90.neg)).wrap(90,90.neg),spread:spread));
 
-Out.ar(0,VBAP.ar(3,Limiter.ar(LeakDC.ar(FreeVerb.ar(sig2,mix.lag(0.001),room.lag(0.001),mul:gain2*loc2.abs)),0.9,0.01),~b,(spy.theta.raddeg+SinOsc.ar(pany,phasey).range(180,180.neg)).wrap(180,180.neg),
+Out.ar(0,VBAP.ar(4,Limiter.ar(LeakDC.ar(FreeVerb.ar(sig2,mix.lag(0.001),room.lag(0.001),mul:gain2*loc2.abs)),0.9,0.01),~b,(spy.theta.raddeg+SinOsc.ar(pany,phasey).range(180,180.neg)).wrap(180,180.neg),
 					(spy.phi.raddeg+SinOsc.ar(pany,phasey).range(90,90.neg)).wrap(90,90.neg),spread:spread));
 
-Out.ar(0,VBAP.ar(3,Limiter.ar(LeakDC.ar(FreeVerb.ar(sig3,mix.lag(0.001),room.lag(0.001),mul:gain3*loc3.abs)),0.9,0.01),~b,(spz.theta.raddeg+SinOsc.ar(panz,phasez).range(180,180.neg)).wrap(180,180.neg),
+Out.ar(0,VBAP.ar(4,Limiter.ar(LeakDC.ar(FreeVerb.ar(sig3,mix.lag(0.001),room.lag(0.001),mul:gain3*loc3.abs)),0.9,0.01),~b,(spz.theta.raddeg+SinOsc.ar(panz,phasez).range(180,180.neg)).wrap(180,180.neg),
 					(spz.phi.raddeg+SinOsc.ar(panz,phasez).range(90,90.neg)).wrap(90,90.neg),spread:spread));
 
 
@@ -501,7 +501,7 @@ MIDIdef.cc(\midi_pot5,{ |val, num, chan, src|
 														(
 MIDIdef.cc(\midi_pot6,{ |val, num, chan, src|
 		var drone_amp;
-			drone_amp=val.linlin(0,127,1,10).round(0.0001);
+			drone_amp=val.linlin(0,127,1,30).round(0.0001);
 		drone_amp.postln;
 		if(~synth.isPlaying,{~synth.set(\drone_amp,drone_amp)});
 },50);
@@ -565,7 +565,7 @@ MIDIdef.cc(\midi_pot12,{ |val, num, chan, src|
 													(
 MIDIdef.cc(\midi_pot13,{ |val, num, chan, src|
 		var theta;
-			theta=val.linlin(0,127,1,992).round(1).asInteger;
+			theta=val.linlin(0,127,0,14).round(1).asInteger;
 		theta.postln;
 		if(~synth.isPlaying,{~synth.set(\sc,theta)});
 },47);
