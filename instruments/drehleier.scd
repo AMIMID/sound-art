@@ -265,11 +265,11 @@ cos((polytope.phi.round(0.00001)).wrap((pi/2).neg,(pi/2))))))).rho/(2.sqrt));
 
 		sph=Spherical(mag,polytope.theta,polytope.phi);
 
-	loc1=sph.x;  loc2=sph.y;  loc3=sph.z;
+loc1=1;  loc2=1;  loc3=1;
 
-phasex=Complex(1,mx.value).theta;
-phasey=Complex(1,my.value).theta;
-phasez=Complex(1,mz.value).theta;
+phasex=Complex(1,sph.x).theta;
+phasey=Complex(1,sph.y).theta;
+phasez=Complex(1,sph.z).theta;
 
 
 freq1=(fund*ton)*b_x.lag(0.001)*lamdoma;
