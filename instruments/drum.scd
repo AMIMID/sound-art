@@ -290,7 +290,7 @@ a.postln;
 )
 )
 
-{SinOsc.ar()}.play
+
 
 		TempoClock.default.tempo_(2.5);
 

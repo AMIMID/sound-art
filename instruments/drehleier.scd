@@ -141,6 +141,12 @@ wt = signal.asWavetable;
 		//	~transfer_function.plot;
 			~dist=Buffer.loadCollection(s,~transfer_function.asWavetableNoWrap);
 		);
+(
+			{
+				var nn=1.neg;
+		~scale=14.collect{nn=nn+1;Scale.phrygian.performDegreeToKey(nn,12)};
+			}.value;
+		)
 
 		////sound
 
@@ -163,7 +169,12 @@ SynthDef.new(\synth,{
 
 fund=fu*(9/8);
 lamdoma=(x.lag(0.001)+a.lag(0.001))/x.lag(0.001);
-				ton=2.pow((tone.lag(0.001))/56).round(0.0001)*2.pow(dron.lag(0.001)/56);
+
+ton=2.pow(Select.kr(tone.lag(0.001).linlin(0, 14, 0, 24), ~scale) /12).round(0.0001)*2.pow(dron.lag(0.001)/56);
+
+
+		//		ton=2.pow((tone.lag(0.001))/56).round(0.0001)*2.pow(dron.lag(0.001)/56);
+
 
 						lfo=2.pow(pan/992);
 				lfon=2.pow(pann/992);
@@ -211,8 +222,8 @@ phase3=Complex(1,anglez).theta;
 
 
 mod_anglex=SinOsc.ar(lfon,phase1).range(pi.neg,pi);
-					mod_angley=SinOsc.ar(lfon*(2/3),phase2).range(pi.neg,pi);
-					mod_anglez=SinOsc.ar(lfon*(1/2),phase3).range((pi/2).neg,(pi/2));
+					mod_angley=SinOsc.ar(lfon,phase2).range(pi.neg,pi);
+					mod_anglez=SinOsc.ar(lfon,phase3).range((pi/2).neg,(pi/2));
 
 					(
 	magx=((Complex(cos(((polytope.theta+mod_anglex).round(0.00001)*m).wrap(pi.neg,pi)),cos((((polytope.theta+mod_anglex).round(0.00001)*m)).wrap(pi.neg,pi))).rho/(2.sqrt))*
@@ -619,7 +630,7 @@ MIDIdef.cc(\midi_slider3,{ |val, num, chan, src|
 (
 MIDIdef.cc(\midi_slider4,{ |val, num, chan, src|
 		var cl;
-		cl=val.linlin(0,127,0,56*4).round(1).asInteger;
+		cl=val.linlin(0,127,0,14).round(1).asInteger;
 		cl.postln;
 		if(~synth.isPlaying,{~synth.set(\tone,cl)});
 },27);
@@ -715,7 +726,7 @@ a.postln;
 					(
 MIDIdef.cc(\midi_seq_pot1,{ |val, num, chan, src|
 		var s1;
-		s1=val.linlin(0,127,0,56*2).round(1).asInteger;
+		s1=val.linlin(0,127,0,14).round(1).asInteger;
 		s1.postln;
 		~s1=s1;
 },18);
@@ -724,7 +735,7 @@ MIDIdef.cc(\midi_seq_pot1,{ |val, num, chan, src|
 				(
 MIDIdef.cc(\midi_seq_pot2,{ |val, num, chan, src|
          var s2;
-					s2=val.linlin(0,127,0,56*2).round(1).asInteger;
+					s2=val.linlin(0,127,0,14).round(1).asInteger;
 		s2.postln;
 		~s2=s2;
 },22);
@@ -733,7 +744,7 @@ MIDIdef.cc(\midi_seq_pot2,{ |val, num, chan, src|
 									(
 MIDIdef.cc(\midi_seq_pot3,{ |val, num, chan, src|
 		var s3;
-			s3=val.linlin(0,127,0,56*2).round(1).asInteger;
+			s3=val.linlin(0,127,0,14).round(1).asInteger;
 		s3.postln;
 		~s3=s3;
 },26);
@@ -742,7 +753,7 @@ MIDIdef.cc(\midi_seq_pot3,{ |val, num, chan, src|
 												(
 MIDIdef.cc(\midi_seq_pot4,{ |val, num, chan, src|
 		var s4;
-			s4=val.linlin(0,127,0,56*2).round(1).asInteger;
+			s4=val.linlin(0,127,0,14).round(1).asInteger;
 		s4.postln;
 		~s4=s4;
 },30);
@@ -751,7 +762,7 @@ MIDIdef.cc(\midi_seq_pot4,{ |val, num, chan, src|
 														(
 MIDIdef.cc(\midi_seq_pot5,{ |val, num, chan, src|
 		var s5;
-			s5=val.linlin(0,127,0,56*2).round(1).asInteger;
+			s5=val.linlin(0,127,0,14).round(1).asInteger;
 		s5.postln;
 		~s5=s5;
 },48);
@@ -760,7 +771,7 @@ MIDIdef.cc(\midi_seq_pot5,{ |val, num, chan, src|
 														(
 MIDIdef.cc(\midi_seq_pot6,{ |val, num, chan, src|
 		var s6;
-			s6=val.linlin(0,127,0,56*2).round(1).asInteger;
+						s6=val.linlin(0,127,0,14).round(1).asInteger;
 		s6.postln;
 		~s6=s6;
 },52);
@@ -769,7 +780,7 @@ MIDIdef.cc(\midi_seq_pot6,{ |val, num, chan, src|
 														(
 MIDIdef.cc(\midi_seq_pot7,{ |val, num, chan, src|
 		var s7;
-			s7=val.linlin(0,127,0,56*2).round(1).asInteger;
+			s7=val.linlin(0,127,0,14).round(1).asInteger;
 		s7.postln;
 		~s7=s7;
 },56);
@@ -778,7 +789,7 @@ MIDIdef.cc(\midi_seq_pot7,{ |val, num, chan, src|
 																	(
 MIDIdef.cc(\midi_seq_pot8,{ |val, num, chan, src|
 		var s8;
-			s8=val.linlin(0,127,0,56*2).round(1).asInteger;
+			s8=val.linlin(0,127,0,14).round(1).asInteger;
 		s8.postln;
 		~s8=s8;
 },60);
