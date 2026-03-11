@@ -207,9 +207,9 @@ ton=2.pow(Select.kr(tone.lag(0.001).linlin(0, 14, 0, 24), ~scale) /12).round(0.0
 
 				polytope=Cartesian(axis.x,axis.y,axis.z);
 
-b_x=2.pow(polytope.x.round(0.0001)/992);
-b_y=2.pow(polytope.y.round(0.0001)/992);
-b_z=2.pow(polytope.z.round(0.0001)/992);
+b_x=2.pow(polytope.x.round(1)/992);
+b_y=2.pow(polytope.y.round(1)/992);
+b_z=2.pow(polytope.z.round(1)/992);
 
 
 anglex=(exp(Complex(0,1)*polytope.theta).real*exp(Complex(0,1)*polytope.phi).real).round(0.00001);

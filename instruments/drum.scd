@@ -95,7 +95,7 @@ SynthDef(\kick, {
 
 			threshold=(((343/0.3)/freq).reciprocal.ampdb/2.sqrt).dbamp;
 
-					sph=Spherical(t,az, el);
+				sph=Spherical(2.pow(t/56),az, el);
 
 anglex=exp(Complex(0,1)*sph.theta).real*exp(Complex(0,1)*sph.phi).real;
 angley=exp(Complex(0,1)*sph.theta).imag*exp(Complex(0,1)*sph.phi).real;
@@ -273,15 +273,16 @@ a.postln;
 );
 
 (
-~seq = Pseq(~dur ,inf).asStream;
-	~s= Routine({loop{
+~seqq = Pseq(~dur ,inf).asStream;
+	~dr= Routine({loop{
 
-	~synth=	Synth(\kick, [\gain,0.1, \tone,992, \m,2,	\low,992*2, \noise,0.001, \az,pi/4, \t,992, \el,pi/8, \decay,3,\attack,0.01,\rz,2000,\mix,0.4,\room,0.6,\pan,992.neg])	;
-    ~seq.next.wait;
+	Synth(\kick, [\gain,~gain, \tone,~tone, \m,2,	\low,992*1, \noise,0.001, \az,~az, \t,28, \el,~el, \decay,2,\attack,0.01,\rz,1000,\mix,0.4,\room,1,\pan,992.neg])	;
+    ~seqq.next.wait;
 };
 });
 );
-	~s.play;
+	~dr.play;
+		~dr.stop
 
 	//	~s.pause;
 	});
