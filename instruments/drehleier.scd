@@ -288,7 +288,7 @@ freq1=(fund*ton)*b_x.lag(0.001)*lamdoma;
 freq2=(fund*ton)*b_y.lag(0.001)*lamdoma;
 freq3=(fund*ton)*b_z.lag(0.001)*lamdoma;
 
-					dr=2.pow(drone.lag(0.1)/12);
+					dr=2.pow(drone.lag(0.1)/12)*2.pow(dron.lag(0.001)/992);
 
 f1=(fund)*b_x.lag(0.001)*lamdoma*dr;
 f2=(fund)*b_y.lag(0.001)*lamdoma*dr;
@@ -550,7 +550,7 @@ MIDIdef.cc(\midi_pot4,{ |val, num, chan, src|
 														(
 MIDIdef.cc(\midi_pot5,{ |val, num, chan, src|
 		var dron;
-			dron=val.linlin(0,127,0,992*3).round(1).asInteger;
+			dron=val.linlin(0,127,0,992*2).round(1).asInteger;
 		dron.postln;
 		if(~synth.isPlaying,{~synth.set(\dron,dron)});
 },46);
