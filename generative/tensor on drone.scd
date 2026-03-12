@@ -155,8 +155,8 @@ wt = signal.asWavetable;
 (
 SynthDef.new(\synth,{
 
-	arg gain=1,low=992,tone=0,x=1,pan=1,mix=0.3,a=1,room=0.5,fund_tone=1,
-				fu=32,drive=1,spread=1,drone_amp=1,pann=0,az=0,el=0,drone=1,xx=1,yy=1,zz=1;
+	arg gain=1,low=992,tone1=0,tone2=0,tone3=0,x=1,pan=1,mix=0.3,a=1,room=0.5,fund_tone=1,pon=1,
+				fu=32,drive=1,spread=1,drone_amp=1,pann=0,az=0,el=0,drone=1,xx=1,yy=1,zz=1,pneuma=0,panx=1,pany=1,panz=1;
 
 	var rq=1,cloud=1,attack,decay,curve,band,azf=0,elf=0,q,r1,r2,r3,sq1,sq2,sq3,rotationx,rotationy,rotationz,core=(9/8).rand;
 	var lamdoma,freq1,freq2,freq3,fund,amp1,amp2,amp3,alpha,cell_az,cell_el,x_pos,y_pos,control1,control2,control3,sc;
@@ -200,7 +200,7 @@ lamdoma=(x.lag(0.001)+a.lag(0.001))/x.lag(0.001);
 	//			rot=((r_v*sin(theta))+cos(theta));
 //r=rot*axisr*rot.conjugate;
 
-				sph_object=Cartesian(0.1,az,el);
+				sph_object=Spherical(1,az,el);
 				panx=sph_object.x;
 				pany=sph_object.y;
 				panz=sph_object.z;
@@ -263,30 +263,30 @@ cos((polytope.phi.round(0.00001)).wrap((pi/2).neg,(pi/2))))))).rho/(2.sqrt));
 
 		sph=Spherical(mag,polytope.theta,polytope.phi);
 
-	loc1=1;  loc2=1;  loc3=1;
+loc1=1;  loc2=1;  loc3=1;
 
-phasex=Complex(1,mx.value).theta;
-phasey=Complex(1,my.value).theta;
-phasez=Complex(1,mz.value).theta;
+phasex=Complex(1,sph.x).theta+pneuma;
+phasey=Complex(1,sph.y).theta+pneuma;
+phasez=Complex(1,sph.z).theta+pneuma;
 
 
-freq1=(fund*ton)*b_x.lag(0.001)*lamdoma;
-freq2=(fund*ton)*b_y.lag(0.001)*lamdoma;
-freq3=(fund*ton)*b_z.lag(0.001)*lamdoma;
+freq1=(fund*ton1)*b_x.lag(0.0001)*lamdoma;
+freq2=(fund*ton2)*b_y.lag(0.0001)*lamdoma;
+freq3=(fund*ton3)*b_z.lag(0.0001)*lamdoma;
 
-					dr=2.pow(drone.lag(0.1)/12);
+					dr=2.pow(drone.lag(0.1)/12)*2.pow(dron.lag(0.0001)/992);
 
-f1=(fund)*b_x.lag(0.001)*lamdoma*dr;
-f2=(fund)*b_y.lag(0.001)*lamdoma*dr;
-f3=(fund)*b_z.lag(0.001)*lamdoma*dr;
+f1=(fund)*b_x.lag(0.0001)*lamdoma*dr;
+f2=(fund)*b_y.lag(0.0001)*lamdoma*dr;
+f3=(fund)*b_z.lag(0.0001)*lamdoma*dr;
 
-amp1=ton.reciprocal*b_x.reciprocal*lamdoma.reciprocal;
-amp2=ton.reciprocal*b_y.reciprocal*lamdoma.reciprocal;
-amp3=ton.reciprocal*b_z.reciprocal*lamdoma.reciprocal;
+amp1=ton1.reciprocal*b_x.reciprocal*lamdoma.reciprocal;
+amp2=ton2.reciprocal*b_y.reciprocal*lamdoma.reciprocal;
+amp3=ton3.reciprocal*b_z.reciprocal*lamdoma.reciprocal;
 
-g1=b_x.reciprocal*lamdoma.reciprocal*dr.reciprocal*drone_amp.reciprocal;
-g2=b_y.reciprocal*lamdoma.reciprocal*dr.reciprocal*drone_amp.reciprocal;
-g3=b_z.reciprocal*lamdoma.reciprocal*dr.reciprocal*drone_amp.reciprocal;
+g1=b_x.reciprocal*lamdoma.reciprocal*dr.reciprocal*drone_amp.reciprocal*panx;
+g2=b_y.reciprocal*lamdoma.reciprocal*dr.reciprocal*drone_amp.reciprocal*pany;
+g3=b_z.reciprocal*lamdoma.reciprocal*dr.reciprocal*drone_amp.reciprocal*panz;
 
 band_osc1=SinOsc.kr(b_x*2.pow(band.lag(0.001)/992),phase:phasex).exprange(496,16256);
 band_osc2=SinOsc.kr(b_y*2.pow(band.lag(0.001)/992),phase:phasey).exprange(496,16256);
@@ -313,9 +313,15 @@ control1=SinOsc.ar(freq1,phase:phasex,mul:amp1);
 control2=SinOsc.ar(freq2,phase:phasey,mul:amp2);
 control3=SinOsc.ar(freq3,phase:phasez,mul:amp3);
 
-ds1=(LPF.ar((Osc.ar(~w1.bufnum,f1,phase:phasex,mul:level).abs*SinOsc.ar(f1,phase:phasex)),f1*2.pow(low.lag(0.001)/992),g1));
-ds2=(LPF.ar((Osc.ar(~w1.bufnum,f2,phase:phasey,mul:level).abs*SinOsc.ar(f2,phase:phasey)),f2*2.pow(low.lag(0.001)/992),g2));
-ds3=(LPF.ar((Osc.ar(~w1.bufnum,f3,phase:phasez,mul:level).abs*SinOsc.ar(f3,phase:phasez)),f3*2.pow(low.lag(0.001)/992),g3));
+ds1=(LPF.ar((Osc.ar(~w1.bufnum,f1+1,phase:phasex,mul:level).abs*SinOsc.ar(f1+1,phase:phasex)),f1*2.pow(low.lag(0.0001)/992),g1)+
+	LPF.ar((Osc.ar(~w1.bufnum,f1+1,phase:phasex+(pi/2),mul:level).abs*SinOsc.ar(f1+1,phase:phasex+(pi/2))),f1*2.pow(low.lag(0.0001)/992),g1)
+					);
+ds2=(LPF.ar((Osc.ar(~w1.bufnum,f2+1,phase:phasey,mul:level).abs*SinOsc.ar(f2+1,phase:phasey)),f2*2.pow(low.lag(0.0001)/992),g2)+
+	LPF.ar((Osc.ar(~w1.bufnum,f2+1,phase:phasey+(pi/2),mul:level).abs*SinOsc.ar(f2+1,phase:phasey+(pi/2))),f2*2.pow(low.lag(0.0001)/992),g2)
+					);
+ds3=(LPF.ar((Osc.ar(~w1.bufnum,f3+1,phase:phasez,mul:level).abs*SinOsc.ar(f3+1,phase:phasez)),f3*2.pow(low.lag(0.0001)/992),g3)+
+	LPF.ar((Osc.ar(~w1.bufnum,f3+1,phase:phasez+(pi/2),mul:level).abs*SinOsc.ar(f3+1,phase:phasez+(pi/2))),f3*2.pow(low.lag(0.0001)/992),g3)
+					);
 
 					sig1=(LPF.ar((Osc.ar(~w1.bufnum,freq1,phase:phasex,mul:level).abs*SinOsc.ar(freq1,phase:phasex)),freq1*2.pow(low.lag(0.001)/992),amp1)+ds1);
 					sig2=(LPF.ar((Osc.ar(~w1.bufnum,freq2,phase:phasey,mul:level).abs*SinOsc.ar(freq2,phase:phasey)),freq2*2.pow(low.lag(0.001)/992),amp2)+ds2);
@@ -357,18 +363,18 @@ threshold3=(((343/0.3)/fund).reciprocal.ampdb/2.sqrt).dbamp;
 					gain3=gain*rq3.sqrt.reciprocal*cloud.reciprocal*10*env;
 
 
-					g_ch1=((sph.x*Spherical(sph.rho,~az.[0],~el.[0]).x*Saw.ar(panx))+
-						         (sph.y*Spherical(sph.rho,~az.[0],~el.[0]).y*Saw.ar(pany))+
-						          (sph.z*Spherical(sph.rho,~az.[1],~el.[1]).z*Saw.ar(panz))).max(0);
-					g_ch2=((sph.x*Spherical(sph.rho,~az.[1],~el.[1]).x*Saw.ar(panx))+
-						         (sph.y*Spherical(sph.rho,~az.[1],~el.[1]).y*Saw.ar(pany))+
-						          (sph.z*Spherical(sph.rho,~az.[1],~el.[1]).z*Saw.ar(panz))).max(0);
-					g_ch3=((sph.x*Spherical(sph.rho,~az.[2],~el.[2]).x*Saw.ar(panx))+
-						         (sph.y*Spherical(sph.rho,~az.[2],~el.[2]).y*Saw.ar(pany))+
-						          (sph.z*Spherical(sph.rho,~az.[2],~el.[2]).z*Saw.ar(panz))).max(0);
-					g_ch4=((sph.x*Spherical(sph.rho,~az.[3],~el.[3]).x*Saw.ar(panx))+
-						         (sph.y*Spherical(sph.rho,~az.[3],~el.[3]).y*Saw.ar(pany))+
-						          (sph.z*Spherical(sph.rho,~az.[3],~el.[3]).z*Saw.ar(panz))).max(0);
+				g_ch1=((sph.x*Spherical(sph.rho,~az.[0],~el.[0]).x*LFSaw.ar(pon,0))+
+						         (sph.y*Spherical(sph.rho,~az.[0],~el.[0]).y*LFSaw.ar(pon,0.5))+
+						          (sph.z*Spherical(sph.rho,~az.[1],~el.[1]).z)).max(0);
+					g_ch2=((sph.x*Spherical(sph.rho,~az.[1],~el.[1]).x*LFSaw.ar(pon,0))+
+						         (sph.y*Spherical(sph.rho,~az.[1],~el.[1]).y*LFSaw.ar(pon,0.5))+
+						          (sph.z*Spherical(sph.rho,~az.[1],~el.[1]).z)).max(0);
+					g_ch3=((sph.x*Spherical(sph.rho,~az.[2],~el.[2]).x*LFSaw.ar(pon,0))+
+						         (sph.y*Spherical(sph.rho,~az.[2],~el.[2]).y*LFSaw.ar(pon,0.5))+
+						          (sph.z*Spherical(sph.rho,~az.[2],~el.[2]).z)).max(0);
+					g_ch4=((sph.x*Spherical(sph.rho,~az.[3],~el.[3]).x*LFSaw.ar(pon,0))+
+						         (sph.y*Spherical(sph.rho,~az.[3],~el.[3]).y*LFSaw.ar(pon,0.5))+
+						          (sph.z*Spherical(sph.rho,~az.[3],~el.[3]).z)).max(0);
 
 
 				 gn = [g_ch1, g_ch2, g_ch3, g_ch4];   g_sum = gn.sum;  gn = gn / g_sum;
