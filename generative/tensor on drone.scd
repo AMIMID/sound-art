@@ -179,7 +179,7 @@ SynthDef.new(\synth,{
 
 				//m = In.kr(~controlBus3);
 
-				env=EnvGen.ar(Env.sine(8),doneAction:2,levelScale:namp);
+				env=EnvGen.ar(Env.sine(8),doneAction:2,levelScale:1);
 fund=fu*(9/8);
 lamdoma=(x.lag(0.001)+a.lag(0.001))/x.lag(0.001);
 
@@ -218,9 +218,9 @@ anglex=(exp(Complex(0,1)*polytope.theta).real*exp(Complex(0,1)*polytope.phi).rea
 angley=(exp(Complex(0,1)*polytope.theta).imag*exp(Complex(0,1)*polytope.phi).real).round(0.00001);
 anglez=(exp(Complex(0,1)*polytope.phi).imag).round(0.00001);
 
-phase1=Complex(1,anglex).theta+pneuma;
-phase2=Complex(1,angley).theta+pneuma;
-phase3=Complex(1,anglez).theta+pneuma;
+phase1=Complex(1,anglex).theta;
+phase2=Complex(1,angley).theta;
+phase3=Complex(1,anglez).theta;
 
 
 mod_anglex=SinOsc.ar(lfon,phase1).range(pi.neg,pi);
@@ -494,12 +494,13 @@ m3=m3+1;
 
     loop {
 				thisThread.randSeed = ~val;
+							TempoClock.default.tempo_(~val/300);
 					~r1=0; ~r2=0; ~r3=0;
 i= ~cart.size.rand;
 					l=~system.next;
 
-	~synth=Synth.new(\synth,[\gain,0.5,\drive,(992*2).rand,\fu,32,\sc,~magnitude.[i].round(1).max(1),
-              \low,992.rand,\pan,(992*16).neg,\mix,0.999.rand,\room,1,\pann,(992*8).neg,\x,2,\a,1,\spread,1,
+	~synth=Synth.new(\synth,[\gain,0.5,\drive,(992*2).rand,\fu,32,\sc,~magnitude.[i].round(1).max(1).asInteger.postln,
+              \low,992.rand,\pan,(992*16).neg,\mix,0.999.rand,\room,1,\pann,(992*8).neg,\x,2,\a,1,\spread,0.5,
 						\pon,0.001,\pneuma,0,\namp,l,\drone,12.neg,\az,~azimuth.[i],\el,~elevation.[i]
 						,\panx,0.5.rand,\pany,0.5.rand,\panz,0.5.rand,
 						\xx,~cart.[i].[0].round(1), \yy,~cart.[i].[1].round(1),\zz,~cart.[i].[2].round(1)]).register;
@@ -512,7 +513,6 @@ i= ~cart.size.rand;
 		})
 		);
 	~s.play;
-//~s.stop;
 
 	});
 	Tdef(\drone).play;
@@ -520,6 +520,7 @@ i= ~cart.size.rand;
 )
 )
 
+~s.stop;
 
 		TempoClock.default.tempo_(1/1);
 
