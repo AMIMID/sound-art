@@ -53,7 +53,7 @@ var signal,wt;
 
 	{
 var signal,wt;
-	signal=Env([30000,0.01,100],[2,0.1],[16,2.neg]);
+	signal=Env([30000,1,100],[2,0.1],[16,2.neg]);
 	wt = signal.asSignal(1024).asWavetable;
 ~perspective.loadCollection(wt);
 //signal.plot;

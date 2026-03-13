@@ -174,10 +174,10 @@ SynthDef.new(\synth,{
 	var axi1,axi2,axi3,ds1,ds2,ds3,f1,f2,f3,g1,g2,g3,sph_object,lfon,axis;
 	var r_axis, r_v, r, axisr,spr,rot,i,j,k,level=100,spx,spy,spz;
 	var g_ch1,g_ch2,g_ch3,g_ch4;
-	var gn ,g_sum,g_avg ,ton1,ton2,ton3;
+	var gn ,g_sum,g_avg ,ton1,ton2,ton3,tonb;
 
 
-				//m = In.kr(~controlBus3);
+				m = In.kr(~controlBus3);
 
 				env=EnvGen.ar(Env.sine(8),doneAction:2,levelScale:1);
 fund=fu*(9/8);
@@ -189,10 +189,11 @@ lamdoma=(x.lag(0.001)+a.lag(0.001))/x.lag(0.001);
 				tone2=sph_object.y;
 				tone3=sph_object.z;
 
+				tonb=2.pow(dron.lag(0.0001)/992);
 
-ton1=2.pow(Select.kr(tone1.round(1), ~scalee) /12).round(0.0001)*2.pow(dron.lag(0.0001)/992);
-ton2=2.pow(Select.kr(tone2.round(1), ~scalee) /12).round(0.0001)*2.pow(dron.lag(0.0001)/992);
-ton3=2.pow(Select.kr(tone3.round(1), ~scalee) /12).round(0.0001)*2.pow(dron.lag(0.0001)/992);
+ton1=2.pow(Select.kr(tone1.round(1), ~scalee) /12).round(0.0001)*tonb;
+ton2=2.pow(Select.kr(tone2.round(1), ~scalee) /12).round(0.0001)*tonb;
+ton3=2.pow(Select.kr(tone3.round(1), ~scalee) /12).round(0.0001)*tonb;
 
 
 				lfon=2.pow(pann/992);
@@ -270,7 +271,7 @@ freq1=(fund*ton1)*b_x.lag(0.0001)*lamdoma;
 freq2=(fund*ton2)*b_y.lag(0.0001)*lamdoma;
 freq3=(fund*ton3)*b_z.lag(0.0001)*lamdoma;
 
-					dr=2.pow(drone.lag(0.1)/12)*2.pow(dron.lag(0.0001)/992);
+					dr=2.pow(drone.lag(0.1)/12)*tonb;
 
 f1=(fund)*b_x.lag(0.0001)*lamdoma*dr;
 f2=(fund)*b_y.lag(0.0001)*lamdoma*dr;
@@ -488,6 +489,7 @@ m3=m3+1;
 
 			~seq = Pseq(~dur, inf).asStream;
 		~system= Pseq(~r,inf).asStream;
+			~tonb=992;
 
 ~s = Routine({
     var i,m,l;
@@ -502,7 +504,7 @@ i= ~cart.size.rand;
 	~synth=Synth.new(\synth,[\gain,0.5,\drive,(992*2).rand,\fu,32,\sc,~magnitude.[i].round(1).max(1).asInteger,
               \low,992.rand,\pan,(992*16).neg,\mix,0.999.rand,\room,1,\pann,(992*8).neg,\x,2,\a,1,\spread,0.5,
 						\pon,0.001,\pneuma,0,\namp,l,\drone,12.neg,\az,~azimuth.[i],\el,~elevation.[i]
-						,\panx,0.5.rand,\pany,0.5.rand,\panz,0.5.rand,
+						,\panx,0.5.rand,\pany,0.5.rand,\panz,0.5.rand,\dron,~tonb,
 						\xx,~cart.[i].[0].round(1), \yy,~cart.[i].[1].round(1),\zz,~cart.[i].[2].round(1)]).register;
 
 
