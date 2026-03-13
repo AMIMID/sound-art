@@ -503,11 +503,12 @@ m3=m3+1;
 				//	~r1=0; ~r2=0; ~r3=0;
 i= ~cart.lag(0.01).size.rand;
 					l=~system.next;
+					~detune=32.rand.round(2).max(1);
 
-	~synth=Synth.new(\synth,[\gain,0.5,\drive,(992*2).rand,\fu,32,\sc,~magnitude.lag(0.01).[i].round(1).max(1).asInteger.lag,
+	~synth=Synth.new(\synth,[\gain,0.5,\drive,(992*2).rand,\fu,32,\sc,~magnitude.lag(0.01).[i].round(1).max(1).asInteger,
               \low,992.rand,\pan,(992*16).neg,\mix,0.999.rand,\room,1,\pann,(992*8).neg,\x,2,\a,1,\spread,~panwidth,
 						\pon,0.001,\pneuma,0,\namp,l,\drone,12.neg,\az,~azimuth.lag(0.01).[i],\el,~elevation.lag(0.01).[i]
-						,\panx,0.5.rand,\pany,0.5.rand,\panz,0.5.rand,\dron,~tonb,
+						,\panx,0.1.rand,\pany,0.1.rand,\panz,0.1.rand,\dron,~tonb,
 						\xx,~cart.lag(0.01).[i].[0].round(1), \yy,~cart.lag(0.01).[i].[1].round(1),\zz,~cart.lag(0.01).[i].[2].round(1)]).register;
 
 
