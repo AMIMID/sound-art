@@ -578,6 +578,7 @@ r.play;
     Pen.translate(1000,600);
 
     a.rot(ot,ot,ot);
+				~r1=ot; ~r2=ot; ~r3=ot;
 
     ot = ot + 0.5.degrad;
 

@@ -3,7 +3,7 @@
 (
 (
 s.options.numWireBufs = 1024*2;
-s.options.numOutputBusChannels=5;
+s.options.numOutputBusChannels=6;
 s.options.numInputBusChannels=0;
 s.options.memSize = 8192*16;
 s.options.blockSize = 64;
@@ -25,32 +25,13 @@ s.scope;
 s.meter;
 	Tdef(\drone, {
 	//Buffer.freeAll;
-////sesor ased randomnes
-//SerialPort.devices;
-//~port = SerialPort.new("/dev/cu.usbserial-210",9600)
 
-/*(
-~charArray = [];
-~getValues = Routine.new({
-
-	var ascii;
-	{ascii = ~port.read.asAscii;
-		if(ascii.isDecDigit, {~charArray = ~charArray.add(ascii)});
-		if(ascii == $a,{~val = ~charArray.collect(_.digit).convertDigits;
-			~charArray =[];
-		});
-	}.loop;
-
-}).play;
-);*/
-
-		///vbap
 
 		///octahedron
-		(
-~azz=[0.degrad,0.degrad,90.degrad,180.degrad,90.neg.degrad,0.degrad];
-~ell=[90.neg.degrad,0.degrad,0.degrad,0.degrad,0.degrad,90.degrad];
-);
+	//	(
+//~azz=[0.degrad,0.degrad,90.degrad,180.degrad,90.neg.degrad,0.degrad];
+//~ell=[90.neg.degrad,0.degrad,0.degrad,0.degrad,0.degrad,90.degrad];
+//);
 
 			//tetr
 		(
@@ -58,6 +39,7 @@ s.meter;
 ~ell=[35.264390.neg.degrad,35.264390.neg.degrad,35.264390.degrad,35.264390.degrad];
 );
 
+				///vbap
 /*(
 ~a = VBAPSpeakerArray.new(3,
 [[~azz.[0],~ell.[0]], [~azz.[1],~ell.[1]], [~azz.[2],~ell.[2]], [~azz.[3],~ell.[3]],[~azz.[4],~el.[4]],[~azz.[5],~ell.[5]]]);
@@ -71,50 +53,64 @@ s.meter;
 	 ~b = Buffer.loadCollection(s, ~a.getSetsAndMatrices);
 );*/
 
-///three channel setup
-		/*(
-~a = VBAPSpeakerArray.new(3,
-				[[0,0],[0,pi/2],[pi/2,0]]);
-	 ~b = Buffer.loadCollection(s, ~a.getSetsAndMatrices);
-);*/
+
+////sesor based randomnes
+SerialPort.devices;
+~port = SerialPort.new("/dev/cu.usbserial-2240",9600);
+
+(
+~charArray = [];
+~getValues = Routine.new({
+
+	var ascii;
+	{ascii = ~port.read.asAscii;
+		if(ascii.isDecDigit, {~charArray = ~charArray.add(ascii)});
+		if(ascii == $a,{~val = ~charArray.collect(_.digit).convertDigits;
+			~charArray =[];
+		});
+	}.loop;
+
+}).play;
+);
 
 
-///animation buses
-	//	~controlBus_1a = Bus.control(s, 1);
-	//	~controlBus_2a = Bus.control(s, 1);
-	//	~controlBus_3a = Bus.control(s, 1);
+		///////L-system
+	(
+{
+var dict = IdentityDictionary[\A -> "AB", \B -> "A"];
+//These are the production rules of the L-system
+var word = "A";
+var string_temp = "";
+var iter = 9;
 
-	//	~controlBus_1b = Bus.control(s, 1);
-	//	~controlBus_2b = Bus.control(s, 1);
-	//	~controlBus_3b = Bus.control(s, 1);
+//These are diction for the mapping of the alphabet to "artistic" parameters: degrees in a scale, beat occurrence, etc.
 
-	//	~controlBus_1c = Bus.control(s, 1);
-	//	~controlBus_2c = Bus.control(s, 1);
-		//~controlBus_3c = Bus.control(s, 1);
+var dictnotes = IdentityDictionary[\A -> 0.5, \B -> 1];
+ ~r=[];
 
-	//	~controlBus_1d = Bus.control(s, 1);
-	//	~controlBus_2d = Bus.control(s, 1);
-	//	~controlBus_3d = Bus.control(s, 1);
+//This iteration generates the system recursively
 
-	//	~controlBus_1e = Bus.control(s, 1);
-	//	~controlBus_2e = Bus.control(s, 1);
-	//	~controlBus_3e = Bus.control(s, 1);
+iter.do({
 
-	//	~controlBus_1f = Bus.control(s, 1);
-	//	~controlBus_2f = Bus.control(s, 1);
-	//	~controlBus_3f = Bus.control(s, 1);
+word.asArray.do({|i|
+    string_temp = string_temp ++ dict[i.asSymbol];
+});
 
-	//	~controlBus_1g = Bus.control(s, 1);
-	//	~controlBus_2g = Bus.control(s, 1);
-	//	~controlBus_3g = Bus.control(s, 1);
+word = string_temp;
+	string_temp = "";
+});
 
-	//	~controlBus_1k = Bus.control(s, 1);
-	//	~controlBus_2k = Bus.control(s, 1);
-	//	~controlBus_3k = Bus.control(s, 1);
+word.postln;
 
-	//	~controlBus_x = Bus.control(s, 1);
-	//	~controlBus_y = Bus.control(s, 1);
-//		~controlBus_z = Bus.control(s, 1);
+//Here we map the final system to the parameters as above
+
+word.do({|i| ~r = ~r ++ dictnotes[i.asSymbol];});
+
+~r.postln;
+}.value
+);
+
+
 
 ////// wavetables
 
@@ -149,33 +145,52 @@ wt = signal.asWavetable;
 		//	~transfer_function.plot;
 			~dist.loadCollection(~transfer_function.asWavetableNoWrap);
 		);
+////scale
+		(
+			{
+				var nn=1.neg;
+		~scale=14.collect{nn=nn+1;Scale.phrygian.performDegreeToKey(nn,12)};
+			}.value;
+		);
 
 		////sound
 
 (
 SynthDef.new(\synth,{
 
-	arg gain=1,low=992,tone1=0,tone2=0,tone3=0,x=1,pan=1,mix=0.3,a=1,room=0.5,fund_tone=1,pon=1,
-				fu=32,drive=1,spread=1,drone_amp=1,pann=0,az=0,el=0,drone=1,xx=1,yy=1,zz=1,pneuma=0,panx=1,pany=1,panz=1;
+	arg gain=1,low=992,tone1=0,tone2=0,tone3=0,x=1,pan=1,mix=0.3,a=1,room=0.5,fund_tone=1,pon=0.01,namp=1,
+				fu=32,drive=1,spread=1,drone_amp=1,pann=0,drone=1,xx=1,yy=1,zz=1,
+				pneuma=0,panx=1,pany=1,panz=1,sc=1,dron=1,az=0,el=0;
 
 	var rq=1,cloud=1,attack,decay,curve,band,azf=0,elf=0,q,r1,r2,r3,sq1,sq2,sq3,rotationx,rotationy,rotationz,core=(9/8).rand;
-	var lamdoma,freq1,freq2,freq3,fund,amp1,amp2,amp3,alpha,cell_az,cell_el,x_pos,y_pos,control1,control2,control3,sc;
+	var lamdoma,freq1,freq2,freq3,fund,amp1,amp2,amp3,alpha,cell_az,cell_el,x_pos,y_pos,control1,control2,control3;
 	var sig1,sig2,bank=6,out1,out2,band_osc1,band_osc2,ton,threshold1,threshold2,threshold3,phase1,phase2,phase3;
-	var panx=1,pany=1,panz=1,m, band_osc3,band_osc4,band_osc5,band_osc6,sig3,out3,cell_tria,b_x,b_y,b_z,polytope,gain1,gain2,gain3,env,azimuth,elevation;
+	var m, band_osc3,band_osc4,band_osc5,band_osc6,sig3,out3,cell_tria,b_x,b_y,b_z;
+	var polytope,gain1,gain2,gain3,env,azimuth,elevation;
 	var magx,magy,magz,magqx,magqy,mod_anglex,anglex,angley,anglez,phasex,phasey,phasez,rq1,rq2,rq3,rq4,rq5,rq6;
 	var mod_angley,mod_anglez,mx,my,mz,mqx,mqy,mag,mq,lfo,sph;
 	var loc1,loc2,loc3,g=((1+5.sqrt)/2),s=(1+2.sqrt),tensor,dr;
 	var amb_w,amb_x,amb_y,amb_z,out,amb_sig1,amb_sig2,amb_sig3,axisx,axisy,axisz,cx,cy,cz;
 	var axi1,axi2,axi3,ds1,ds2,ds3,f1,f2,f3,g1,g2,g3,sph_object,lfon,axis;
 	var r_axis, r_v, r, axisr,spr,rot,i,j,k,level=100,spx,spy,spz;
-					var g_ch1,g_ch2,g_ch3,g_ch4;
-	var gn ,g_sum,g_avg ;
+	var g_ch1,g_ch2,g_ch3,g_ch4;
+	var gn ,g_sum,g_avg ,ton1,ton2,ton3;
 
 
-				env=EnvGen.ar(Env.sine(8),doneAction:2);
+				env=EnvGen.ar(Env.sine(3),doneAction:2,levelScale:1);
 fund=fu*(9/8);
 lamdoma=(x.lag(0.001)+a.lag(0.001))/x.lag(0.001);
-				ton=2.pow((tone.lag(0.001))/56).round(0.0001);
+
+
+						sph_object=Spherical(14,az.lag(0.0001),el.lag(0.0001));
+				tone1=sph_object.x;
+				tone2=sph_object.y;
+				tone3=sph_object.z;
+
+
+ton1=2.pow(Select.kr(tone1.round(1), ~scale) /12).round(0.0001)*2.pow(dron.lag(0.0001)/992);
+ton2=2.pow(Select.kr(tone2.round(1), ~scale) /12).round(0.0001)*2.pow(dron.lag(0.0001)/992);
+ton3=2.pow(Select.kr(tone3.round(1), ~scale) /12).round(0.0001)*2.pow(dron.lag(0.0001)/992);
 
 				m=~controlBus3.getSynchronous;
 
@@ -185,33 +200,13 @@ lamdoma=(x.lag(0.001)+a.lag(0.001))/x.lag(0.001);
 				mq=(m.lag(0.001)+1);
 
 				spr=Cartesian(xx,yy,zz);
-				spx=Cartesian(spr.x,0,0);
-				spy=Cartesian(0,spr.y,0);
-				spz=Cartesian(0,0,spr.z);
-			//r_axis=[rx,ry,rz].normalizeSum.sqrt;
-
-//i=Quaternion(r_axis.[0], 0, 0);
-//j=Quaternion(0, 0, r_axis.[1], 0);
-//k=Quaternion(0, 0, 0, r_axis.[2]);
-//r_v=i+j+k;
-
-//axisr=Quaternion(0.spr.x,spr.y,spr.z);
-
-	//			rot=((r_v*sin(theta))+cos(theta));
-//r=rot*axisr*rot.conjugate;
-
-				sph_object=Spherical(1,az,el);
-				panx=sph_object.x;
-				pany=sph_object.y;
-				panz=sph_object.z;
-				//sph_object=spr;
-			//	sc=2.pow(fund_tone.round(1)/992);
+				//spx=Cartesian(spr.x,0,0);
+				//spy=Cartesian(0,spr.y,0);
+				//spz=Cartesian(0,0,spr.z);
 
 				cloud.do{
 
-				//axis=Spherical(sc,(sph_object.theta+azf).wrap(pi,pi.neg),  (sph_object.phi+elf).wrap((pi/2),(pi/2).neg));
-
-				polytope=spr;
+					polytope=Spherical(sc,spr.theta,spr.phi);
 
 b_x=2.pow(polytope.x.round(0.0001)/992);
 b_y=2.pow(polytope.y.round(0.0001)/992);
@@ -265,9 +260,9 @@ cos((polytope.phi.round(0.00001)).wrap((pi/2).neg,(pi/2))))))).rho/(2.sqrt));
 
 loc1=1;  loc2=1;  loc3=1;
 
-phasex=Complex(1,sph.x).theta+pneuma;
-phasey=Complex(1,sph.y).theta+pneuma;
-phasez=Complex(1,sph.z).theta+pneuma;
+phasex=Complex(1,sph.x).theta;
+phasey=Complex(1,sph.y).theta;
+phasez=Complex(1,sph.z).theta;
 
 
 freq1=(fund*ton1)*b_x.lag(0.0001)*lamdoma;
@@ -284,9 +279,9 @@ amp1=ton1.reciprocal*b_x.reciprocal*lamdoma.reciprocal;
 amp2=ton2.reciprocal*b_y.reciprocal*lamdoma.reciprocal;
 amp3=ton3.reciprocal*b_z.reciprocal*lamdoma.reciprocal;
 
-g1=b_x.reciprocal*lamdoma.reciprocal*dr.reciprocal*drone_amp.reciprocal*panx;
-g2=b_y.reciprocal*lamdoma.reciprocal*dr.reciprocal*drone_amp.reciprocal*pany;
-g3=b_z.reciprocal*lamdoma.reciprocal*dr.reciprocal*drone_amp.reciprocal*panz;
+g1=b_x.reciprocal*lamdoma.reciprocal*dr.reciprocal*panx;
+g2=b_y.reciprocal*lamdoma.reciprocal*dr.reciprocal*pany;
+g3=b_z.reciprocal*lamdoma.reciprocal*dr.reciprocal*panz;
 
 band_osc1=SinOsc.kr(b_x*2.pow(band.lag(0.001)/992),phase:phasex).exprange(496,16256);
 band_osc2=SinOsc.kr(b_y*2.pow(band.lag(0.001)/992),phase:phasey).exprange(496,16256);
@@ -440,16 +435,6 @@ Out.ar(0,VBAP.ar(3,Limiter.ar(LeakDC.ar(
 				//		[sph.theta+azf, sph.theta+azf], [sph.phi+elf,sph.phi+elf],2 ));
 
 
-	///animation control buses out
-////
-	//	Out.kr(~controlBus_1a, A2K.kr(Limiter.ar(LeakDC.ar(FreeVerb.ar(sig1,mix.lag(0.001),room.lag(0.001),mul:gain1*loc1.abs)),0.9,0.01)*100));
-	//		Out.kr(~controlBus_2a, A2K.kr(Limiter.ar(LeakDC.ar(FreeVerb.ar(sig2,mix.lag(0.001),room.lag(0.001),mul:gain2*loc2.abs)),0.9,0.01)*100));
-	//	Out.kr(~controlBus_3a, A2K.kr(Limiter.ar(LeakDC.ar(FreeVerb.ar(sig3,mix.lag(0.001),room.lag(0.001),mul:gain3*loc3.abs)),0.9,0.01)*100));
-
-	//	Out.kr(~controlBus_x, mod_anglex);
-	///	Out.kr(~controlBus_y, mod_angley);
-	//	Out.kr(~controlBus_z, mod_anglez);
-
 
 						azf = (azf+(2pi-(2pi/s))).wrap(pi.neg,pi);
 		   elf = (elf+(pi-(pi/s))).wrap((pi/2).neg,(pi/2))
@@ -461,34 +446,35 @@ Out.ar(0,VBAP.ar(3,Limiter.ar(LeakDC.ar(
 
 
 ////durs
-	({var m1=1.neg, m2=1.neg, m3=1.neg,a,b,c,n=0,bank=6,time=32.reciprocal,beat=1,r=0;
+	({var m1=1.neg, m2=1.neg, m3=1.neg,a,b,c,n=0,bank=4,time=32.reciprocal,beat=1,r=0;
 
 			~dur1=[];~dur2=[];~dur3=[]; ~dx=[];~dy=[]; ~dz=[]; ~durx=[]; ~dury=[]; ~durz=[]; ~dur=[];
+			~r1=0; ~r2=0; ~r3=0;
 
 					1.do{
 ~x=bank.collect{
 m1=m1+1;
-					b=Spherical(beat,~azz.[m1],~ell.[m1]).rotate(r).tilt(r).tumble(r).x.round(0.00001);
+					b=Spherical(beat,~azz.[m1],~ell.[m1]).rotate(~r1).tilt(~r2).tumble(~r3).x.round(0.00001);
 	2.pow(b).round(time);
 };
 ~y=bank.collect{
 m2=m2+1;
-	c=Spherical(beat,~azz.[m2],~ell.[m2]).rotate(r).tilt(r).tumble(r).y.round(0.00001);
+	c=Spherical(beat,~azz.[m2],~ell.[m2]).rotate(~r1).tilt(~r2).tumble(~r3).y.round(0.00001);
 	2.pow(c).round(time);
 };
 ~z=bank.collect{
 m3=m3+1;
-	d=Spherical(beat,~azz.[m3],~ell.[m3]).rotate(r).tilt(r).tumble(r).z.round(0.00001);
+	d=Spherical(beat,~azz.[m3],~ell.[m3]).rotate(~r1).tilt(~r2).tumble(~r3).z.round(0.00001);
 	2.pow(d).round(time);
 }; m1=1.neg; m2=1.neg; m3=1.neg; ~dx=~dx++~x; ~dy=~dy++~y;  ~dz=~dz++~z;   ~x=[]; ~y=[]; ~z=[];  r=r+90.degrad; };
 
-				6.do{ ~dur1=~dur1++~dx.[n];n=n+1;};n=0;
+				bank.do{ ~dur1=~dur1++~dx.[n];n=n+1;};n=0;
 		//	~durx = ~dur1.collect { |x| if (x == 0) { Rest(2) } { x }};
 
-		6.do{ ~dur2=~dur2++~dy.[n];n=n+1;};n=0;
+		bank.do{ ~dur2=~dur2++~dy.[n];n=n+1;};n=0;
 			//	~dury = ~dur2.collect { |x| if (x == 0) { Rest(2) } { x }};
 
-		6.do{ ~dur3=~dur3++~dz.[n];n=n+1;};n=0;
+		bank.do{ ~dur3=~dur3++~dz.[n];n=n+1;};n=0;
 			//	~durz = ~dur3.collect { |x| if (x == 0) { Rest(2) } { x }};
 
 			~dur=~dur++~dur1++~dur2++~dur3;
@@ -497,31 +483,25 @@ m3=m3+1;
 );
 
 		/////////////sequencer
-		~count=[2,2,2,3,2,4];
 		(
 
-thisThread.randSeed = 123;
-
-			~seq = Pseq([1/4], inf).asStream;
-//~ind = Pseq(~count.rand, inf).asStream;
+			~seq = Pseq(~dur/4, inf).asStream;
+		~system= Pseq(~r,inf).asStream;
 
 ~s = Routine({
     var i;
 
     loop {
-       // i = ~ind.next.asInteger;
+				thisThread.randSeed = ~val;
 i= ~cart.size.rand;
-    //   // ~synth.set(
-			//			\tone, ~magnitude[i].lag(0.01),
-        //    \az, ~azimuth[i].lag(0.01),
-       //     \el, ~elevation[i].lag(0.01)
-     //   );
 
-					~synth=Synth.new(\synth,[\gain,0.5,\drive,992*2,\fu,32,\tone,
-						~magnitude[i].round(1),\low,992*1,\pan,(992*16).neg,
-		\mix,0.6,\drone_amp,3,\room,0.6,\pann,(992*9).neg,\x,2,\a,1,\spread,90,
-						\az,~azimuth[i],\el,~elevation[i],\drone,12.neg,\xx,
-						~cart.[i].[0].round(1), \yy,~cart.[i].[1].round(1),\zz,~cart.[i].[2].round(1)]).register;
+				~synth=Synth.new(\synth,[\gain,0.5,\drive,(992*2).rand,\fu,32,\sc,~magnitude[i].round(1),\low,992.rand,
+						\pan,(992*16).neg,\mix,0.999.rand,\room,1,\pann,(992*8).neg,\x,2,\a,1,\spread,1,\pon,0.001,
+					\pneuma,0,\namp,~system.next,\drone,12.neg,\az,~azimuth[i],\el,~elevation.[i]
+						,\panx,0.5.rand,\pany,0.5.rand,\panz,0.5.rand,
+						\xx,~cart.[i].[0].round(1), \yy,~cart.[i].[1].round(1),\zz,~cart.[i].[2].round(1)]).register;
+
+
 
         ~seq.next.wait;
 				//	(1).wait;
@@ -538,39 +518,8 @@ i= ~cart.size.rand;
 )
 
 
-		TempoClock.default.tempo_(1/10);
+		TempoClock.default.tempo_(1/1);
 
-////randomness
-
-	~s= Routine({loop{
-
-	thisThread.randSeed = ~val;
-
-		~val.postln;
-
-	~synth.set(\tone, (56).rand)	;
-
-2.wait
-};
-});
-
-	~s.play;
-/////server based randomness
-(
-
-	thisThread.randSeed = 123;
-~seq = Pseq(~dur, inf).asStream;
-	~s= Routine({loop{
-
-
-	~synth.set(\tone, (56).rand)	;
-
-    ~seq.next.wait;\
-};
-});
-)
-
-~s.stop
 
 
 
