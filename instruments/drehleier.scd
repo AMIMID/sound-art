@@ -146,7 +146,6 @@ wt = signal.asWavetable;
 		//	~transfer_function.plot;
 			~dist=Buffer.loadCollection(s,~transfer_function.asWavetableNoWrap);
 		);
-		Scale.directory
 (
 			{
 				var nn=1.neg;
@@ -185,9 +184,9 @@ SynthDef.new(\synth,{
 fund=fu*(9/8);
 lamdoma=(x.lag(0.0001)+a.lag(0.0001))/x.lag(0.0001);
 
-ton1=2.pow(Select.kr(tone1.lag(0.0001).linlin(0, 14, 0, 24), ~scale) /12).round(0.0001)*2.pow(dron.lag(0.0001)/992);
-ton2=2.pow(Select.kr(tone2.lag(0.0001).linlin(0, 14, 0, 24), ~scale) /12).round(0.0001)*2.pow(dron.lag(0.0001)/992);
-ton3=2.pow(Select.kr(tone3.lag(0.0001).linlin(0, 14, 0, 24), ~scale) /12).round(0.0001)*2.pow(dron.lag(0.0001)/992);
+ton1=2.pow(Select.kr(tone1.lag(0.0001), ~scale) /12).round(0.0001)*2.pow(dron.lag(0.0001)/992);
+ton2=2.pow(Select.kr(tone2.lag(0.0001), ~scale) /12).round(0.0001)*2.pow(dron.lag(0.0001)/992);
+ton3=2.pow(Select.kr(tone3.lag(0.0001), ~scale) /12).round(0.0001)*2.pow(dron.lag(0.0001)/992);
 
 		//		ton=2.pow((tone.lag(0.0001))/56).round(0.0001)*2.pow(dron.lag(0.0001)/56);
 
