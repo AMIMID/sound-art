@@ -11,7 +11,7 @@ s.waitForBoot{
 Buffer.freeAll;
 ~controlBus = Bus.control(s, 1);
 ~controlBus1 = Bus.control(s, 1);
-//~controlBus2 = Bus.control(s, 1);
+~controlBus2 = Bus.control(s, 1);
 ~controlBus3 = Bus.control(s, 1);
 ~controlBus4 = Bus.control(s, 1);
 ~controlBus5 = Bus.control(s, 1);
@@ -20,7 +20,7 @@ Buffer.freeAll;
 	~scale1= Buffer.alloc(s,2048);
 	~scale2= Buffer.alloc(s,2048);
 	~scale= Buffer.alloc(s,2048);
-	//~perspective= Buffer.alloc(s,2048);
+	~rotation= Buffer.alloc(s,2048);
 	~harm= Buffer.alloc(s,2048);
 	~temp= Buffer.alloc(s,2048);
 
@@ -52,13 +52,13 @@ var signal,wt;
 //signal.plot;
 		}.value;
 
-/*	{
+	{
 var signal,wt;
-	signal=Env([30000,1,100],[2,0.1],[16,2.neg]);
+	signal=Env([1.6,0.001],[3],[4]);
 	wt = signal.asSignal(1024).asWavetable;
-~perspective.loadCollection(wt);
+~rotation.loadCollection(wt);
 //signal.plot;
-		}.value;*/
+		}.value;
 
 	{
 var signal,wt;
@@ -70,7 +70,7 @@ var signal,wt;
 
 		{
 var signal,wt;
-	signal=Env([1,0],[3],[6]);
+	signal=Env([1,0],[3],[4]);
 	wt = signal.asSignal(1024).asWavetable;
 ~temp.loadCollection(wt);
 //signal.plot;
@@ -83,7 +83,7 @@ SynthDef.new(\player,{
 	Out.kr(~controlBus.index, (Osc.kr(~scale.bufnum,(1/100)).abs));
 	Out.kr(~controlBus1.index, (Osc.kr(~scale1.bufnum,(1/100)).abs));
 			Out.kr(~controlBus4.index, (Osc.kr(~scale2.bufnum,(1/100)).abs));
-	//	Out.kr(~controlBus2.index, (Osc.kr(~perspective.bufnum,(1/100)).abs));
+		Out.kr(~controlBus2.index, (Osc.kr(~rotation.bufnum,(1/100)).abs));
 Out.kr(~controlBus3.index, (Osc.kr(~harm.bufnum,(1/100)).abs));
 			Out.kr(~controlBus5.index, (LFNoise1.kr(1/100).range(pi.neg,pi)));
 						Out.kr(~controlBus6.index, (Osc.kr(~temp.bufnum,(1/100)).abs));
@@ -120,9 +120,9 @@ var az1=0,el1=0,az2=0,el2=0,az3=0,el3=0,az4=0,el4=0,az7=0,el7=0,az6=0,el6=0;
 var az11=0,el11=0,az22=0,el22=0,az33=0,el33=0,az44=0,el44=0,az77=0,el77=0,az66=0,el66=0;
 var az_1=0,el_1=0,az_2=0,el_2=0,az_3=0,el_3=0,az_4=0,el_4=0,az_7=0,el_7=0,az_6=0,el_6=0;
 var azimuth,elevation,magnitudex,magnitudey,magnitudez,magnitudeqx;
-var magx,magy,magz,magqx;
+var magx,magy,magz,magqx,rotation;
 var angle=0,angle1=0,angle11=0;
-	var g=((1+5.sqrt)/2),s=(1+2.sqrt),ott=pi.rand2,temp;
+var g=((1+5.sqrt)/2),s=(1+2.sqrt),ott=pi.rand2,temp;
 
 ~detune=16;
 	~az=[];~el=[];~magx=[];~magy=[];~magz=[];~qx=[]; ~cart=[];~data=[[1,1,1]];
@@ -150,7 +150,7 @@ b.background = Color.clear;
 		scale=~controlBus.getSynchronous;
 	scale1=~controlBus1.getSynchronous;
 	scale2=~controlBus4.getSynchronous;
-	//perspective=~controlBus2.getSynchronous;
+	rotation=~controlBus2.getSynchronous;
 	harm=~controlBus3.getSynchronous;
 	angle=~controlBus5.getSynchronous;
 		temp=~controlBus6.getSynchronous;
@@ -603,8 +603,8 @@ r.play;
 		 b.rot(ott,ott,ott);
 				~r1=ot; ~r2=ot; ~r3=ot;
 
-		ot = (ot + 0.25.degrad).wrap(0,2pi);
-				ott = (ott + 0.35.degrad).wrap(0,2pi);
+		ot = (ot + rotation.degrad).wrap(0,2pi);
+				ott = (ott + rotation.degrad).wrap(0,2pi);
 
     ~cart = data.collect{|p|
 
