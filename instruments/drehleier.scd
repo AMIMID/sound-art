@@ -227,6 +227,11 @@ ton3=2.pow(Select.kr(tone3.lag(0.0001), ~scale) /12).round(0.0001)*2.pow(dron.la
 //b_y=2.pow(Select.kr(polytope.y.round(1).linlin(1, 14, 0, 24), ~scale1) /12);
 //b_z=2.pow(Select.kr(polytope.z.round(1).linlin(1, 14, 0, 24), ~scale1) /12);
 
+
+//b_x=2.pow(polytope.x.round(1) /992)*lamdoma;
+//b_y=2.pow(polytope.y.round(1) /992)*lamdoma;
+//b_z=2.pow(polytope.z.round(1) /992)*lamdoma;
+
 b_x=2.pow(polytope.x.round(1) /992)*laxis.x.round((9/8)/2);
 b_y=2.pow(polytope.y.round(1) /992)*laxis.y.round((9/8)/2);
 b_z=2.pow(polytope.z.round(1) /992)*laxis.z.round((9/8)/2);
@@ -372,23 +377,23 @@ threshold3=(((343/0.3)/fund).reciprocal.ampdb/2.sqrt).dbamp;
 
 	sig3 =  (tanh(sig3.softclip*2.pow(drive/992))) / (1 + (tanh(sig3.softclip*2.pow(drive/992))).abs);
 
-
+					(pi/2)*(2/4)
 	///final out
 					gain1=gain*rq1.sqrt.reciprocal*cloud.reciprocal*10*namp1;
 					gain2=gain*rq2.sqrt.reciprocal*cloud.reciprocal*10*namp2;
 					gain3=gain*rq3.sqrt.reciprocal*cloud.reciprocal*10*namp3;
 
-					g_ch1=((sph.x*Spherical(sph.rho,~az.[0],~el.[0]).x*SinOsc.ar(pon,0))+
-						(sph.y*Spherical(sph.rho,~az.[0],~el.[0]).y*SinOsc.ar(pon,(pi/2)))+
+					g_ch1=((sph.x*Spherical(sph.rho,~az.[0],~el.[0]).x*SinOsc.ar(pon,(pi*(4/4))))+
+						          (sph.y*Spherical(sph.rho,~az.[0],~el.[0]).y*SinOsc.ar(pon,((pi/2)*(4/4))))+
 						          (sph.z*Spherical(sph.rho,~az.[1],~el.[1]).z)).max(0);
-					g_ch2=((sph.x*Spherical(sph.rho,~az.[1],~el.[1]).x*SinOsc.ar(pon,0))+
-						         (sph.y*Spherical(sph.rho,~az.[1],~el.[1]).y*SinOsc.ar(pon,(pi/2)))+
+					g_ch2=((sph.x*Spherical(sph.rho,~az.[1],~el.[1]).x*SinOsc.ar(pon,(pi*(1/4))))+
+						         (sph.y*Spherical(sph.rho,~az.[1],~el.[1]).y*SinOsc.ar(pon,((pi/2)*(1/4))))+
 						          (sph.z*Spherical(sph.rho,~az.[1],~el.[1]).z)).max(0);
-					g_ch3=((sph.x*Spherical(sph.rho,~az.[2],~el.[2]).x*SinOsc.ar(pon,0))+
-						         (sph.y*Spherical(sph.rho,~az.[2],~el.[2]).y*SinOsc.ar(pon,(pi/2)))+
+					g_ch3=((sph.x*Spherical(sph.rho,~az.[2],~el.[2]).x*SinOsc.ar(pon,(pi*(2/4))))+
+						         (sph.y*Spherical(sph.rho,~az.[2],~el.[2]).y*SinOsc.ar(pon,((pi/2)*(2/4))))+
 						          (sph.z*Spherical(sph.rho,~az.[2],~el.[2]).z)).max(0);
-					g_ch4=((sph.x*Spherical(sph.rho,~az.[3],~el.[3]).x*SinOsc.ar(pon,0))+
-						         (sph.y*Spherical(sph.rho,~az.[3],~el.[3]).y*SinOsc.ar(pon,(pi/2)))+
+					g_ch4=((sph.x*Spherical(sph.rho,~az.[3],~el.[3]).x*SinOsc.ar(pon,(pi*(3/4))))+
+						         (sph.y*Spherical(sph.rho,~az.[3],~el.[3]).y*SinOsc.ar(pon,((pi/2)*(3/4))))+
 						          (sph.z*Spherical(sph.rho,~az.[3],~el.[3]).z)).max(0);
 
 				 gn = [g_ch1, g_ch2, g_ch3, g_ch4];   g_sum = gn.sum;  gn = gn / g_sum;
