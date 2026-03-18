@@ -174,7 +174,7 @@ SynthDef.new(\synth,{
 	var axi1,axi2,axi3,ds1,ds2,ds3,f1,f2,f3,g1,g2,g3,sph_object,lfon,axis;
 	var r_axis, r_v, r, axisr,spr,rot,i,j,k,level=100,spx,spy,spz;
 	var g_ch1,g_ch2,g_ch3,g_ch4;
-	var gn ,g_sum,g_avg ,ton1,ton2,ton3,tonb;
+	var gn ,g_sum,g_avg ,ton1,ton2,ton3,tonb,laxis;
 
 
 				m = In.kr(~controlBus3).lag(0.1);
@@ -209,10 +209,15 @@ ton3=2.pow(Select.kr(tone3.round(1), ~scalee) /12).round(0.0001)*tonb;
 				cloud.do{
 
 					polytope=Spherical(sc,spr.theta,spr.phi);
+							laxis=Spherical(lamdoma,spr.theta,spr.phi);
 
-b_x=2.pow(polytope.x.round(0.0001)/992);
-b_y=2.pow(polytope.y.round(0.0001)/992);
-b_z=2.pow(polytope.z.round(0.0001)/992);
+b_x=2.pow(polytope.x.round(1) /992)*laxis.x.round((9/8)/2);
+b_y=2.pow(polytope.y.round(1) /992)*laxis.y.round((9/8)/2);
+b_z=2.pow(polytope.z.round(1) /992)*laxis.z.round((9/8)/2);
+
+//b_x=laxis.x.round((9/8)/2);
+//b_y=laxis.y.round((9/8)/2);
+//b_z=laxis.z.round((9/8)/2);
 
 
 anglex=(exp(Complex(0,1)*polytope.theta).real*exp(Complex(0,1)*polytope.phi).real).round(0.00001);
@@ -267,23 +272,23 @@ phasey=Complex(1,sph.y).theta;
 phasez=Complex(1,sph.z).theta;
 
 
-freq1=(fund*ton1)*b_x.lag(0.0001)*lamdoma;
-freq2=(fund*ton2)*b_y.lag(0.0001)*lamdoma;
-freq3=(fund*ton3)*b_z.lag(0.0001)*lamdoma;
+freq1=(fund*ton1)*b_x.lag(0.0001);
+freq2=(fund*ton2)*b_y.lag(0.0001);
+freq3=(fund*ton3)*b_z.lag(0.0001);
 
 					dr=2.pow(drone.lag(0.1)/12)*tonb;
 
-f1=(fund)*b_x.lag(0.0001)*lamdoma*dr;
-f2=(fund)*b_y.lag(0.0001)*lamdoma*dr;
-f3=(fund)*b_z.lag(0.0001)*lamdoma*dr;
+f1=(fund)*b_x.lag(0.0001)*dr;
+f2=(fund)*b_y.lag(0.0001)*dr;
+f3=(fund)*b_z.lag(0.0001)*dr;
 
-amp1=ton1.reciprocal*b_x.reciprocal*lamdoma.reciprocal;
-amp2=ton2.reciprocal*b_y.reciprocal*lamdoma.reciprocal;
-amp3=ton3.reciprocal*b_z.reciprocal*lamdoma.reciprocal;
+amp1=ton1.reciprocal*b_x.reciprocal;
+amp2=ton2.reciprocal*b_y.reciprocal;
+amp3=ton3.reciprocal*b_z.reciprocal;
 
-g1=b_x.reciprocal*lamdoma.reciprocal*dr.reciprocal*panx;
-g2=b_y.reciprocal*lamdoma.reciprocal*dr.reciprocal*pany;
-g3=b_z.reciprocal*lamdoma.reciprocal*dr.reciprocal*panz;
+g1=b_x.reciprocal*dr.reciprocal*panx;
+g2=b_y.reciprocal*dr.reciprocal*pany;
+g3=b_z.reciprocal*dr.reciprocal*panz;
 
 band_osc1=SinOsc.kr(b_x*2.pow(band.lag(0.001)/992),phase:phasex).exprange(496,16256);
 band_osc2=SinOsc.kr(b_y*2.pow(band.lag(0.001)/992),phase:phasey).exprange(496,16256);
