@@ -78,9 +78,9 @@ s.meter;
 
 
 ///animation buses
-		~controlBus_1a = Bus.control(s, 1);
-		~controlBus_2a = Bus.control(s, 1);
-		~controlBus_3a = Bus.control(s, 1);
+	//	~controlBus_1a = Bus.control(s, 1);
+	//	~controlBus_2a = Bus.control(s, 1);
+	//	~controlBus_3a = Bus.control(s, 1);
 
 	//	~controlBus_1b = Bus.control(s, 1);
 	//	~controlBus_2b = Bus.control(s, 1);
@@ -110,9 +110,9 @@ s.meter;
 	//	~controlBus_2k = Bus.control(s, 1);
 	//	~controlBus_3k = Bus.control(s, 1);
 
-		~controlBus_x = Bus.control(s, 1);
-		~controlBus_y = Bus.control(s, 1);
-		~controlBus_z = Bus.control(s, 1);
+	///	~controlBus_x = Bus.control(s, 1);
+	//	~controlBus_y = Bus.control(s, 1);
+	//	~controlBus_z = Bus.control(s, 1);
 
 ////// wavetables
 
@@ -159,7 +159,6 @@ wt = signal.asWavetable;
 		~scale1=28.collect{nn=nn+1;Scale.dorian.performDegreeToKey(nn,12)};
 			}.value;
 		);
-
 		////sound
 
 (
@@ -180,7 +179,7 @@ SynthDef.new(\synth,{
 	var axi1,axi2,axi3,ds1,ds2,ds3,f1,f2,f3,g1,g2,g3,sph_object,lfon,axis;
 	var r_axis, r_v, r, axisr,spr,rot,i,j,k,level=100,spx,spy,spz;
 	var g_ch1,g_ch2,g_ch3,g_ch4;
-	var gn ,g_sum,g_avg ,ton1,ton2,ton3;
+	var gn ,g_sum,g_avg ,ton1,ton2,ton3,laxis;
 
 fund=fu*(9/8);
 lamdoma=(x.lag(0.0001)+a.lag(0.0001))/x.lag(0.0001);
@@ -220,6 +219,7 @@ ton3=2.pow(Select.kr(tone3.lag(0.0001), ~scale) /12).round(0.0001)*2.pow(dron.la
 				cloud.do{
 
 				axis=Spherical(sc,(sph_object.theta+azf).wrap(pi,pi.neg),  (sph_object.phi+elf).wrap((pi/2),(pi/2).neg));
+			laxis=Spherical(lamdoma,(sph_object.theta+azf).wrap(pi,pi.neg),  (sph_object.phi+elf).wrap((pi/2),(pi/2).neg));
 
 				polytope=Cartesian(axis.x,axis.y,axis.z);
 
@@ -227,11 +227,13 @@ ton3=2.pow(Select.kr(tone3.lag(0.0001), ~scale) /12).round(0.0001)*2.pow(dron.la
 //b_y=2.pow(Select.kr(polytope.y.round(1).linlin(1, 14, 0, 24), ~scale1) /12);
 //b_z=2.pow(Select.kr(polytope.z.round(1).linlin(1, 14, 0, 24), ~scale1) /12);
 
-b_x=2.pow(polytope.x.round(1) /992);
-b_y=2.pow(polytope.y.round(1) /992);
-b_z=2.pow(polytope.z.round(1) /992);
+b_x=2.pow(polytope.x.round(1) /992)*laxis.x.round((9/8)/2);
+b_y=2.pow(polytope.y.round(1) /992)*laxis.y.round((9/8)/2);
+b_z=2.pow(polytope.z.round(1) /992)*laxis.z.round((9/8)/2);
 
-
+//b_x=laxis.x.round((9/8)/2);
+//b_y=laxis.y.round((9/8)/2);
+//b_z=laxis.z.round((9/8)/2);
 
 anglex=(exp(Complex(0,1)*polytope.theta).real*exp(Complex(0,1)*polytope.phi).real).round(0.00001);
 angley=(exp(Complex(0,1)*polytope.theta).imag*exp(Complex(0,1)*polytope.phi).real).round(0.00001);
@@ -285,23 +287,23 @@ phasey=Complex(1,sph.y).theta+pneuma2;
 phasez=Complex(1,sph.z).theta+pneuma3;
 
 
-freq1=(fund*ton1)*b_x.lag(0.0001)*lamdoma;
-freq2=(fund*ton2)*b_y.lag(0.0001)*lamdoma;
-freq3=(fund*ton3)*b_z.lag(0.0001)*lamdoma;
+freq1=(fund*ton1)*b_x.lag(0.0001);
+freq2=(fund*ton2)*b_y.lag(0.0001);
+freq3=(fund*ton3)*b_z.lag(0.0001);
 
 					dr=2.pow(drone.lag(0.1)/12)*2.pow(dron.lag(0.0001)/992);
 
-f1=(fund)*b_x.lag(0.0001)*lamdoma*dr;
-f2=(fund)*b_y.lag(0.0001)*lamdoma*dr;
-f3=(fund)*b_z.lag(0.0001)*lamdoma*dr;
+f1=(fund)*b_x.lag(0.0001)*dr;
+f2=(fund)*b_y.lag(0.0001)*dr;
+f3=(fund)*b_z.lag(0.0001)*dr;
 
-amp1=ton1.reciprocal*b_x.reciprocal*lamdoma.reciprocal;
-amp2=ton2.reciprocal*b_y.reciprocal*lamdoma.reciprocal;
-amp3=ton3.reciprocal*b_z.reciprocal*lamdoma.reciprocal;
+amp1=ton1.reciprocal*b_x.reciprocal;
+amp2=ton2.reciprocal*b_y.reciprocal;
+amp3=ton3.reciprocal*b_z.reciprocal;
 
-g1=b_x.reciprocal*lamdoma.reciprocal*dr.reciprocal*drone_amp.reciprocal*panx;
-g2=b_y.reciprocal*lamdoma.reciprocal*dr.reciprocal*drone_amp.reciprocal*pany;
-g3=b_z.reciprocal*lamdoma.reciprocal*dr.reciprocal*drone_amp.reciprocal*panz;
+g1=b_x.reciprocal*dr.reciprocal*drone_amp.reciprocal*panx;
+g2=b_y.reciprocal*dr.reciprocal*drone_amp.reciprocal*pany;
+g3=b_z.reciprocal*dr.reciprocal*drone_amp.reciprocal*panz;
 
 band_osc1=SinOsc.kr(b_x*2.pow(band.lag(0.0001)/992),phase:phasex).exprange(496,16256);
 band_osc2=SinOsc.kr(b_y*2.pow(band.lag(0.0001)/992),phase:phasey).exprange(496,16256);
@@ -451,13 +453,13 @@ Out.ar(3,Limiter.ar(LeakDC.ar(FreeVerb.ar(sig3,mix.lag(0.0001),room.lag(0.0001),
 
 	///animation control buses out
 
-		Out.kr(~controlBus_1a, A2K.kr(Limiter.ar(LeakDC.ar(FreeVerb.ar(sig1,mix.lag(0.0001),room.lag(0.0001),mul:gain1*loc1.abs)),0.9,0.01)*100));
-			Out.kr(~controlBus_2a, A2K.kr(Limiter.ar(LeakDC.ar(FreeVerb.ar(sig2,mix.lag(0.0001),room.lag(0.0001),mul:gain2*loc2.abs)),0.9,0.01)*100));
-		Out.kr(~controlBus_3a, A2K.kr(Limiter.ar(LeakDC.ar(FreeVerb.ar(sig3,mix.lag(0.0001),room.lag(0.0001),mul:gain3*loc3.abs)),0.9,0.01)*100));
+	//	Out.kr(~controlBus_1a, A2K.kr(Limiter.ar(LeakDC.ar(FreeVerb.ar(sig1,mix.lag(0.0001),room.lag(0.0001),mul:gain1*loc1.abs)),0.9,0.01)*100));
+	//		Out.kr(~controlBus_2a, A2K.kr(Limiter.ar(LeakDC.ar(FreeVerb.ar(sig2,mix.lag(0.0001),room.lag(0.0001),mul:gain2*loc2.abs)),0.9,0.01)*100));
+	//	Out.kr(~controlBus_3a, A2K.kr(Limiter.ar(LeakDC.ar(FreeVerb.ar(sig3,mix.lag(0.0001),room.lag(0.0001),mul:gain3*loc3.abs)),0.9,0.01)*100));
 
-		Out.kr(~controlBus_x, mod_anglex);
-		Out.kr(~controlBus_y, mod_angley);
-		Out.kr(~controlBus_z, mod_anglez);
+	//	Out.kr(~controlBus_x, mod_anglex);
+	//	Out.kr(~controlBus_y, mod_angley);
+	//	Out.kr(~controlBus_z, mod_anglez);
 
 
 						azf = (azf+(2pi-(2pi/s))).wrap(pi.neg,pi);
@@ -510,7 +512,7 @@ m3=m3+1;
 ~synth=Synth.new(\synth,[\gain,1,\drive,992*2,\fu,32,\tone1,0,\tone2,0,\tone3,0,\low,992*0,\pan,(992*16).neg,
 		\mix,0.3,\drone_amp,1,\room,0.5,\m,1,\pann,(992*16).neg,\pon,0.001,\pneuma1,0,\pneuma2,0,\pneuma3,0,
 			\x,1,\a,1,\panx,0.01,\pany,0.01,\panz,0.01,\spread,1,\namp1,1,\namp2,1,\namp3,1,
-			\az,pi/4,\el,pi/8,\azr,992,\dron,0,\drone,1,\sc,1]).register;
+			\az,pi/4,\el,pi/8,\azr,992,\dron,0,\drone,1,\sc,992]).register;
 );
 
 		(
