@@ -475,43 +475,6 @@ Out.ar(3,Limiter.ar(LeakDC.ar(FreeVerb.ar(sig3,mix.lag(0.0001),room.lag(0.0001),
 10.wait;
 
 
-////durs
-	({var m1=1.neg, m2=1.neg, m3=1.neg,a,b,c,n=0,bank=4,time=32.reciprocal,beat=1,r=0;
-
-			~dur1=[];~dur2=[];~dur3=[]; ~dx=[];~dy=[]; ~dz=[]; ~durx=[]; ~dury=[]; ~durz=[]; ~dur=[];
-
-					1.do{
-~x=bank.collect{
-m1=m1+1;
-					b=Spherical(beat,~az.[m1],~el.[m1]).rotate(r).tilt(r).tumble(r).x.round(0.00001);
-	2.pow(b).round(time);
-};
-~y=bank.collect{
-m2=m2+1;
-	c=Spherical(beat,~az.[m2],~el.[m2]).rotate(r).tilt(r).tumble(r).y.round(0.00001);
-	2.pow(c).round(time);
-};
-~z=bank.collect{
-m3=m3+1;
-	d=Spherical(beat,~az.[m3],~el.[m3]).rotate(r).tilt(r).tumble(r).z.round(0.00001);
-	2.pow(d).round(time);
-}; m1=1.neg; m2=1.neg; m3=1.neg; ~dx=~dx++~x; ~dy=~dy++~y;  ~dz=~dz++~z;   ~x=[]; ~y=[]; ~z=[];  r=r+90.degrad; };
-
-				bank.do{ ~dur1=~dur1++~dx.[n];n=n+1;};n=0;
-		//	~durx = ~dur1.collect { |x| if (x == 0) { Rest(2) } { x }};
-
-		bank.do{ ~dur2=~dur2++~dy.[n];n=n+1;};n=0;
-			//	~dury = ~dur2.collect { |x| if (x == 0) { Rest(2) } { x }};
-
-		bank.do{ ~dur3=~dur3++~dz.[n];n=n+1;};n=0;
-			//	~durz = ~dur3.collect { |x| if (x == 0) { Rest(2) } { x }};
-
-			~dur=~dur++~dur1++~dur2++~dur3;
-
-}.value;
-);
-
-
 (
 ~synth=Synth.new(\synth,[\gain,1,\drive,992*2,\fu,32,\tone1,0,\tone2,0,\tone3,0,\low,992*0,\pan,(992*16).neg,
 		\mix,0.3,\drone_amp,1,\room,0.5,\m,1,\pann,(992*16).neg,\pon,0.001,\pneuma1,0,\pneuma2,0,\pneuma3,0,
@@ -1347,7 +1310,7 @@ m3=m3+1;
 
 	    ~seq1.next.wait;
 
-	~synth.set(\tone1, ~s8, \pneuma1pi, \namp1,~ss8)	;
+	~synth.set(\tone1, ~s8, \pneuma1,pi, \namp1,~ss8)	;
 
 	    ~seq1.next.wait;
 };
@@ -1464,6 +1427,40 @@ m3=m3+1;
 
 
 
+////durs
+	({var m1=1.neg, m2=1.neg, m3=1.neg,a,b,c,n=0,bank=4,time=32.reciprocal,beat=1,r=0;
+
+			~dur1=[];~dur2=[];~dur3=[]; ~dx=[];~dy=[]; ~dz=[]; ~durx=[]; ~dury=[]; ~durz=[]; ~dur=[];
+
+					1.do{
+~x=bank.collect{
+m1=m1+1;
+					b=Spherical(beat,~az.[m1],~el.[m1]).rotate(r).tilt(r).tumble(r).x.round(0.00001);
+	2.pow(b).round(time);
+};
+~y=bank.collect{
+m2=m2+1;
+	c=Spherical(beat,~az.[m2],~el.[m2]).rotate(r).tilt(r).tumble(r).y.round(0.00001);
+	2.pow(c).round(time);
+};
+~z=bank.collect{
+m3=m3+1;
+	d=Spherical(beat,~az.[m3],~el.[m3]).rotate(r).tilt(r).tumble(r).z.round(0.00001);
+	2.pow(d).round(time);
+}; m1=1.neg; m2=1.neg; m3=1.neg; ~dx=~dx++~x; ~dy=~dy++~y;  ~dz=~dz++~z;   ~x=[]; ~y=[]; ~z=[];  r=r+90.degrad; };
+
+				bank.do{ ~dur1=~dur1++~dx.[n];n=n+1;};n=0;
+		//	~durx = ~dur1.collect { |x| if (x == 0) { Rest(2) } { x }};
+
+		bank.do{ ~dur2=~dur2++~dy.[n];n=n+1;};n=0;
+			//	~dury = ~dur2.collect { |x| if (x == 0) { Rest(2) } { x }};
+
+		bank.do{ ~dur3=~dur3++~dz.[n];n=n+1;};n=0;
+			//	~durz = ~dur3.collect { |x| if (x == 0) { Rest(2) } { x }};
+
+			~dur=~dur++~dur1++~dur2++~dur3;
+
+}.value;
 
 ////////////////////////////////////////
 			////sequencer randomness

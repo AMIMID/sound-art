@@ -104,7 +104,8 @@ SynthDef.new(\synth,{
 	var mod_anglex,phasex,phasey,rq1,rq2,rq3,rq4, g_ch1,g_ch2,gn ,g_sum,g_avg ,ton1,ton2;
 	var mod_angley,lfo,sph,loc1,loc2,g=((1+5.sqrt)/2),s=(1+2.sqrt),dr;
 
-env=EnvGen.ar(Env.sine(decay),levelScale:100,doneAction:2);
+//env=EnvGen.ar(Env.sine(decay),levelScale:100,doneAction:2);
+				env=1;
 fund=fu*(9/8);
 
 ton1=2.pow(Select.kr(tone1.lag(0.0001), ~scale) /12).round(0.0001)*2.pow(dron.lag(0.0001)/992);
@@ -112,9 +113,9 @@ ton2=2.pow(Select.kr(tone2.lag(0.0001), ~scale) /12).round(0.0001)*2.pow(dron.la
 
 				lfo=2.pow(pan/992);
 					band=pann;
-				axis=exp(Complex(re,im)*SinOsc.ar(lfo).range(pi,pi.neg));
+				axis=(Complex(re,im));
 
-loc1=axis.real; loc2=axis.imag;
+loc1=axis.real.abs/992; loc2=axis.imag.abs/992;
 b_x=2.pow(axis.real.round(1) /992);
 b_y=2.pow(axis.imag.round(1) /992);
 
@@ -182,10 +183,10 @@ threshold2=(((343/0.15)/fund).reciprocal.ampdb/2.sqrt).dbamp;
 					gain2=gain*rq2.sqrt.reciprocal*env*namp2;
 
 
-					g_ch1=(axis.real*Complex(1,0).real*SinOsc.ar(pon,(pi*(4/4)))+
-						(axis.imag*Complex(1,0).imag*SinOsc.ar(pon,((pi/2)*(4/4))))).max(0);
-					g_ch2=(axis.real*Complex(1,0).real*SinOsc.ar(pon,(pi*(1/4)))+
-					    (axis.imag*Complex(1,0).imag*SinOsc.ar(pon,((pi/2)*(1/4))))).max(0);
+				g_ch1=((axis.real*Complex(1,0).real)+
+				(axis.imag*Complex(1,0).imag)).max(0);
+			g_ch2=((axis.real*Complex(1,0).real)+
+			(axis.imag*Complex(1,0).imag)).max(0);
 
 gn = [g_ch1, g_ch2];   g_sum = gn.sum;  gn = gn / g_sum;
 g_avg = gn.sum / gn.size;
@@ -202,42 +203,6 @@ Out.ar(1,Limiter.ar(LeakDC.ar(FreeVerb.ar(sig2,mix.lag(0.0001),room.lag(0.0001),
 }).add;);
 
 5.wait;
-////durs
-	({var m1=1.neg, m2=1.neg,b,c,n=0,bank=3,time=16.reciprocal,beat=1;
-
-	~rea=[Complex(cos(1.5pi),sin(1.5pi)).real,
-				Complex(cos(1.5pi+(2pi/3)),sin(1.5pi+(2pi/3)+(2pi/3))).real,
-				Complex(cos(1.5pi+(2pi/3)+(2pi/3)),sin(1.5pi+(2pi/3)+(2pi/3))).real].round(0.0001);
-	~ima=[Complex(cos(1.5pi),sin(1.5pi)).imag,
-				Complex(cos(1.5pi+(2pi/3)),sin(1.5pi+(2pi/3)+(2pi/3))).imag,
-				Complex(cos(1.5pi+(2pi/3)+(2pi/3)),sin(1.5pi+(2pi/3)+(2pi/3))).imag].round(0.0001);
-
-			~dur1=[];~dur2=[];~dx=[];~dy=[]; ~durx=[]; ~dury=[]; ~dur=[]; ~rotation=0;
-
-					1.do{
-~x=bank.collect{
-m1=m1+1;
-	b=exp(Complex(~rea.[m1],~ima.[m1])*~rotation.degrad).real;
-	2.pow(b).round(time);
-};
-~y=bank.collect{
-m2=m2+1;
-	c=exp(Complex(~rea.[m2],~ima.[m2])*~rotation.degrad).imag;
-	2.pow(c).round(time);
-};
- m1=1.neg; m2=1.neg;  ~dx=~dx++~x; ~dy=~dy++~y;   ~x=[]; ~y=[]; };
-
-				bank.do{ ~dur1=~dur1++~dx.[n];n=n+1;};n=0;
-		//	~durx = ~dur1.collect { |x| if (x == 0) { Rest(2) } { x }};
-
-		bank.do{ ~dur2=~dur2++~dy.[n];n=n+1;};n=0;
-			//	~dury = ~dur2.collect { |x| if (x == 0) { Rest(2) } { x }};
-
-
-			~dur=~dur++~dur1++~dur2;
-
-}.value;
-);
 
 
 (
@@ -264,16 +229,16 @@ MIDIdef.cc(\midi_pot1,{ |val, num, chan, src|
 				(
 MIDIdef.cc(\midi_pot2,{ |val, num, chan, src|
       		var pan;
-			pan=val.linlin(0,127,(992*16).neg,(992*8)).round(1).asInteger;
+			pan=val.linlin(0,127,(1*24).neg,(0*2)).round(1).asInteger;
 		pan.postln;
-		if(~synth.isPlaying,{~synth.set(\pan,pan)});
+		if(~synth.isPlaying,{~synth.set(\drone,pan)});
 },2);
 	);
 
 									(
 MIDIdef.cc(\midi_pot3,{ |val, num, chan, src|
 		var pann;
-			pann=val.linlin(0,127,(992*32).neg,(992*4)).round(1).asInteger;
+			pann=val.linlin(0,127,(992*16).neg,(992*4)).round(1).asInteger;
 		pann.postln;
 		if(~synth.isPlaying,{~synth.set(\pann,pann)});
 },3);
@@ -328,7 +293,7 @@ MIDIdef.cc(\midi_pot8,{ |val, num, chan, src|
 												(
 MIDIdef.cc(\midi_pot9,{ |val, num, chan, src|
 				var re;
-			re=val.linlin(0,127,1.neg,1).round(0.0001);
+			re=val.linlin(0,127,0,992).round(1).asInteger;
 		re.postln;
 		if(~synth.isPlaying,{~synth.set(\re,re)});
 },9);
@@ -337,9 +302,9 @@ MIDIdef.cc(\midi_pot9,{ |val, num, chan, src|
 													(
 MIDIdef.cc(\midi_pot10,{ |val, num, chan, src|
 				var im;
-			im=val.linlin(0,127,1.neg,1).round(0.0001);
+			im=val.linlin(0,127,0,992).round(1).asInteger;
 		im.postln;
-		if(~synth.isPlaying,{~synth.set(\re,re)});
+		if(~synth.isPlaying,{~synth.set(\im,im)});
 },10);
 	);
 
@@ -539,9 +504,9 @@ MIDIdef.cc(\midi_slider9,{ |val, num, chan, src|
 },32);
 			));
 			///comtroller 2
-			(
+			/*(
 					(
-MIDIdef.cc(\midi_seq_pot1,{ |val, num, chan, src|
+MIDIdef.cc(\midi_seq_pot9,{ |val, num, chan, src|
 		var s1;
 		s1=val.linlin(0,127,0,14).round(1).asInteger;
 		s1.postln;
@@ -550,7 +515,7 @@ MIDIdef.cc(\midi_seq_pot1,{ |val, num, chan, src|
 						);
 
 				(
-MIDIdef.cc(\midi_seq_pot2,{ |val, num, chan, src|
+MIDIdef.cc(\midi_seq_pot10,{ |val, num, chan, src|
          var s2;
 					s2=val.linlin(0,127,0,14).round(1).asInteger;
 		s2.postln;
@@ -559,7 +524,7 @@ MIDIdef.cc(\midi_seq_pot2,{ |val, num, chan, src|
 	);
 
 									(
-MIDIdef.cc(\midi_seq_pot3,{ |val, num, chan, src|
+MIDIdef.cc(\midi_seq_pot11,{ |val, num, chan, src|
 		var s3;
 			s3=val.linlin(0,127,0,14).round(1).asInteger;
 		s3.postln;
@@ -568,7 +533,7 @@ MIDIdef.cc(\midi_seq_pot3,{ |val, num, chan, src|
 	);
 
 												(
-MIDIdef.cc(\midi_seq_pot4,{ |val, num, chan, src|
+MIDIdef.cc(\midi_seq_pot12,{ |val, num, chan, src|
 		var s4;
 			s4=val.linlin(0,127,0,14).round(1).asInteger;
 		s4.postln;
@@ -577,7 +542,7 @@ MIDIdef.cc(\midi_seq_pot4,{ |val, num, chan, src|
 	);
 
 														(
-MIDIdef.cc(\midi_seq_pot5,{ |val, num, chan, src|
+MIDIdef.cc(\midi_seq_pot13,{ |val, num, chan, src|
 		var s5;
 			s5=val.linlin(0,127,0,14).round(1).asInteger;
 		s5.postln;
@@ -586,7 +551,7 @@ MIDIdef.cc(\midi_seq_pot5,{ |val, num, chan, src|
 	);
 
 														(
-MIDIdef.cc(\midi_seq_pot6,{ |val, num, chan, src|
+MIDIdef.cc(\midi_seq_pot14,{ |val, num, chan, src|
 		var s6;
 						s6=val.linlin(0,127,0,14).round(1).asInteger;
 		s6.postln;
@@ -595,7 +560,7 @@ MIDIdef.cc(\midi_seq_pot6,{ |val, num, chan, src|
 	);
 
 														(
-MIDIdef.cc(\midi_seq_pot7,{ |val, num, chan, src|
+MIDIdef.cc(\midi_seq_pot15,{ |val, num, chan, src|
 		var s7;
 			s7=val.linlin(0,127,0,14).round(1).asInteger;
 		s7.postln;
@@ -604,17 +569,17 @@ MIDIdef.cc(\midi_seq_pot7,{ |val, num, chan, src|
 	);
 
 																	(
-MIDIdef.cc(\midi_seq_pot8,{ |val, num, chan, src|
+MIDIdef.cc(\midi_seq_pot16,{ |val, num, chan, src|
 		var s8;
 			s8=val.linlin(0,127,0,14).round(1).asInteger;
 		s8.postln;
 		~s17=s8;
 },57,2);
 	);
-);
-(
+)*/
+/*(
 			(
-MIDIdef.cc(\midi_slider1,{ |val, num, chan, src|
+MIDIdef.cc(\midi_slider17,{ |val, num, chan, src|
 		var th;
 	th=val.linlin(0,127,0.0001,1).round(0.0001);
 		th.postln;
@@ -623,7 +588,7 @@ MIDIdef.cc(\midi_slider1,{ |val, num, chan, src|
 			);
 
 											(
-MIDIdef.cc(\midi_slider2,{ |val, num, chan, src|
+MIDIdef.cc(\midi_slider18,{ |val, num, chan, src|
 		var th;
 	th=val.linlin(0,127,0.0001,1).round(0.0001);
 		th.postln;
@@ -632,7 +597,7 @@ MIDIdef.cc(\midi_slider2,{ |val, num, chan, src|
 	);
 
 														(
-MIDIdef.cc(\midi_slider3,{ |val, num, chan, src|
+MIDIdef.cc(\midi_slider19,{ |val, num, chan, src|
 		var th;
 	th=val.linlin(0,127,0.0001,1).round(0.0001);
 		th.postln;
@@ -641,7 +606,7 @@ MIDIdef.cc(\midi_slider3,{ |val, num, chan, src|
 },60,2);
 	);
 (
-MIDIdef.cc(\midi_slider4,{ |val, num, chan, src|
+MIDIdef.cc(\midi_slider20,{ |val, num, chan, src|
 		var th;
 	th=val.linlin(0,127,0.0001,1).round(0.0001);
 		th.postln;
@@ -650,7 +615,7 @@ MIDIdef.cc(\midi_slider4,{ |val, num, chan, src|
 	);
 
 				(
-MIDIdef.cc(\midi_slider5,{ |val, num, chan, src|
+MIDIdef.cc(\midi_slider21,{ |val, num, chan, src|
 		var th;
 	th=val.linlin(0,127,0.0001,1).round(0.0001);
 		th.postln;
@@ -658,7 +623,7 @@ MIDIdef.cc(\midi_slider5,{ |val, num, chan, src|
 },62,2);
 			);
 					(
-MIDIdef.cc(\midi_slider6,{ |val, num, chan, src|
+MIDIdef.cc(\midi_slider22,{ |val, num, chan, src|
 		var th;
 	th=val.linlin(0,127,0.0001,1).round(0.0001);
 		th.postln;
@@ -666,7 +631,7 @@ MIDIdef.cc(\midi_slider6,{ |val, num, chan, src|
 },63,2);
 			);
 					(
-MIDIdef.cc(\midi_slider7,{ |val, num, chan, src|
+MIDIdef.cc(\midi_slider23,{ |val, num, chan, src|
 		var th;
 	th=val.linlin(0,127,0.0001,1).round(0.0001);
 		th.postln;
@@ -675,7 +640,7 @@ MIDIdef.cc(\midi_slider7,{ |val, num, chan, src|
 	);
 
 (
-MIDIdef.cc(\midi_slider8,{ |val, num, chan, src|
+MIDIdef.cc(\midi_slider24,{ |val, num, chan, src|
 		var th;
 	th=val.linlin(0,127,0.0001,1).round(0.0001);
 		th.postln;
@@ -684,178 +649,33 @@ MIDIdef.cc(\midi_slider8,{ |val, num, chan, src|
 	);
 
 
-			);
-						(
-					(
-MIDIdef.cc(\midi_seq_pot1,{ |val, num, chan, src|
-		var s1;
-		s1=val.linlin(0,127,0,14).round(1).asInteger;
-		s1.postln;
-		~s18=s1;
-},66,2);
-						);
-
-				(
-MIDIdef.cc(\midi_seq_pot2,{ |val, num, chan, src|
-         var s2;
-					s2=val.linlin(0,127,0,14).round(1).asInteger;
-		s2.postln;
-		~s19=s2;
-},67,2);
-	);
-
-									(
-MIDIdef.cc(\midi_seq_pot3,{ |val, num, chan, src|
-		var s3;
-			s3=val.linlin(0,127,0,14).round(1).asInteger;
-		s3.postln;
-		~s20=s3;
-},68,2);
-	);
-
-												(
-MIDIdef.cc(\midi_seq_pot4,{ |val, num, chan, src|
-		var s4;
-			s4=val.linlin(0,127,0,14).round(1).asInteger;
-		s4.postln;
-		~s21=s4;
-},69,2);
-	);
-
-														(
-MIDIdef.cc(\midi_seq_pot5,{ |val, num, chan, src|
-		var s5;
-			s5=val.linlin(0,127,0,14).round(1).asInteger;
-		s5.postln;
-		~s22=s5;
-},70,2);
-	);
-
-														(
-MIDIdef.cc(\midi_seq_pot6,{ |val, num, chan, src|
-		var s6;
-						s6=val.linlin(0,127,0,14).round(1).asInteger;
-		s6.postln;
-		~s23=s6;
-},71,2);
-	);
-
-														(
-MIDIdef.cc(\midi_seq_pot7,{ |val, num, chan, src|
-		var s7;
-			s7=val.linlin(0,127,0,14).round(1).asInteger;
-		s7.postln;
-		~s24=s7;
-},72,2);
-	);
-
-																	(
-MIDIdef.cc(\midi_seq_pot8,{ |val, num, chan, src|
-		var s8;
-			s8=val.linlin(0,127,0,14).round(1).asInteger;
-		s8.postln;
-		~s25=s8;
-},73,2);
-	);
-);
-(
-			(
-MIDIdef.cc(\midi_slider1,{ |val, num, chan, src|
-		var s8;
-			s8=val.linlin(0,127,0,14).round(1).asInteger;
-		s8.postln;
-		~s18=s8;
-},74,2);
-			);
-
-											(
-MIDIdef.cc(\midi_slider2,{ |val, num, chan, src|
-		var th;
-	th=val.linlin(0,127,0.0001,1).round(0.0001);
-		th.postln;
-~ss19=th
-},75,2);
-	);
-
-														(
-MIDIdef.cc(\midi_slider3,{ |val, num, chan, src|
-		var th;
-	th=val.linlin(0,127,0.0001,1).round(0.0001);
-		th.postln;
-~ss20=th
-
-},76,2);
-	);
-(
-MIDIdef.cc(\midi_slider4,{ |val, num, chan, src|
-		var th;
-	th=val.linlin(0,127,0.0001,1).round(0.0001);
-		th.postln;
-~ss21=th
-},77,2);
-	);
-
-				(
-MIDIdef.cc(\midi_slider5,{ |val, num, chan, src|
-		var th;
-	th=val.linlin(0,127,0.0001,1).round(0.0001);
-		th.postln;
-~ss22=th
-},78,2);
-			);
-					(
-MIDIdef.cc(\midi_slider6,{ |val, num, chan, src|
-		var th;
-	th=val.linlin(0,127,0.0001,1).round(0.0001);
-		th.postln;
-~ss23=th
-},79,2);
-			);
-					(
-MIDIdef.cc(\midi_slider7,{ |val, num, chan, src|
-		var th;
-	th=val.linlin(0,127,0.0001,1).round(0.0001);
-		th.postln;
-~ss24=th
-},80,2);
-	);
-
-(
-MIDIdef.cc(\midi_slider8,{ |val, num, chan, src|
-		var th;
-	th=val.linlin(0,127,0.0001,1).round(0.0001);
-		th.postln;
-~ss25=th
-},81,2);
-	);
-
-			);
-
+			)*/
 		);
-		/////////////sequencer with midi
-({
-			var m1=1.neg, m2=1.neg, m3=1.neg,a,b,c,n=0,bank=4,time=32.reciprocal,beat=1,r=0;
-			~r=0;		~r1=0;		~r2=0;
-				(
 
-			~dur1=[];~dur2=[];~dur3=[]; ~dx=[];~dy=[]; ~dz=[]; ~durx=[]; ~dury=[]; ~durz=[]; ~dur=[];
+		////durs
+	({var m1=1.neg, m2=1.neg,b,c,n=0,bank=3,time=16.reciprocal,beat=1;
+
+	~rea=[Complex(cos(1.5pi),sin(1.5pi)).real,
+				Complex(cos(1.5pi+(2pi/3)),sin(1.5pi+(2pi/3)+(2pi/3))).real,
+				Complex(cos(1.5pi+(2pi/3)+(2pi/3)),sin(1.5pi+(2pi/3)+(2pi/3))).real].round(0.0001);
+	~ima=[Complex(cos(1.5pi),sin(1.5pi)).imag,
+				Complex(cos(1.5pi+(2pi/3)),sin(1.5pi+(2pi/3)+(2pi/3))).imag,
+				Complex(cos(1.5pi+(2pi/3)+(2pi/3)),sin(1.5pi+(2pi/3)+(2pi/3))).imag].round(0.0001);
+
+			~dur1=[];~dur2=[];~dx=[];~dy=[]; ~durx=[]; ~dury=[]; ~dur=[]; ~rotation=0;
 
 					1.do{
 ~x=bank.collect{
 m1=m1+1;
-					b=Spherical(beat,~az.[m1],~el.[m1]).rotate(~r).tilt(~r1).tumble(~r2).x.round(0.00001);
+	b=exp(Complex(~rea.[m1],~ima.[m1])*~rotation.degrad).real;
 	2.pow(b).round(time);
 };
 ~y=bank.collect{
 m2=m2+1;
-	c=Spherical(beat,~az.[m2],~el.[m2]).rotate(~r).tilt(~r1).tumble(~r2).y.round(0.00001);
+	c=exp(Complex(~rea.[m2],~ima.[m2])*~rotation.degrad).imag;
 	2.pow(c).round(time);
 };
-~z=bank.collect{
-m3=m3+1;
-	d=Spherical(beat,~az.[m3],~el.[m3]).rotate(~r).tilt(~r1).tumble(~r2).z.round(0.00001);
-	2.pow(d).round(time);
-}; m1=1.neg; m2=1.neg; m3=1.neg; ~dx=~dx++~x; ~dy=~dy++~y;  ~dz=~dz++~z;   ~x=[]; ~y=[]; ~z=[];  r=r+90.degrad; };
+ m1=1.neg; m2=1.neg;  ~dx=~dx++~x; ~dy=~dy++~y;   ~x=[]; ~y=[]; };
 
 				bank.do{ ~dur1=~dur1++~dx.[n];n=n+1;};n=0;
 		//	~durx = ~dur1.collect { |x| if (x == 0) { Rest(2) } { x }};
@@ -863,17 +683,16 @@ m3=m3+1;
 		bank.do{ ~dur2=~dur2++~dy.[n];n=n+1;};n=0;
 			//	~dury = ~dur2.collect { |x| if (x == 0) { Rest(2) } { x }};
 
-		bank.do{ ~dur3=~dur3++~dz.[n];n=n+1;};n=0;
-			//	~durz = ~dur3.collect { |x| if (x == 0) { Rest(2) } { x }};
 
-			~dur=~dur++~dur1++~dur2++~dur3;
+			~dur=~dur++~dur1++~dur2;
+
+}.value;
 );
-		}.value);
+		/////////////sequencer with midi;
 
 						//	~seq = Pseq([1] ,inf).asStream;
 		~seq1= Pseq(~dur1 ,inf).asStream;
 		~seq2= Pseq(~dur2 ,inf).asStream;
-		~seq3= Pseq(~dur3 ,inf).asStream;
 
 				//leier string1
 		(
@@ -955,49 +774,9 @@ m3=m3+1;
 };
 		}));
 
-		///leier string2
-		(
-	~str3= Routine({loop{
-
-
-
-	~synth.set(\tone3, ~s18, \pneuma3,0, \namp3,~ss18)	;
-
-    ~seq3.next.wait;
-
-	~synth.set(\tone3, ~s20, \pneuma3,pi, \namp3,~ss20)	;
-
-	    ~seq3.next.wait;
-
-	~synth.set(\tone3, ~s21, \pneuma3,0, \namp3,~ss21)	;
-
-	    ~seq3.next.wait;
-
-	~synth.set(\tone3, ~s22, \pneuma3,pi, \namp3,~ss22)	;
-
-	    ~seq3.next.wait;
-
-	~synth.set(\tone3, ~s23, \pneuma3,0, \namp3,~ss23)	;
-
-	    ~seq3.next.wait;
-
-	~synth.set(\tone3, ~s24, \pneuma3,pi, \namp3,~ss24)	;
-
-	    ~seq3.next.wait;
-
-	~synth.set(\tone3, ~s25, \pneuma3,0, \namp3,~ss25)	;
-
-	    ~seq3.next.wait;
-
-	~synth.set(\tone3, ~s26, \pneuma3,pi, \namp3,~ss26)	;
-
-	    ~seq3.next.wait;
-};
-		}));
 
 	~str1.play;
 	~str2.play;
-	~str3.play;
 
 		TempoClock.default.tempo_(2);
 
@@ -1008,64 +787,9 @@ m3=m3+1;
 )
 ~str1.stop;
 ~str2.stop;
-~sr3.stop
 
-	~r=0;		~r1=0;		~r2=0;
 
 
 
 		TempoClock.default.tempo_(2);
-
-
-(
-~synth=Synth.new(\synth,[\gain,1,\drive,992*2,\fu,32,\tone1,0,\tone2,0,\tone3,0,\low,992*0,\pan,(992*16).neg,
-		\mix,0.3,\drone_amp,1,\room,0.5,\m,1,\pann,(992*16).neg,\pon,0.001,\pneuma,0, \namp,1,
-			\x,1,\a,1,\panx,0.01,\pany,0.01,\panz,0.01,\spread,1,
-			\az,pi/4,\el,pi/8,\azr,992,\dron,0,\drone,1,\sc,1]).register;
-);
-
-
-
-
-////////////////////////////////////////
-			////sequencer randomness
-
-	~s= Routine({loop{
-
-	thisThread.randSeed = ~val;
-
-		~val.postln;
-
-	~synth.set(\tone, (56).rand)	;
-
-2.wait
-};
-});
-
-	~s.play;
-/////server based randomes
-(
-~seq = Pseq(~dur, inf).asStream;
-	~s= Routine({loop{
-
-
-	~synth.set(\tone, (56).rand)	;
-
-    ~seq.next.wait;
-};
-});
-)
-
-~s.stop
-
-
-
-Routine({
-    loop {
-        6*3600.wait;   // every 6 hours
-        s.reboot;
-    }
-}).play;
-
-
 
