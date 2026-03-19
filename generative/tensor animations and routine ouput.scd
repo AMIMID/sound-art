@@ -31,7 +31,7 @@ Buffer.freeAll;
 {
 var signal,wt;
 	//signal=Env([1,100],[3],[8]);
-		signal=Env([1,1500],[3],[10]);
+		signal=Env([1,2000],[3],[10]);
 	wt = signal.asSignal(1024).asWavetable;
 ~scale2.loadCollection(wt);
 //signal.plot;
@@ -101,7 +101,7 @@ SynthDef.new(\player,{
 
 
 }).add;
-	);~count=[2,2,2,3,2,4];
+	);~count=[1,2,2,2,2,3];
 }
 )
 
@@ -142,12 +142,12 @@ Window.free;
 ~w = Window.new("3D Scatterplot", Rect(40,40, 2000, 1200)).front;
 
 ~v = UserView.new(~w,Rect(0,0,1800,1000)).background_(Color.black);
-a = ScatterView3d(~v, Rect(0,0, 1800,1000), ~data, [-10000, 10000].asSpec,[-10000, 10000].asSpec,[-10000, 10000].asSpec);
+a = ScatterView3d(~v, Rect(0,0, 1800,1000), ~data, [-5000, 5000].asSpec,[-5000, 5000].asSpec,[-5000, 5000].asSpec);
 a.drawMethod = \fillRect;
 a.symbolSize = 2;
 a.symbolColor = Color.white;
 a.background = Color.clear;
-b = ScatterView3d(~v, Rect(0,0, 1800,1000), ~data, [-9000, 9000].asSpec,[-9000, 9000].asSpec,[-9000, 9000].asSpec);
+b = ScatterView3d(~v, Rect(0,0, 1800,1000), ~data, [-4000, 4000].asSpec,[-4000, 4000].asSpec,[-9000, 4000].asSpec);
 b.drawMethod = \fillRect;
 b.symbolSize = 2;
 b.symbolColor = Color.white;
@@ -172,8 +172,6 @@ b.background = Color.clear;
 		mq=harm+1;
 
 
-
-	~count=[2,2,2,3,2,4];
 	axis=~count.[0];
 	cloud=~count.[1];
 	axis1=~count.[2];
