@@ -151,11 +151,11 @@ phasey=Complex(1,sph.y).theta;
 phasez=Complex(1,sph.z).theta;
 
 chainf1= chain.pvcollect(frames,
-						{|mag, phase, index| [(mag*loc1), (phase+phasex)]; }, frombin: ~nVals.[pl], tobin: ~nVals.[pl+1], zeroothers: 1);
+						{|mag, phase, index| [(mag), (phase+phasex)]; }, frombin: ~nVals.[pl], tobin:  ~nVals.[pl]+1, zeroothers: 1);
 chainf2= chain.pvcollect(frames,
-						{|mag, phase, index| [(mag*loc2), (phase+phasey)]; }, frombin: ~nVals.[pl], tobin: ~nVals.[pl+1], zeroothers: 1);
+						{|mag, phase, index| [(mag), (phase+phasey)]; }, frombin: ~nVals.[pl], tobin:  ~nVals.[pl]+1, zeroothers: 1);
 chainf3= chain.pvcollect(frames,
-						{|mag, phase, index| [(mag*loc3), (phase+phasez)]; }, frombin: ~nVals.[pl], tobin: ~nVals.[pl+1], zeroothers: 1);
+						{|mag, phase, index| [(mag), (phase+phasez)]; }, frombin: ~nVals.[pl], tobin: ~nVals.[pl]+1, zeroothers: 1);
 
 				sig1=IFFT(chainf1);
 				sig2=IFFT(chainf2);

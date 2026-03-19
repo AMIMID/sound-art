@@ -115,7 +115,7 @@ ton2=2.pow(Select.kr(tone2.lag(0.0001), ~scale) /12).round(0.0001)*2.pow(dron.la
 					band=pann;
 				axis=Polar(re,im);
 
-loc1=axis.x.abs/992; loc2=axis.y.abs/992;
+//loc1=axis.x.abs/992; loc2=axis.y.abs/992;
 b_x=2.pow(axis.x.round(1) /992);
 b_y=2.pow(axis.y.round(1) /992);
 
@@ -194,11 +194,11 @@ gn = gn.collect { |gi| (1 - spread) * gi + spread * g_avg };
 gn = gn/ gn.sum;
 g_ch1 = gn[0];  g_ch2 = gn[1];
 
+Out.ar(0,Pan2.ar(Limiter.ar(LeakDC.ar(FreeVerb.ar(sig1,mix.lag(0.0001),room.lag(0.0001),mul:gain1)),0.9,0.01)*g_ch1,SinOsc.ar(pon,phasex)));
+Out.ar(0,Pan2.ar(Limiter.ar(LeakDC.ar(FreeVerb.ar(sig1,mix.lag(0.0001),room.lag(0.0001),mul:gain2)),0.9,0.01)*g_ch2,SinOsc.ar(pon,phasex.neg)));
 
-
-Out.ar(0,Limiter.ar(LeakDC.ar(FreeVerb.ar(sig1,mix.lag(0.0001),room.lag(0.0001),mul:gain1)),0.9,0.01)*g_ch1*loc1);	Out.ar(0,Limiter.ar(LeakDC.ar(FreeVerb.ar(sig1,mix.lag(0.0001),room.lag(0.0001),mul:gain1)),0.9,0.01)*g_ch2*loc1);
-
-Out.ar(1,Limiter.ar(LeakDC.ar(FreeVerb.ar(sig2,mix.lag(0.0001),room.lag(0.0001),mul:gain2)),0.9,0.01)*g_ch1*loc2);	Out.ar(1,Limiter.ar(LeakDC.ar(FreeVerb.ar(sig2,mix.lag(0.0001),room.lag(0.0001),mul:gain2)),0.9,0.01)*g_ch2*loc2);
+Out.ar(0,Pan2.ar(Limiter.ar(LeakDC.ar(FreeVerb.ar(sig2,mix.lag(0.0001),room.lag(0.0001),mul:gain1)),0.9,0.01)*g_ch1,SinOsc.ar(pon,phasey));
+Out.ar(0,Pan2.ar(Limiter.ar(LeakDC.ar(FreeVerb.ar(sig2,mix.lag(0.0001),room.lag(0.0001),mul:gain2)),0.9,0.01)*g_ch2,SinOsc.ar(pon,phasey.neg)));
 
 }).add;);
 
