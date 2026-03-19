@@ -113,14 +113,14 @@ ton2=2.pow(Select.kr(tone2.lag(0.0001), ~scale) /12).round(0.0001)*2.pow(dron.la
 
 				lfo=2.pow(pan/992);
 					band=pann;
-				axis=(Complex(re,im));
+				axis=Polar(re,im);
 
-loc1=axis.real.abs/992; loc2=axis.imag.abs/992;
-b_x=2.pow(axis.real.round(1) /992);
-b_y=2.pow(axis.imag.round(1) /992);
+loc1=axis.x.abs/992; loc2=axis.y.abs/992;
+b_x=2.pow(axis.x.round(1) /992);
+b_y=2.pow(axis.y.round(1) /992);
 
 
-phasex=Complex(1,axis.real).theta+pneuma1;    phasey=Complex(1,axis.imag).theta+pneuma2;
+phasex=Complex(1,axis.x).theta+pneuma1;    phasey=Complex(1,axis.y).theta+pneuma2;
 freq1=(fund*ton1)*b_x.lag(0.0001);  freq2=(fund*ton2)*b_y.lag(0.0001);
 
 dr=2.pow(drone.lag(0.1)/12)*2.pow(dron.lag(0.0001)/992);
@@ -183,10 +183,10 @@ threshold2=(((343/0.15)/fund).reciprocal.ampdb/2.sqrt).dbamp;
 					gain2=gain*rq2.sqrt.reciprocal*env*namp2;
 
 
-				g_ch1=((axis.real*Complex(1,0).real)+
-				(axis.imag*Complex(1,0).imag)).max(0);
-			g_ch2=((axis.real*Complex(1,0).real)+
-			(axis.imag*Complex(1,0).imag)).max(0);
+				g_ch1=((axis.x*Complex(1,0).real)+
+				(axis.y*Complex(1,0).imag)).max(0);
+			g_ch2=((axis.x*Complex(1,0).real)+
+			(axis.y*Complex(1,0).imag)).max(0);
 
 gn = [g_ch1, g_ch2];   g_sum = gn.sum;  gn = gn / g_sum;
 g_avg = gn.sum / gn.size;
@@ -302,7 +302,7 @@ MIDIdef.cc(\midi_pot9,{ |val, num, chan, src|
 													(
 MIDIdef.cc(\midi_pot10,{ |val, num, chan, src|
 				var im;
-			im=val.linlin(0,127,0,992).round(1).asInteger;
+			im=val.linlin(0,127,pi,pi.neg).round(0.0001);
 		im.postln;
 		if(~synth.isPlaying,{~synth.set(\im,im)});
 },10);
