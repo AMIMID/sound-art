@@ -2,7 +2,7 @@
 (
 (
 s.options.numWireBufs = 1024*2;
-s.options.numOutputBusChannels=4;
+s.options.numOutputBusChannels=2;
 s.options.numInputBusChannels=0;
 s.options.memSize = 8192*4;
 s.options.blockSize = 64;
@@ -152,7 +152,7 @@ control2=SinOsc.ar(freq2,phase:phasey,mul:amp2);
 
 
 ds1=(LPF.ar((Osc.ar(~w1.bufnum,f1+1,phase:phasex,mul:level).abs*SinOsc.ar(f1+1,phase:phasex)),f1*2.pow(low.lag(0.0001)/992),g1)+
-	LPF.ar((Osc.ar(~w1.bufnum,f1+1,phase:phasex+(pi/2),mul:level).abs*SinOsc.ar(f1+1,phase:phasex+(pi/2))),f1*2.pow(low.lag(0.0001)/992),g1)
+	LPF.ar((Osc.ar(~w1.bufnum,f1+1,phase:phasex+(pi/2),mul:level).abs*SinOsc.ar(f1+1,phase:phasex+(pi    /2))),f1*2.pow(low.lag(0.0001)/992),g1)
 					);
 ds2=(LPF.ar((Osc.ar(~w1.bufnum,f2+1,phase:phasey,mul:level).abs*SinOsc.ar(f2+1,phase:phasey)),f2*2.pow(low.lag(0.0001)/992),g2)+
 	LPF.ar((Osc.ar(~w1.bufnum,f2+1,phase:phasey+(pi/2),mul:level).abs*SinOsc.ar(f2+1,phase:phasey+(pi/2))),f2*2.pow(low.lag(0.0001)/992),g2)
@@ -211,6 +211,7 @@ g_ch1 = gn[0];  g_ch2 = gn[1];
 			\panx,0.01,\pany,0.01,\spread,1,\namp1,1,\namp2,1,\decay,16,
 			\re,992,\im,496,\dron,0,\drone,1]).register;
 );
+
 
 		(
 MIDIClient.init;
@@ -439,7 +440,7 @@ MIDIdef.cc(\midi_seq_pot8,{ |val, num, chan, src|
 			(
 MIDIdef.cc(\midi_slider1,{ |val, num, chan, src|
 		var gain;
-	gain=val.linlin(0,127,0,5).round(0.0001);
+	gain=val.linlin(0,127,0,3).round(0.0001);
 		gain.postln;
 		if(~synth.isPlaying,{~synth.set(\gain,gain)});
 },49);
@@ -518,7 +519,7 @@ MIDIdef.cc(\midi_slider9,{ |val, num, chan, src|
 			///comtroller 2
 			(
 					(
-MIDIdef.cc(\midi_seq_pot9,{ |val, num, chan, src|
+MIDIdef.cc(\midi_seq_pot10,{ |val, num, chan, src|
 		var s1;
 		s1=val.linlin(0,127,0,14).round(1).asInteger;
 		s1.postln;
@@ -527,7 +528,7 @@ MIDIdef.cc(\midi_seq_pot9,{ |val, num, chan, src|
 						);
 
 				(
-MIDIdef.cc(\midi_seq_pot10,{ |val, num, chan, src|
+MIDIdef.cc(\midi_seq_pot11,{ |val, num, chan, src|
          var s2;
 					s2=val.linlin(0,127,0,14).round(1).asInteger;
 		s2.postln;
@@ -536,7 +537,7 @@ MIDIdef.cc(\midi_seq_pot10,{ |val, num, chan, src|
 	);
 
 									(
-MIDIdef.cc(\midi_seq_pot11,{ |val, num, chan, src|
+MIDIdef.cc(\midi_seq_pot12,{ |val, num, chan, src|
 		var s3;
 			s3=val.linlin(0,127,0,14).round(1).asInteger;
 		s3.postln;
@@ -545,7 +546,7 @@ MIDIdef.cc(\midi_seq_pot11,{ |val, num, chan, src|
 	);
 
 												(
-MIDIdef.cc(\midi_seq_pot12,{ |val, num, chan, src|
+MIDIdef.cc(\midi_seq_pot13,{ |val, num, chan, src|
 		var s4;
 			s4=val.linlin(0,127,0,14).round(1).asInteger;
 		s4.postln;
@@ -554,7 +555,7 @@ MIDIdef.cc(\midi_seq_pot12,{ |val, num, chan, src|
 	);
 
 														(
-MIDIdef.cc(\midi_seq_pot13,{ |val, num, chan, src|
+MIDIdef.cc(\midi_seq_pot14,{ |val, num, chan, src|
 		var s5;
 			s5=val.linlin(0,127,0,14).round(1).asInteger;
 		s5.postln;
@@ -563,7 +564,7 @@ MIDIdef.cc(\midi_seq_pot13,{ |val, num, chan, src|
 	);
 
 														(
-MIDIdef.cc(\midi_seq_pot14,{ |val, num, chan, src|
+MIDIdef.cc(\midi_seq_pot15,{ |val, num, chan, src|
 		var s6;
 						s6=val.linlin(0,127,0,14).round(1).asInteger;
 		s6.postln;
@@ -572,7 +573,7 @@ MIDIdef.cc(\midi_seq_pot14,{ |val, num, chan, src|
 	);
 
 														(
-MIDIdef.cc(\midi_seq_pot15,{ |val, num, chan, src|
+MIDIdef.cc(\midi_seq_pot16,{ |val, num, chan, src|
 		var s7;
 			s7=val.linlin(0,127,0,14).round(1).asInteger;
 		s7.postln;
@@ -581,7 +582,7 @@ MIDIdef.cc(\midi_seq_pot15,{ |val, num, chan, src|
 	);
 
 																	(
-MIDIdef.cc(\midi_seq_pot16,{ |val, num, chan, src|
+MIDIdef.cc(\midi_seq_pot17,{ |val, num, chan, src|
 		var s8;
 			s8=val.linlin(0,127,0,14).round(1).asInteger;
 		s8.postln;
@@ -680,7 +681,7 @@ MIDIdef.cc(\midi_slider18,{ |val, num, chan, src|
 				Complex(cos(1.5pi+(2pi/3)),sin(1.5pi+(2pi/3)+(2pi/3))).imag,
 				Complex(cos(1.5pi+(2pi/3)+(2pi/3)),sin(1.5pi+(2pi/3)+(2pi/3))).imag].round(0.0001);
 
-			~dur1=[];~dur2=[];~dx=[];~dy=[]; ~durx=[]; ~dury=[]; ~dur=[]; ~rotation=45;
+			~dur1=[];~dur2=[];~dx=[];~dy=[]; ~durx=[]; ~dury=[]; ~dur=[]; ~rotation=0;
 
 					1.do{
 ~x=bank.collect{
@@ -758,23 +759,23 @@ m2=m2+1;
 
 
 
-	~synth.set(\tone2, ~s9, \pneuma2,0, \namp2,~ss9)	;
+	~synth.set(\tone2, ~s10, \pneuma2,0, \namp2,~ss10)	;
 
     ~seq2.next.wait;
 
-	~synth.set(\tone2, ~s10, \pneuma2,pi, \namp2,~ss10)	;
+	~synth.set(\tone2, ~s11, \pneuma2,pi, \namp2,~ss11)	;
 
 	    ~seq2.next.wait;
 
-	~synth.set(\tone2, ~s11, \pneuma2,0, \namp2,~ss11)	;
+	~synth.set(\tone2, ~s12, \pneuma2,0, \namp2,~ss12)	;
 
 	    ~seq2.next.wait;
 
-	~synth.set(\tone2, ~s12, \pneuma2,pi, \namp2,~ss12)	;
+	~synth.set(\tone2, ~s13, \pneuma2,pi, \namp2,~ss13)	;
 
 	    ~seq2.next.wait;
 
-	~synth.set(\tone2, ~s13, \pneuma2,0, \namp2,~ss14)	;
+	~synth.set(\tone2, ~s14, \pneuma2,0, \namp2,~ss14)	;
 
 	    ~seq2.next.wait;
 
@@ -793,8 +794,8 @@ m2=m2+1;
 		}));
 
 
-	~str1.play;
-//	~str2.play;
+~str1.play;
+~str2.play;
 
 		TempoClock.default.tempo_(5);
 
@@ -806,8 +807,14 @@ m2=m2+1;
 ~str1.stop;
 ~str2.stop;
 
+(
 
+~synth=Synth.new(\synth,[\gain,1,\drive,992*4,\fu,32,\tone1,0,\tone2,0,\pan,(992*8).neg,
+		\mix,0.3,\drone_amp,1,\room,0.5,\pann,(992*16).neg,\pon,0.001,\pneuma1,0,\pneuma2,0,
+			\panx,0.01,\pany,0.01,\spread,1,\namp1,1,\namp2,1,\decay,16,
+			\re,992,\im,496,\dron,0,\drone,1]).register;
 
+)
 
 		TempoClock.default.tempo_(2);
 
