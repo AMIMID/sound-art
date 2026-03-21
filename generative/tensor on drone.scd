@@ -476,6 +476,7 @@ Out.ar(0,Pan2.ar(
 						SinOsc.ar(pon,phasez.neg,spread.reciprocal);
 
 
+					Out.ar(0,WhiteNoise.ar(0.0001)!2);
 						azf = (azf+(2pi-(2pi/s))).wrap(pi.neg,pi);
 		   elf = (elf+(pi-(pi/s))).wrap((pi/2).neg,(pi/2))
 				};
