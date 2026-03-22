@@ -46,10 +46,10 @@ s.meter;
 		///vbap
 
 		///octahedron
-	//	(
-//~az=[0.degrad,0.degrad,90.degrad,180.degrad,90.neg.degrad,0.degrad];
-//~el=[90.neg.degrad,0.degrad,0.degrad,0.degrad,0.degrad,90.degrad];
-//);
+		(
+~azz=[0.degrad,0.degrad,90.degrad,180.degrad,90.neg.degrad,0.degrad];
+~ell=[90.neg.degrad,0.degrad,0.degrad,0.degrad,0.degrad,90.degrad];
+);
 		//tetr
 		(
 ~az=[45.degrad,135.neg.degrad,45.neg.degrad,135.degrad];
@@ -1270,7 +1270,7 @@ MIDIdef.cc(\midi_slider26,{ |val, num, chan, src|
 		);
 		/////////////sequencer with midi
 ({
-			var m1=1.neg, m2=1.neg, m3=1.neg,a,b,c,n=0,bank=4,time=32.reciprocal,beat=1,r=0;
+			var m1=1.neg, m2=1.neg, m3=1.neg,a,b,c,n=0,bank=6,time=32.reciprocal,beat=1,r=0;
 			~r=0;		~r1=0;		~r2=0;
 				(
 
@@ -1279,17 +1279,17 @@ MIDIdef.cc(\midi_slider26,{ |val, num, chan, src|
 					1.do{
 ~x=bank.collect{
 m1=m1+1;
-					b=Spherical(beat,~az.[m1],~el.[m1]).rotate(~r).tilt(~r1).tumble(~r2).x.round(0.00001);
+					b=Spherical(beat,~azz.[m1],~ell.[m1]).rotate(~r).tilt(~r1).tumble(~r2).x.round(0.00001);
 	2.pow(b).round(time);
 };
 ~y=bank.collect{
 m2=m2+1;
-	c=Spherical(beat,~az.[m2],~el.[m2]).rotate(~r).tilt(~r1).tumble(~r2).y.round(0.00001);
+	c=Spherical(beat,~azz.[m2],~ell.[m2]).rotate(~r).tilt(~r1).tumble(~r2).y.round(0.00001);
 	2.pow(c).round(time);
 };
 ~z=bank.collect{
 m3=m3+1;
-	d=Spherical(beat,~az.[m3],~el.[m3]).rotate(~r).tilt(~r1).tumble(~r2).z.round(0.00001);
+	d=Spherical(beat,~azz.[m3],~ell.[m3]).rotate(~r).tilt(~r1).tumble(~r2).z.round(0.00001);
 	2.pow(d).round(time);
 }; m1=1.neg; m2=1.neg; m3=1.neg; ~dx=~dx++~x; ~dy=~dy++~y;  ~dz=~dz++~z;   ~x=[]; ~y=[]; ~z=[];  r=r+90.degrad; };
 
