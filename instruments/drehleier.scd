@@ -287,9 +287,9 @@ cos((polytope.phi.round(0.00001)).wrap((pi/2).neg,(pi/2))))))).rho/(2.sqrt));
 
 loc1=magqx;  loc2=magy;  loc3=magz;
 
-phasex=Complex(1,sph.x).theta+pneuma1;
-phasey=Complex(1,sph.y).theta+pneuma2;
-phasez=Complex(1,sph.z).theta+pneuma3;
+phasex=Complex(1,sph.x).theta;
+phasey=Complex(1,sph.y).theta;
+phasez=Complex(1,sph.z).theta;
 
 
 freq1=(fund*ton1)*b_x.lag(0.0001);
@@ -409,42 +409,42 @@ g_ch4 = gn[3];
 
 Out.ar(0,PanAz.ar(4,
 Limiter.ar(LeakDC.ar(FreeVerb.ar(
-sig1,mix.lag(0.0001),room.lag(0.0001),mul:gain1)),0.9,0.01)*g_ch1,LFSaw.ar(pon,0),width:spread*4));
+sig1,mix.lag(0.0001),room.lag(0.0001),mul:gain1)),0.9,0.01)*g_ch1,LFSaw.ar(pon,0),width:spread*10));
 Out.ar(0,PanAz.ar(4,
 Limiter.ar(LeakDC.ar(FreeVerb.ar(
-sig1,mix.lag(0.0001),room.lag(0.0001),mul:gain1)),0.9,0.01)*g_ch2,LFSaw.ar(pon,1/4),width:spread*4));
+sig1,mix.lag(0.0001),room.lag(0.0001),mul:gain1)),0.9,0.01)*g_ch2,LFSaw.ar(pon,1/4),width:spread*10));
 Out.ar(0,PanAz.ar(4,
 Limiter.ar(LeakDC.ar(FreeVerb.ar(
-sig1,mix.lag(0.0001),room.lag(0.0001),mul:gain1)),0.9,0.01)*g_ch3,LFSaw.ar(pon,1/2),width:spread*4));
+sig1,mix.lag(0.0001),room.lag(0.0001),mul:gain1)),0.9,0.01)*g_ch3,LFSaw.ar(pon,1/2),width:spread*10));
 Out.ar(0,PanAz.ar(4,
 Limiter.ar(LeakDC.ar(FreeVerb.ar(
-sig1,mix.lag(0.0001),room.lag(0.0001),mul:gain1)),0.9,0.01)*g_ch4,LFSaw.ar(pon,3/4),width:spread*4));
+sig1,mix.lag(0.0001),room.lag(0.0001),mul:gain1)),0.9,0.01)*g_ch4,LFSaw.ar(pon,3/4),width:spread*10));
 
 Out.ar(0,PanAz.ar(4,
 Limiter.ar(LeakDC.ar(FreeVerb.ar(
-sig2,mix.lag(0.0001),room.lag(0.0001),mul:gain2)),0.9,0.01)*g_ch1,LFSaw.ar(pon,0),width:spread*4));
+sig2,mix.lag(0.0001),room.lag(0.0001),mul:gain2)),0.9,0.01)*g_ch1,LFSaw.ar(pon,0),width:spread*10));
 Out.ar(0,PanAz.ar(4,
 Limiter.ar(LeakDC.ar(FreeVerb.ar(
-sig2,mix.lag(0.0001),room.lag(0.0001),mul:gain2)),0.9,0.01)*g_ch2,LFSaw.ar(pon,1/4),width:spread*4));
+sig2,mix.lag(0.0001),room.lag(0.0001),mul:gain2)),0.9,0.01)*g_ch2,LFSaw.ar(pon,1/4),width:spread*10));
 Out.ar(0,PanAz.ar(4,
 Limiter.ar(LeakDC.ar(FreeVerb.ar(
-sig2,mix.lag(0.0001),room.lag(0.0001),mul:gain2)),0.9,0.01)*g_ch3,LFSaw.ar(pon,1/2),width:spread*4));
+sig2,mix.lag(0.0001),room.lag(0.0001),mul:gain2)),0.9,0.01)*g_ch3,LFSaw.ar(pon,1/2),width:spread*10));
 Out.ar(0,PanAz.ar(4,
 Limiter.ar(LeakDC.ar(FreeVerb.ar(
-sig2,mix.lag(0.0001),room.lag(0.0001),mul:gain2)),0.9,0.01)*g_ch4,LFSaw.ar(pon,3/4),width:spread*4));
+sig2,mix.lag(0.0001),room.lag(0.0001),mul:gain2)),0.9,0.01)*g_ch4,LFSaw.ar(pon,3/4),width:spread*10));
 
 Out.ar(0,PanAz.ar(4,
 Limiter.ar(LeakDC.ar(FreeVerb.ar(
-sig3,mix.lag(0.0001),room.lag(0.0001),mul:gain3)),0.9,0.01)*g_ch1,LFSaw.ar(pon,0),width:spread*4));
+sig3,mix.lag(0.0001),room.lag(0.0001),mul:gain3)),0.9,0.01)*g_ch1,LFSaw.ar(pon,0),width:spread*10));
 Out.ar(0,PanAz.ar(4,
 Limiter.ar(LeakDC.ar(FreeVerb.ar(
-sig3,mix.lag(0.0001),room.lag(0.0001),mul:gain3)),0.9,0.01)*g_ch2,LFSaw.ar(pon,1/4),width:spread*4));
+sig3,mix.lag(0.0001),room.lag(0.0001),mul:gain3)),0.9,0.01)*g_ch2,LFSaw.ar(pon,1/4),width:spread*10));
 Out.ar(0,PanAz.ar(4,
 Limiter.ar(LeakDC.ar(FreeVerb.ar(
-sig3,mix.lag(0.0001),room.lag(0.0001),mul:gain3)),0.9,0.01)*g_ch3,LFSaw.ar(pon,1/2),width:spread*4));
+sig3,mix.lag(0.0001),room.lag(0.0001),mul:gain3)),0.9,0.01)*g_ch3,LFSaw.ar(pon,1/2),width:spread*10));
 Out.ar(0,PanAz.ar(4,
 Limiter.ar(LeakDC.ar(FreeVerb.ar(
-sig3,mix.lag(0.0001),room.lag(0.0001),mul:gain3)),0.9,0.01)*g_ch4,LFSaw.ar(pon,3/4),width:spread*4));
+sig3,mix.lag(0.0001),room.lag(0.0001),mul:gain3)),0.9,0.01)*g_ch4,LFSaw.ar(pon,3/4),width:spread*10));
 
 					Out.ar(0,WhiteNoise.ar(0.0001)!4);
 					///three channel
@@ -1192,7 +1192,7 @@ MIDIdef.cc(\midi_slider18,{ |val, num, chan, src|
 		var s8;
 			s8=val.linlin(0,127,0,14).round(1).asInteger;
 		s8.postln;
-		~s18=s8;
+		~ss18=s8;
 },74);
 			);
 
