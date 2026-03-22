@@ -1190,7 +1190,7 @@ MIDIdef.cc(\midi_seq_pot24,{ |val, num, chan, src|
 			(
 MIDIdef.cc(\midi_slider18,{ |val, num, chan, src|
 		var s8;
-			s8=val.linlin(0,127,0,14).round(1).asInteger;
+			s8=val.linlin(0,127,0,1).round(1).asInteger;
 		s8.postln;
 		~ss18=s8;
 },74);
@@ -1321,7 +1321,7 @@ m3=m3+1;
 
     ~seq1.next.wait;
 
-	~synth.set(\tone1, ~s2, \pneuma1,pi, \namp1,~ss2)	;
+	~synth.set(\tone1, ~s2, \pneuma1,0, \namp1,~ss2)	;
 
 	    ~seq1.next.wait;
 
@@ -1329,7 +1329,7 @@ m3=m3+1;
 
 	    ~seq1.next.wait;
 
-	~synth.set(\tone1, ~s4, \pneuma1,pi, \namp1,~ss4)	;
+	~synth.set(\tone1, ~s4, \pneuma1,0, \namp1,~ss4)	;
 
 	    ~seq1.next.wait;
 
@@ -1337,7 +1337,7 @@ m3=m3+1;
 
 	    ~seq1.next.wait;
 
-	~synth.set(\tone1, ~s6, \pneuma1,pi, \namp1,~ss6)	;
+	~synth.set(\tone1, ~s6, \pneuma1,0, \namp1,~ss6)	;
 
 	    ~seq1.next.wait;
 
@@ -1345,7 +1345,7 @@ m3=m3+1;
 
 	    ~seq1.next.wait;
 
-	~synth.set(\tone1, ~s8, \pneuma1,pi, \namp1,~ss8)	;
+	~synth.set(\tone1, ~s8, \pneuma1,0, \namp1,~ss8)	;
 
 	    ~seq1.next.wait;
 };
@@ -1361,7 +1361,7 @@ m3=m3+1;
 
     ~seq2.next.wait;
 
-	~synth.set(\tone2, ~s10, \pneuma2,pi, \namp2,~ss10)	;
+	~synth.set(\tone2, ~s10, \pneuma2,0, \namp2,~ss10)	;
 
 	    ~seq2.next.wait;
 
@@ -1369,7 +1369,7 @@ m3=m3+1;
 
 	    ~seq2.next.wait;
 
-	~synth.set(\tone2, ~s12, \pneuma2,pi, \namp2,~ss12)	;
+	~synth.set(\tone2, ~s12, \pneuma2,0, \namp2,~ss12)	;
 
 	    ~seq2.next.wait;
 
@@ -1377,7 +1377,7 @@ m3=m3+1;
 
 	    ~seq2.next.wait;
 
-	~synth.set(\tone2, ~s15, \pneuma2,pi, \namp2,~ss15)	;
+	~synth.set(\tone2, ~s15, \pneuma2,0, \namp2,~ss15)	;
 
 	    ~seq2.next.wait;
 
@@ -1401,7 +1401,7 @@ m3=m3+1;
 
     ~seq3.next.wait;
 
-	~synth.set(\tone3, ~s20, \pneuma3,pi, \namp3,~ss20)	;
+	~synth.set(\tone3, ~s20, \pneuma3,0, \namp3,~ss20)	;
 
 	    ~seq3.next.wait;
 
@@ -1409,7 +1409,7 @@ m3=m3+1;
 
 	    ~seq3.next.wait;
 
-	~synth.set(\tone3, ~s22, \pneuma3,pi, \namp3,~ss22)	;
+	~synth.set(\tone3, ~s22, \pneuma3,0, \namp3,~ss22)	;
 
 	    ~seq3.next.wait;
 
@@ -1417,7 +1417,7 @@ m3=m3+1;
 
 	    ~seq3.next.wait;
 
-	~synth.set(\tone3, ~s24, \pneuma3,pi, \namp3,~ss24)	;
+	~synth.set(\tone3, ~s24, \pneuma3,0, \namp3,~ss24)	;
 
 	    ~seq3.next.wait;
 
@@ -1425,7 +1425,7 @@ m3=m3+1;
 
 	    ~seq3.next.wait;
 
-	~synth.set(\tone3, ~s26, \pneuma3,pi, \namp3,~ss26)	;
+	~synth.set(\tone3, ~s26, \pneuma3,0, \namp3,~ss26)	;
 
 	    ~seq3.next.wait;
 };
