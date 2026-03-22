@@ -457,14 +457,14 @@ g_ch1 = gn[0]; g_ch2 = gn[1];
 
 Out.ar(0,Pan2.ar(
 				Limiter.ar(LeakDC.ar(FreeVerb.ar(sig1,mix.lag(0.001),room.lag(0.001),mul:gain1)),0.9,0.01)*g_ch1),
-					SinOsc.ar(pon,phasex,spread.reciprocal);
+					SinOsc.ar(pon,phasex);
 Out.ar(0,Pan2.ar(
 				Limiter.ar(LeakDC.ar(FreeVerb.ar(sig1,mix.lag(0.001),room.lag(0.001),mul:gain1)),0.9,0.01)*g_ch2),
-					SinOsc.ar(pon,phasex.neg,spread.reciprocal);
+					SinOsc.ar(pon,phasex.neg);
 
 Out.ar(0,Pan2.ar(
 					Limiter.ar(LeakDC.ar(FreeVerb.ar(sig2,mix.lag(0.001),room.lag(0.001),mul:gain2)),0.9,0.01)*g_ch1),
-					SinOsc.ar(pon,phasey,spread.reciprocal);
+					SinOsc.ar(pon,phasey);
 Out.ar(0,Pan2.ar(
 				Limiter.ar(LeakDC.ar(FreeVerb.ar(sig2,mix.lag(0.001),room.lag(0.001),mul:gain2)),0.9,0.01)*g_ch2),
 					SinOsc.ar(pon,phasey.neg);
