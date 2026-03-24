@@ -6,7 +6,7 @@
 s.options.numWireBufs = 1024*2;
 s.options.numOutputBusChannels=2;
 s.options.numInputBusChannels=2;
-s.options.memSize = 8192*4;
+s.options.memSize = 8192*8;
 s.options.blockSize = 64;
 s.options.maxNodes = 1024 * 2;
 //s.makeGui(w);
@@ -32,8 +32,8 @@ s.meter;
 	Buffer.freeAll;
 
 (
-~r1 = Buffer.readChannel(s,,channels:0 );
-~r2 = Buffer.readChannel(s,,channels:1 );
+~r1 = Buffer.readChannel(s,"/Users/amimid/Desktop/1.wav",channels:0 );
+~r2 = Buffer.readChannel(s,"/Users/amimid/Desktop/2.wav",channels:0 );
 //~i3 = Buffer.readChannel(s,,channels:1 );
 		);
 
@@ -61,7 +61,7 @@ SynthDef.new(\re_im, {
     var sig1rl,sig2rl,sig3rl,sig4rl,sig5rl,sig6rl,sig7rl,sig8rl;
 	var sig1rr,sig2rr,sig3rr,sig4rr,sig5rr,sig6rr,sig7rr,sig8rr;
     var sig1il,sig2il,sig3il,sig4il,sig5il,sig6il,sig7il,sig8il;
-	var sph, anglex,angley,anglez,in1,in2,in3,in4,n=0;
+	var sph, anglex,angley,anglez,in1,in2,in3,in4,n=0,chain1,chain2;
 	var frames=~frames,silver=45,golden=45,l=1,r=1.neg,g=((1+5.sqrt)/2),s=(1+2.sqrt);
 
 
@@ -153,7 +153,7 @@ MIDIdef.cc(\midi_slider1,{ |val, num, chan, src|
 	th=val.linlin(0,127,0.0001,1).round(0.0001);
 		th.postln;
 if(~synth.isPlaying,{~synth.set(\amp1, th)});
-},49);
+},25);
 			);
 
 											(
@@ -162,7 +162,7 @@ MIDIdef.cc(\midi_slider2,{ |val, num, chan, src|
 	th=val.linlin(0,127,0.0001,1).round(0.0001);
 		th.postln;
 if(~synth.isPlaying,{~synth.set(\amp2, th)});
-},25);
+},26);
 	);
 
 														(
@@ -172,49 +172,53 @@ MIDIdef.cc(\midi_slider3,{ |val, num, chan, src|
 		th.postln;
 if(~synth.isPlaying,{~synth.set(\amp3, th)});
 
-},26);
+},27);
 	);
 (
 MIDIdef.cc(\midi_slider4,{ |val, num, chan, src|
 		var th;
 	th=val.linlin(0,127,0.0001,1).round(0.0001);
+		th.postln;
 if(~synth.isPlaying,{~synth.set(\amp4, th)});
-~ss3=th
-},27);
+
+},28);
 	);
 
 				(
 MIDIdef.cc(\midi_slider5,{ |val, num, chan, src|
 		var th;
 	th=val.linlin(0,127,0.0001,1).round(0.0001);
+		th.postln;
 if(~synth.isPlaying,{~synth.set(\amp5, th)});
-~ss4=th
-},28);
+
+},29);
 			);
 					(
 MIDIdef.cc(\midi_slider6,{ |val, num, chan, src|
 		var th;
 	th=val.linlin(0,127,0.0001,1).round(0.0001);
+		th.postln;
 if(~synth.isPlaying,{~synth.set(\amp6, th)});
-~ss5=th
-},29);
+
+},30);
 			);
 				(
 MIDIdef.cc(\midi_slider7,{ |val, num, chan, src|
 		var th;
 	th=val.linlin(0,127,0.0001,1).round(0.0001);
+		th.postln;
 if(~synth.isPlaying,{~synth.set(\amp7, th)});
-~ss6=th
-},30);
+},31);
 	);
 
 (
 MIDIdef.cc(\midi_slider8,{ |val, num, chan, src|
 		var th;
 	th=val.linlin(0,127,0.0001,1).round(0.0001);
+		th.postln;
 if(~synth.isPlaying,{~synth.set(\amp8, th)});
-~ss7=th
-},31);
+
+},32);
 	);
 
 );
@@ -222,9 +226,9 @@ if(~synth.isPlaying,{~synth.set(\amp8, th)});
 (
 			(
 MIDIdef.cc(\midi_slider18,{ |val, num, chan, src|
-		var s8;
-			s8=val.linlin(0,127,0,1).round(1).asInteger;
-		s8.postln;
+		var th;
+	th=val.linlin(0,127,0.0001,1).round(0.0001);
+		th.postln;
 if(~synth.isPlaying,{~synth.set(\amp1a, th)});
 },74);
 			);
