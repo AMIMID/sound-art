@@ -76,12 +76,12 @@ wt = signal.asWavetable;
 
  (
 SynthDef(\kick, {
-	arg gain=1,tone=32,pan=1,low=0,noise=0.001,decay=1/2,attack=0.001,az=0,azr=0,el=0,m=1,rz=1000,
+	arg gain=1,tone=32,pan=1,low=0,decay=1/2,attack=0.001,az=0,azr=0,el=0,m=1,rz=1000,
 			fu=16,mix=1,room=1,drive=1,t=1;
     var env,freq,anglex,angley,anglez,mod_anglex,mod_angley,mod_anglez,mx,my,mz,magx,magz,magy;
 	var sph,phase,threshold,ton,phase1,phase2,phase3,sph1,loc1,loc2,loc3,mag,fund,freqq;
 	var sig1,sig2,sig3,phasex,phasey,phasez,control1,control2,control3,lfo;
-	var amb_w,amb_x,amb_y,amb_z,out,amb_sig1,amb_sig2,amb_sig3;
+	var amb_w,amb_x,amb_y,amb_z,out,amb_sig1,amb_sig2,amb_sig3,noise=0.01;
 
 
 				ton=2.pow(tone/992);
@@ -90,8 +90,8 @@ SynthDef(\kick, {
 					lfo=2.pow(pan/992);
 
 
-				freq = EnvGen.kr(Env([freqq, fu*ton], [decay*2], curve: -8)); // pitch drop
-				env= EnvGen.kr(Env.perc(attack, decay, curve: -8),doneAction:2,levelScale:gain*8);
+				freq = EnvGen.kr(Env([freqq, fu*ton], [decay], curve: -8)); // pitch drop
+				env= EnvGen.kr(Env.perc(attack, decay, curve: -2),doneAction:2,levelScale:gain);
 
 			threshold=(((343/0.3)/freq).reciprocal.ampdb/2.sqrt).dbamp;
 
@@ -146,9 +146,9 @@ sig1 = sig1 + (sig1 * BrownNoise.ar(noise*loc1)); sig2 = sig2 + (sig2 * BrownNoi
 		sig1=tanh(sig1*drive);sig2=tanh(sig2*drive);sig3=tanh(sig2*drive);
 
 
-			Out.ar(0,Limiter.ar(LeakDC.ar(FreeVerb.ar((sig1 ),mix.lag(0.01),room.lag(0.01),mul:env*loc1.abs)),0.9,0.01)!2);
-			Out.ar(0,Limiter.ar(LeakDC.ar(FreeVerb.ar((sig2),mix.lag(0.01),room.lag(0.01),mul:env*loc2.abs)),0.9,0.01)!2);
-			Out.ar(0,Limiter.ar(LeakDC.ar(FreeVerb.ar((sig3),mix.lag(0.01),room.lag(0.01),mul:env*loc3.abs)),0.9,0.01)!2);
+			Out.ar(1,Limiter.ar(LeakDC.ar(FreeVerb.ar((sig1 ),mix.lag(0.01),room.lag(0.01),mul:env)),0.9,0.01));
+			Out.ar(1,Limiter.ar(LeakDC.ar(FreeVerb.ar((sig2),mix.lag(0.01),room.lag(0.01),mul:env)),0.9,0.01));
+			Out.ar(1,Limiter.ar(LeakDC.ar(FreeVerb.ar((sig3),mix.lag(0.01),room.lag(0.01),mul:env)),0.9,0.01));
 
 }).add);
 
@@ -169,11 +169,15 @@ axis=i+j+k;
 )*/
 
 	////durs
-		(
+	/*	(
 ~az=[0.degrad,0.degrad,90.degrad,180.degrad,90.neg.degrad,0.degrad];
 ~el=[90.neg.degrad,0.degrad,0.degrad,0.degrad,0.degrad,90.degrad];
-);
-	({var m1=1.neg, m2=1.neg, m3=1.neg,a,b,c,n=0,bank=6,time=32.reciprocal,beat=1,r=0;
+);*/
+
+		~az=[45.degrad,135.neg.degrad,45.neg.degrad,135.degrad];
+~el=[35.264390.neg.degrad,35.264390.neg.degrad,35.264390.degrad,35.264390.degrad];
+
+	({var m1=1.neg, m2=1.neg, m3=1.neg,a,b,c,n=0,bank=4,time=32.reciprocal,beat=1,r=0;
 
 			~dur1=[];~dur2=[];~dur3=[]; ~dx=[];~dy=[]; ~dz=[]; ~durx=[]; ~dury=[]; ~durz=[]; ~dur=[];
 
@@ -208,80 +212,18 @@ m3=m3+1;
 }.value;
 );
 
-(
-MIDIClient.init;
-MIDIIn.connectAll;
-);
-
-(
-
-(
-MIDIdef.cc(\midi_slider5,{ |val, num, chan, src|
-		var gain;
-	gain=val.linlin(0,127,0.0001,1).round(0.0001);
-		gain.postln;
-~gain=gain;
-},49);
-			);
-
-											(
-MIDIdef.cc(\midi_slider7,{ |val, num, chan, src|
-		var low;
-		low=val.linlin(0,127,0,992*3).round(1).asInteger;
-		low.postln;
-~tone=low;
-},53);
-	);
-
-(
-MIDIdef.cc(\midi_slider8,{ |val, num, chan, src|
-		var az;
-	az=val.linlin(0,127,pi.neg,pi).round(0.0001);
-		az.postln;
-~az=az
-},57);
-	);
-
-	(
-MIDIdef.cc(\midi_slider9,{ |val, num, chan, src|
-		var el;
-		el=val.linlin(0,127,(pi/2).neg,(pi/2)).round(0.0001);
-		el.postln;
-~el=el;
-},61);
-	);
-
-(
-MIDIdef.cc(\midi_switch9,{ |val, num, chan, src|
-		var a;
-				if(val>0,a=1);
-a.postln;
-	~tone=a;
-
-},13);
-	);
-	(
-MIDIdef.cc(\midi_switch10,{ |val, num, chan, src|
-		 var a;
-					if(val>0,a=2);
-a.postln;
-		~tone=a;
-
-},15);
-	);
-
-);
 
 (
 ~seqq = Pseq(~dur ,inf).asStream;
 	~dr= Routine({loop{
 
-	Synth(\kick, [\gain,~gain, \tone,~tone, \m,2,	\low,992*1, \noise,0.001, \az,~az, \t,28, \el,~el, \decay,2,\attack,0.01,\rz,1000,\mix,0.4,\room,1,\pan,992.neg])	;
+	Synth(\kick, [\gain,1,\tone,992, \m,1,\drive,1.5,	\low,992*1, \noise,0.001, \az,0, \t,28, \el,pi/4, \decay,1.5,\attack,0.05,\rz,1000,\mix,0.3,\room,0.6,\pan,992.neg])	;
     ~seqq.next.wait;
 };
 });
 );
 	~dr.play;
+
 		~dr.stop
 
 	//	~s.pause;
@@ -293,7 +235,7 @@ a.postln;
 
 
 
-		TempoClock.default.tempo_(2.5);
+		TempoClock.default.tempo_(3);
 
 
 
