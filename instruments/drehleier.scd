@@ -166,12 +166,12 @@ SynthDef.new(\synth,{
 
 	arg gain=1,low=992,tone1=0,tone2=0,tone3=0,x=1,pan=1,mix=0.3,a=1,panx=1,pany=1,panz=1,room=0.5,m=2,pon=1,
 				fu=32,drive=1,spread=1,drone_amp=1,pann=0,az=0,el=0,azr=0,dron=0,drone=1,theta=0,rx=0,ry=0,rz=0,
-				pneuma1=0,pneuma2=0,pneuma3=0,namp1=1,namp2=1,namp3=1;
+				pneuma1=0,pneuma2=0,pneuma3=0,namp1=1,namp2=1,namp3=1,sc=14;
 
 	var rq=1,cloud=1,attack,decay,curve,band,azf=0,elf=0,q,r1,r2,r3,sq1,sq2,sq3,rotationx,rotationy,rotationz,core=(9/8).rand;
 	var lamdoma,freq1,freq2,freq3,fund,amp1,amp2,amp3,alpha,cell_az,cell_el,x_pos,y_pos,control1,control2,control3;
 	var sig1,sig2,bank=6,out1,out2,band_osc1,band_osc2,threshold1,threshold2,threshold3,phase1,phase2,phase3;
-	var band_osc3,band_osc4,band_osc5,band_osc6,sig3,out3,cell_tria,b_x,b_y,b_z,polytope,gain1,gain2,gain3,env,azimuth,elevation,sc=14;
+	var band_osc3,band_osc4,band_osc5,band_osc6,sig3,out3,cell_tria,b_x,b_y,b_z,polytope,gain1,gain2,gain3,env,azimuth,elevation;
 	var magx,magy,magz,magqx,magqy,mod_anglex,anglex,angley,anglez,phasex,phasey,phasez,rq1,rq2,rq3,rq4,rq5,rq6;
 	var mod_angley,mod_anglez,mx,my,mz,mqx,mqy,mag,mq,lfo,sph;
 	var loc1,loc2,loc3,g=((1+5.sqrt)/2),s=(1+2.sqrt),tensor,dr;
@@ -382,7 +382,7 @@ threshold3=(((343/0.3)/fund).reciprocal.ampdb/2.sqrt).dbamp;
 					gain2=gain*rq2.sqrt.reciprocal*cloud.reciprocal*10*namp2;
 					gain3=gain*rq3.sqrt.reciprocal*cloud.reciprocal*10*namp3;
 
-					sp= LFNoise1.kr(10).range(spread.neg, spread);
+					sp= SinOsc.ar(28).range(spread.neg, spread);
 
 					g_ch1=((sph.x*Spherical(mx,~az.[0]+sp,~el.[0]+sp).x)+
 						          (sph.y*Spherical(my,~az.[0]+sp,~el.[0]+sp).y)+
@@ -571,7 +571,7 @@ MIDIdef.cc(\midi_pot7,{ |val, num, chan, src|
 																	(
 MIDIdef.cc(\midi_pot8,{ |val, num, chan, src|
 		var spread;
-			spread=val.linlin(0,127,0.001.degrad,90.degrad.neg).round(0.0001);
+			spread=val.linlin(0,127,0.001.degrad,90.degrad).round(0.0001);
 		spread.postln;
 		if(~synth.isPlaying,{~synth.set(\spread,spread)});
 },8);
@@ -617,7 +617,7 @@ MIDIdef.cc(\midi_pot12,{ |val, num, chan, src|
 													(
 MIDIdef.cc(\midi_pot13,{ |val, num, chan, src|
 		var theta;
-			theta=val.linlin(0,127,1,992).round(1).asInteger;
+			theta=val.linlin(0,127,1,14).round(1).asInteger;
 		theta.postln;
 		if(~synth.isPlaying,{~synth.set(\sc,theta)});
 },13);
