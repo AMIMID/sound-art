@@ -395,56 +395,55 @@ threshold3=(((343/0.3)/fund).reciprocal.ampdb/2.sqrt).dbamp;
 						         (sph.y*Spherical(sph.rho,~az.[3],~el.[3]).y)+
 						          (sph.z*Spherical(sph.rho,~az.[3],~el.[3]).z)).max(0);
 
-			//	 gn = [g_ch1, g_ch2, g_ch3, g_ch4];   g_sum = gn.sum;  gn = gn / g_sum;
+				 gn = [g_ch1, g_ch2, g_ch3, g_ch4];   g_sum = gn.sum;  gn = gn / g_sum;
 
-//g_avg = gn.sum / gn.size;
-//gn = gn.collect { |gi| (1 - spread) * gi + spread * g_avg };
+g_avg = gn.sum / gn.size;
+gn = gn.collect { |gi| (1 - spread) * gi + spread * g_avg };
 
-//gn = gn/ gn.sum;
-
-//g_ch1 = magqx;
-////g_ch2 =magy;
-//g_ch3 = magz;
-//g_ch4 =1;
-
-Out.ar(0,PanAz.ar(chan,
-Limiter.ar(LeakDC.ar(FreeVerb.ar(
-sig1,mix.lag(0.0001),room.lag(0.0001),mul:gain1)),0.9,0.01)*g_ch1,LFSaw.ar(pon,0),width:spread));
-Out.ar(0,PanAz.ar(chan,
-Limiter.ar(LeakDC.ar(FreeVerb.ar(
-sig1,mix.lag(0.0001),room.lag(0.0001),mul:gain1)),0.9,0.01)*g_ch2,LFSaw.ar(pon,1/4),width:spread));
-Out.ar(0,PanAz.ar(chan,
-Limiter.ar(LeakDC.ar(FreeVerb.ar(
-sig1,mix.lag(0.0001),room.lag(0.0001),mul:gain1)),0.9,0.01)*g_ch3,LFSaw.ar(pon,1/2),width:spread));
-Out.ar(0,PanAz.ar(chan,
-Limiter.ar(LeakDC.ar(FreeVerb.ar(
-sig1,mix.lag(0.0001),room.lag(0.0001),mul:gain1)),0.9,0.01)*g_ch4,LFSaw.ar(pon,3/4),width:spread));
+gn = gn/ gn.sum;
+g_ch1 = gn.[0];
+g_ch2 = gn.[1];
+g_ch3 = gn.[2];
+g_ch4 = gn.[3];
 
 Out.ar(0,PanAz.ar(chan,
 Limiter.ar(LeakDC.ar(FreeVerb.ar(
-sig2,mix.lag(0.0001),room.lag(0.0001),mul:gain2)),0.9,0.01)*g_ch1,LFSaw.ar(pon,0),width:spread));
+sig1,mix.lag(0.0001),room.lag(0.0001),mul:gain1)),0.9,0.01)*g_ch1,LFSaw.ar(pon,0),width:2));
 Out.ar(0,PanAz.ar(chan,
 Limiter.ar(LeakDC.ar(FreeVerb.ar(
-sig2,mix.lag(0.0001),room.lag(0.0001),mul:gain2)),0.9,0.01)*g_ch2,LFSaw.ar(pon,1/4),width:spread));
+sig1,mix.lag(0.0001),room.lag(0.0001),mul:gain1)),0.9,0.01)*g_ch2,LFSaw.ar(pon,1/4),width:2));
 Out.ar(0,PanAz.ar(chan,
 Limiter.ar(LeakDC.ar(FreeVerb.ar(
-sig2,mix.lag(0.0001),room.lag(0.0001),mul:gain2)),0.9,0.01)*g_ch3,LFSaw.ar(pon,1/2),width:spread));
+sig1,mix.lag(0.0001),room.lag(0.0001),mul:gain1)),0.9,0.01)*g_ch3,LFSaw.ar(pon,1/2),width:2));
 Out.ar(0,PanAz.ar(chan,
 Limiter.ar(LeakDC.ar(FreeVerb.ar(
-sig2,mix.lag(0.0001),room.lag(0.0001),mul:gain2)),0.9,0.01)*g_ch4,LFSaw.ar(pon,3/4),width:spread));
+sig1,mix.lag(0.0001),room.lag(0.0001),mul:gain1)),0.9,0.01)*g_ch4,LFSaw.ar(pon,3/4),width:2));
 
 Out.ar(0,PanAz.ar(chan,
 Limiter.ar(LeakDC.ar(FreeVerb.ar(
-sig3,mix.lag(0.0001),room.lag(0.0001),mul:gain3)),0.9,0.01)*g_ch1,LFSaw.ar(pon,0),width:spread));
+sig2,mix.lag(0.0001),room.lag(0.0001),mul:gain2)),0.9,0.01)*g_ch1,LFSaw.ar(pon,0),width:2));
 Out.ar(0,PanAz.ar(chan,
 Limiter.ar(LeakDC.ar(FreeVerb.ar(
-sig3,mix.lag(0.0001),room.lag(0.0001),mul:gain3)),0.9,0.01)*g_ch2,LFSaw.ar(pon,1/4),width:spread));
+sig2,mix.lag(0.0001),room.lag(0.0001),mul:gain2)),0.9,0.01)*g_ch2,LFSaw.ar(pon,1/4),width:2));
 Out.ar(0,PanAz.ar(chan,
 Limiter.ar(LeakDC.ar(FreeVerb.ar(
-sig3,mix.lag(0.0001),room.lag(0.0001),mul:gain3)),0.9,0.01)*g_ch3,LFSaw.ar(pon,1/2),width:spread));
+sig2,mix.lag(0.0001),room.lag(0.0001),mul:gain2)),0.9,0.01)*g_ch3,LFSaw.ar(pon,1/2),width:2));
 Out.ar(0,PanAz.ar(chan,
 Limiter.ar(LeakDC.ar(FreeVerb.ar(
-sig3,mix.lag(0.0001),room.lag(0.0001),mul:gain3)),0.9,0.01)*g_ch4,LFSaw.ar(pon,3/4),width:spread));
+sig2,mix.lag(0.0001),room.lag(0.0001),mul:gain2)),0.9,0.01)*g_ch4,LFSaw.ar(pon,3/4),width:2));
+
+Out.ar(0,PanAz.ar(chan,
+Limiter.ar(LeakDC.ar(FreeVerb.ar(
+sig3,mix.lag(0.0001),room.lag(0.0001),mul:gain3)),0.9,0.01)*g_ch1,LFSaw.ar(pon,0),width:2));
+Out.ar(0,PanAz.ar(chan,
+Limiter.ar(LeakDC.ar(FreeVerb.ar(
+sig3,mix.lag(0.0001),room.lag(0.0001),mul:gain3)),0.9,0.01)*g_ch2,LFSaw.ar(pon,1/4),width:2));
+Out.ar(0,PanAz.ar(chan,
+Limiter.ar(LeakDC.ar(FreeVerb.ar(
+sig3,mix.lag(0.0001),room.lag(0.0001),mul:gain3)),0.9,0.01)*g_ch3,LFSaw.ar(pon,1/2),width:2));
+Out.ar(0,PanAz.ar(chan,
+Limiter.ar(LeakDC.ar(FreeVerb.ar(
+sig3,mix.lag(0.0001),room.lag(0.0001),mul:gain3)),0.9,0.01)*g_ch4,LFSaw.ar(pon,3/4),width:2));
 
 					Out.ar(0,WhiteNoise.ar(0.0001)!chan);
 					///three channel
