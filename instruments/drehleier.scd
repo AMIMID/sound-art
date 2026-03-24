@@ -283,7 +283,7 @@ cos((polytope.phi.round(0.00001)).wrap((pi/2).neg,(pi/2))))))).rho/(2.sqrt));
 					mz=(Cartesian(0,0,magz).rho);
 					mag=(Cartesian(magqx,my,mz).rho/2.sqrt) ;
 
-		sph=Spherical(mx,polytope.theta,polytope.phi);
+		sph=Spherical(mag,polytope.theta,polytope.phi);
 
 loc1=magqx;  loc2=magy;  loc3=magz;
 
@@ -382,18 +382,18 @@ threshold3=(((343/0.3)/fund).reciprocal.ampdb/2.sqrt).dbamp;
 					gain2=gain*rq2.sqrt.reciprocal*cloud.reciprocal*10*namp2;
 					gain3=gain*rq3.sqrt.reciprocal*cloud.reciprocal*10*namp3;
 
-					g_ch1=((sph.x*Spherical(sph.rho,~az.[0],~el.[0]).x)+
-						          (sph.y*Spherical(sph.rho,~az.[0],~el.[0]).y)+
-						          (sph.z*Spherical(sph.rho,~az.[1],~el.[1]).z)).max(0);
-					g_ch2=((sph.x*Spherical(sph.rho,~az.[1],~el.[1]).x)+
-						         (sph.y*Spherical(sph.rho,~az.[1],~el.[1]).y)+
-						          (sph.z*Spherical(sph.rho,~az.[1],~el.[1]).z)).max(0);
-					g_ch3=((sph.x*Spherical(sph.rho,~az.[2],~el.[2]).x)+
-						         (sph.y*Spherical(sph.rho,~az.[2],~el.[2]).y)+
-						          (sph.z*Spherical(sph.rho,~az.[2],~el.[2]).z)).max(0);
-					g_ch4=((sph.x*Spherical(sph.rho,~az.[3],~el.[3]).x)+
-						         (sph.y*Spherical(sph.rho,~az.[3],~el.[3]).y)+
-						          (sph.z*Spherical(sph.rho,~az.[3],~el.[3]).z)).max(0);
+					g_ch1=((sph.x*Spherical(mx.rho,~az.[0],~el.[0]).x)+
+						          (sph.y*Spherical(my.rho,~az.[0],~el.[0]).y)+
+						          (sph.z*Spherical(mz.rho,~az.[1],~el.[1]).z)).max(0);
+					g_ch2=((sph.x*Spherical(mx.rho,~az.[1],~el.[1]).x)+
+						         (sph.y*Spherical(my.rho,~az.[1],~el.[1]).y)+
+						          (sph.z*Spherical(mz.rho,~az.[1],~el.[1]).z)).max(0);
+					g_ch3=((sph.x*Spherical(mx.rho,~az.[2],~el.[2]).x)+
+						         (sph.y*Spherical(my.rho,~az.[2],~el.[2]).y)+
+						          (sph.z*Spherical(mz.rho,~az.[2],~el.[2]).z)).max(0);
+					g_ch4=((sph.x*Spherical(mx.rho,~az.[3],~el.[3]).x)+
+						         (sph.y*Spherical(my.rho,~az.[3],~el.[3]).y)+
+						          (sph.z*Spherical(mz.rho,~az.[3],~el.[3]).z)).max(0);
 
 				 gn = [g_ch1, g_ch2, g_ch3, g_ch4];   g_sum = gn.sum;  gn = gn / g_sum;
 
