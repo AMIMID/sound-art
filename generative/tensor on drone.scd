@@ -173,7 +173,7 @@ SynthDef.new(\synth,{
 	var amb_w,amb_x,amb_y,amb_z,out,amb_sig1,amb_sig2,amb_sig3,axisx,axisy,axisz,cx,cy,cz;
 	var axi1,axi2,axi3,ds1,ds2,ds3,f1,f2,f3,g1,g2,g3,sph_object,lfon,axis;
 	var r_axis, r_v, r, axisr,spr,rot,i,j,k,level=100,spx,spy,spz;
-	var g_ch1,g_ch2,g_ch3,g_ch4;
+	var g_ch1,g_ch2,g_ch3,g_ch4,chan=2,sp;
 	var gn ,g_sum,g_avg ,ton1,ton2,ton3,tonb,laxis;
 
 
@@ -362,30 +362,21 @@ threshold3=(((343/0.3)/fund).reciprocal.ampdb/2.sqrt).dbamp;
 					gain3=gain*rq3.sqrt.reciprocal*cloud.reciprocal*10*env;
 
 
-				/*	g_ch1=((sph.x*Spherical(sph.rho,~az.[0],~el.[0]).x))+
-						          (sph.y*Spherical(sph.rho,~az.[0],~el.[0]).y))+
-						          (sph.z*Spherical(sph.rho,~az.[1],~el.[1]).z)).max(0);
-					g_ch2=((sph.x*Spherical(sph.rho,~az.[1],~el.[1]).x))+
-						         (sph.y*Spherical(sph.rho,~az.[1],~el.[1]).y))+
-						          (sph.z*Spherical(sph.rho,~az.[1],~el.[1]).z)).max(0);
-					g_ch3=((sph.x*Spherical(sph.rho,~az.[2],~el.[2]).x))+
-						         (sph.y*Spherical(sph.rho,~az.[2],~el.[2]).y))+
-						          (sph.z*Spherical(sph.rho,~az.[2],~el.[2]).z)).max(0);
-					g_ch4=((sph.x*Spherical(sph.rho,~az.[3],~el.[3]).x))+
-						         (sph.y*Spherical(sph.rho,~az.[3],~el.[3]).y))+
-						          (sph.z*Spherical(sph.rho,~az.[3],~el.[3]).z)).max(0);
-					// */
-					// gn = [g_ch1, g_ch2, g_ch3, g_ch4];   g_sum = gn.sum;  gn = gn / g_sum;
-					//
-					// g_avg = gn.sum / gn.size;
-					// gn = gn.collect { |gi| (1 - spread) * gi + spread * g_avg };
-					//
-					// gn = gn/ gn.sum;
-					//
-					// g_ch1 = gn[0];
-					// g_ch2 = gn[1];
-					// g_ch3 = gn[2];
-					// g_ch4 = gn[3];
+					sp= LFNoise1.kr(10).range(spread.neg, spread);
+
+					g_ch1=((sph.x*Spherical(mx,~az.[0]+sp,~el.[0]+sp).x)+
+						          (sph.y*Spherical(my,~az.[0]+sp,~el.[0]+sp).y)+
+						          (sph.z*Spherical(mz,~az.[0]+sp,~el.[0]+sp).z)).max(0);
+					g_ch2=((sph.x*Spherical(mx,~az.[1]+sp,~el.[1]+sp).x)+
+						         (sph.y*Spherical(my,~az.[1]+sp,~el.[1]+sp).y)+
+						          (sph.z*Spherical(mz,~az.[1]+sp,~el.[1]+sp).z)).max(0);
+					g_ch3=((sph.x*Spherical(mx,~az.[2]+sp,~el.[2]+sp).x)+
+						         (sph.y*Spherical(my,~az.[2]+sp,~el.[2]+sp).y)+
+						          (sph.z*Spherical(mz,~az.[2]+sp,~el.[2]+sp).z)).max(0);
+					g_ch4=((sph.x*Spherical(mx,~az.[3]+sp,~el.[3]+sp).x)+
+						         (sph.y*Spherical(my,~az.[3]+sp,~el.[3]+sp).y)+
+						          (sph.z*Spherical(mz,~az.[3]+sp,~el.[3]+sp).z)).max(0);
+
 
 
 //Out.ar(0,Limiter.ar(LeakDC.ar(FreeVerb.ar(sig1,mix.lag(0.001),room.lag(0.001),mul:gain1)),0.9,0.01)*g_ch1*loc1)
@@ -440,40 +431,51 @@ Out.ar(0,VBAP.ar(3,Limiter.ar(LeakDC.ar(
 							//	out= Out.ar(0,BFDecode1.ar1(amb_w, amb_x, amb_y, amb_z,
 					//	[sph.theta+LFSaw.ar(pon,0), sph.theta+LFSaw.ar(pon,0.5)], [sph.phi,sph.phi],2 ));
 
-g_ch1=((sph.x*Spherical(sph.rho,0,0).x)+(sph.y*Spherical(sph.rho,0,0).y)).max(0);
-g_ch2=((sph.x*Spherical(sph.rho,pi/2,0).x)+(sph.y*Spherical(sph.rho,pi/2,0).y) ).max(0);
-
- gn = [g_ch1, g_ch2,];   g_sum = gn.sum;  gn = gn / g_sum;
-g_avg = gn.sum / gn.size;
-gn = gn.collect { |gi| (1 - spread) * gi + spread * g_avg };
-gn = gn/ gn.sum;
-g_ch1 = gn[0]; g_ch2 = gn[1];
 
 
 
 
-Out.ar(0,Pan2.ar(
-				Limiter.ar(LeakDC.ar(FreeVerb.ar(sig1,mix.lag(0.001),room.lag(0.001),mul:gain1)),0.9,0.01)*g_ch1),
-					SinOsc.ar(pon,phasex);
-Out.ar(0,Pan2.ar(
-				Limiter.ar(LeakDC.ar(FreeVerb.ar(sig1,mix.lag(0.001),room.lag(0.001),mul:gain1)),0.9,0.01)*g_ch2),
-					SinOsc.ar(pon,phasex.neg);
+Out.ar(0,PanAz.ar(chan,
+Limiter.ar(LeakDC.ar(FreeVerb.ar(
+sig1,mix.lag(0.0001),room.lag(0.0001),mul:gain1)),0.9,0.01)*g_ch1,LFSaw.ar(pon,0),width:2));
+Out.ar(0,PanAz.ar(chan,
+Limiter.ar(LeakDC.ar(FreeVerb.ar(
+sig1,mix.lag(0.0001),room.lag(0.0001),mul:gain1)),0.9,0.01)*g_ch2,LFSaw.ar(pon,1/4),width:2));
+Out.ar(0,PanAz.ar(chan,
+Limiter.ar(LeakDC.ar(FreeVerb.ar(
+sig1,mix.lag(0.0001),room.lag(0.0001),mul:gain1)),0.9,0.01)*g_ch3,LFSaw.ar(pon,1/2),width:2));
+Out.ar(0,PanAz.ar(chan,
+Limiter.ar(LeakDC.ar(FreeVerb.ar(
+sig1,mix.lag(0.0001),room.lag(0.0001),mul:gain1)),0.9,0.01)*g_ch4,LFSaw.ar(pon,3/4),width:2));
 
-Out.ar(0,Pan2.ar(
-					Limiter.ar(LeakDC.ar(FreeVerb.ar(sig2,mix.lag(0.001),room.lag(0.001),mul:gain2)),0.9,0.01)*g_ch1),
-					SinOsc.ar(pon,phasey);
-Out.ar(0,Pan2.ar(
-				Limiter.ar(LeakDC.ar(FreeVerb.ar(sig2,mix.lag(0.001),room.lag(0.001),mul:gain2)),0.9,0.01)*g_ch2),
-					SinOsc.ar(pon,phasey.neg);
+Out.ar(0,PanAz.ar(chan,
+Limiter.ar(LeakDC.ar(FreeVerb.ar(
+sig2,mix.lag(0.0001),room.lag(0.0001),mul:gain2)),0.9,0.01)*g_ch1,LFSaw.ar(pon,0),width:2));
+Out.ar(0,PanAz.ar(chan,
+Limiter.ar(LeakDC.ar(FreeVerb.ar(
+sig2,mix.lag(0.0001),room.lag(0.0001),mul:gain2)),0.9,0.01)*g_ch2,LFSaw.ar(pon,1/4),width:2));
+Out.ar(0,PanAz.ar(chan,
+Limiter.ar(LeakDC.ar(FreeVerb.ar(
+sig2,mix.lag(0.0001),room.lag(0.0001),mul:gain2)),0.9,0.01)*g_ch3,LFSaw.ar(pon,1/2),width:2));
+Out.ar(0,PanAz.ar(chan,
+Limiter.ar(LeakDC.ar(FreeVerb.ar(
+sig2,mix.lag(0.0001),room.lag(0.0001),mul:gain2)),0.9,0.01)*g_ch4,LFSaw.ar(pon,3/4),width:2));
 
-Out.ar(0,Pan2.ar(
-						Limiter.ar(LeakDC.ar(FreeVerb.ar(sig3,mix.lag(0.001),room.lag(0.001),mul:gain3)),0.9,0.01)*g_ch1),SinOsc.ar(pon,phasez,spread.reciprocal);
-Out.ar(0,Pan2.ar(
-			Limiter.ar(LeakDC.ar(FreeVerb.ar(sig3,mix.lag(0.001),room.lag(0.001),mul:gain3)),0.9,0.01)*g_ch2),
-						SinOsc.ar(pon,phasez.neg,spread.reciprocal);
+Out.ar(0,PanAz.ar(chan,
+Limiter.ar(LeakDC.ar(FreeVerb.ar(
+sig3,mix.lag(0.0001),room.lag(0.0001),mul:gain3)),0.9,0.01)*g_ch1,LFSaw.ar(pon,0),width:2));
+Out.ar(0,PanAz.ar(chan,
+Limiter.ar(LeakDC.ar(FreeVerb.ar(
+sig3,mix.lag(0.0001),room.lag(0.0001),mul:gain3)),0.9,0.01)*g_ch2,LFSaw.ar(pon,1/4),width:2));
+Out.ar(0,PanAz.ar(chan,
+Limiter.ar(LeakDC.ar(FreeVerb.ar(
+sig3,mix.lag(0.0001),room.lag(0.0001),mul:gain3)),0.9,0.01)*g_ch3,LFSaw.ar(pon,1/2),width:2));
+Out.ar(0,PanAz.ar(chan,
+Limiter.ar(LeakDC.ar(FreeVerb.ar(
+sig3,mix.lag(0.0001),room.lag(0.0001),mul:gain3)),0.9,0.01)*g_ch4,LFSaw.ar(pon,3/4),width:2));
 
+					Out.ar(0,WhiteNoise.ar(0.0001)!chan);
 
-					Out.ar(0,WhiteNoise.ar(0.0001)!2);
 						azf = (azf+(2pi-(2pi/s))).wrap(pi.neg,pi);
 		   elf = (elf+(pi-(pi/s))).wrap((pi/2).neg,(pi/2))
 				};
