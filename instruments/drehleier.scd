@@ -525,7 +525,7 @@ MIDIIn.connectAll;
 					(
 MIDIdef.cc(\midi_pot1,{ |val, num, chan, src|
 		var drive;
-		drive=val.linlin(0,127,(992*1).neg,(992*16)).round(1).asInteger;
+		drive=val.linlin(0,127,(992*1).neg,(992*4)).round(1).asInteger;
 		drive.postln;
 		if(~synth.isPlaying,{~synth.set(\drive,drive)});
 },1);
@@ -534,7 +534,7 @@ MIDIdef.cc(\midi_pot1,{ |val, num, chan, src|
 				(
 MIDIdef.cc(\midi_pot2,{ |val, num, chan, src|
          var low;
-		low=val.linlin(0,127,(992*2).neg,(992*8)).round(1).asInteger;
+		low=val.linlin(0,127,(992*2).neg,(992*5)).round(1).asInteger;
 		low.postln;
 		if(~synth.isPlaying,{~synth.set(\low,low)});
 },2);
@@ -543,7 +543,7 @@ MIDIdef.cc(\midi_pot2,{ |val, num, chan, src|
 									(
 MIDIdef.cc(\midi_pot3,{ |val, num, chan, src|
 		var pan;
-			pan=val.linlin(0,127,(992*16).neg,(992*8)).round(1).asInteger;
+			pan=val.linlin(0,127,(992*16).neg,(992*4)).round(1).asInteger;
 		pan.postln;
 		if(~synth.isPlaying,{~synth.set(\pan,pan)});
 },3);
@@ -552,7 +552,7 @@ MIDIdef.cc(\midi_pot3,{ |val, num, chan, src|
 												(
 MIDIdef.cc(\midi_pot4,{ |val, num, chan, src|
 		var pann;
-			pann=val.linlin(0,127,(992*32).neg,(992*4)).round(1).asInteger;
+			pann=val.linlin(0,127,(992*16).neg,(992*4)).round(1).asInteger;
 		pann.postln;
 		if(~synth.isPlaying,{~synth.set(\pann,pann)});
 },4);
@@ -588,7 +588,7 @@ MIDIdef.cc(\midi_pot7,{ |val, num, chan, src|
 																	(
 MIDIdef.cc(\midi_pot8,{ |val, num, chan, src|
 		var spread;
-			spread=val.linlin(0,127,0,1).round(0.0001);
+			spread=val.linlin(0,127,0.000001,1).round(0.0001);
 		spread.postln;
 		if(~synth.isPlaying,{~synth.set(\spread,spread)});
 },8);
