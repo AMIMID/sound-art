@@ -134,7 +134,7 @@ var magx,magy,magz,magqx,rotation;
 var angle=0,angle1=0,angle11=0;
 var g=((1+5.sqrt)/2),s=(1+2.sqrt),ott=pi.rand2,temp,space;
 
-	~az=[];~el=[];~magx=[];~magy=[];~magz=[];~qx=[]; ~cart=[];      ~detune=16;
+	~az=[];~el=[];~magx=[];~magy=[];~magz=[];~qx=[]; ~cart=[];      ~detune=1;
 //	spread = if(m_z < 1) { 1 / m_z } { m_z };
 Synth.new(\player);
 data = [];
@@ -572,7 +572,7 @@ az6=0;el6=0;
 
 	~azimuth=~az;
 	~elevation=~el;
-	~magnitude=(~magqx.[pla].pow(2)+~magy.pow(2)+~magz.pow(2)).sqrt*(992/~detune);
+	~magnitude=(~magqx.[pla].pow(2)+~magy.pow(2)+~magz.pow(2)).sqrt*(14/~detune);
 //~magnitude.postln;
 
 	dota=(~count.[0]*~count.[1]*~count.[2]*~count.[3]*~count.[4]*~count.[5]).collect{
@@ -640,7 +640,7 @@ r.play;
 		ry = (x*sin(ot)) + (y*cos(ot));
         x = rx; y = ry;
 
-        [x,y,z]+1;
+        [x,y,z];
     };
 
 };

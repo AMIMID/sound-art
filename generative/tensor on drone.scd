@@ -149,7 +149,14 @@ wt = signal.asWavetable;
 		(
 			{
 				var nn=1.neg;
-		~scalee=35.collect{nn=nn+1;Scale.phrygian.performDegreeToKey(nn,12)};
+		~scaleee=28.collect{nn=nn+1;Scale.phrygian.performDegreeToKey(nn,12)};
+			}.value;
+		);
+
+				(
+			{
+				var nn=1.neg;
+		~scalee=14.collect{nn=nn+1;Scale.phrygian.performDegreeToKey(nn,12)};
 			}.value;
 		);
 
@@ -162,11 +169,11 @@ SynthDef.new(\synth,{
 				fu=32,drive=1,spread=1,drone_amp=1,pann=0,drone=1,xx=1,yy=1,zz=1,
 				pneuma=0,panx=1,pany=1,panz=1,sc=1,dron=1,az=0,el=0;
 
-	var rq=1,cloud=1,attack,decay,curve,band,azf=0,elf=0,q,r1,r2,r3,sq1,sq2,sq3,rotationx,rotationy,rotationz,core=(9/8).rand;
+	var rq=1,cloud=5,attack,decay,curve,band,azf=0,elf=0,q,r1,r2,r3,sq1,sq2,sq3,rotationx,rotationy,rotationz,core=(9/8).rand;
 	var lamdoma,freq1,freq2,freq3,fund,amp1,amp2,amp3,alpha,cell_az,cell_el,x_pos,y_pos,control1,control2,control3;
 	var sig1,sig2,bank=6,out1,out2,band_osc1,band_osc2,ton,threshold1,threshold2,threshold3,phase1,phase2,phase3;
 	var band_osc3,band_osc4,band_osc5,band_osc6,sig3,out3,cell_tria,b_x,b_y,b_z;
-	var polytope,gain1,gain2,gain3,env,azimuth,elevation,m=1;
+	var polytope,gain1,gain2,gain3,env,azimuth,elevation,m=2;
 	var magx,magy,magz,magqx,magqy,mod_anglex,anglex,angley,anglez,phasex,phasey,phasez,rq1,rq2,rq3,rq4,rq5,rq6;
 	var mod_angley,mod_anglez,mx,my,mz,mqx,mqy,mag,mq,lfo,sph;
 	var loc1,loc2,loc3,g=((1+5.sqrt)/2),s=(1+2.sqrt),tensor,dr;
@@ -177,23 +184,23 @@ SynthDef.new(\synth,{
 	var gn ,g_sum,g_avg ,ton1,ton2,ton3,tonb,laxis;
 
 
-				m = In.kr(~controlBus3).lag(0.1);
+				m = In.kr(~controlBus3).lag(0.1).round(1);
 
-				env=EnvGen.ar(Env.sine(6),doneAction:2,levelScale:1);
+				env=EnvGen.ar(Env.sine(8),doneAction:2,levelScale:1);
 fund=fu*(9/8);
 lamdoma=(x.lag(0.001)+a.lag(0.001))/x.lag(0.001);
 
 
-						sph_object=Spherical(35,az.lag(0.0001),el.lag(0.0001));
-				tone1=sph_object.x+1;
-				tone2=sph_object.y+1;
-				tone3=sph_object.z+1;
+						sph_object=Spherical(28,az.lag(0.0001),el.lag(0.0001));
+				tone1=sph_object.x;
+				tone2=sph_object.y;
+				tone3=sph_object.z;
 
 				tonb=2.pow(dron.lag(0.0001)/992);
 
-ton1=2.pow(Select.kr(tone1.round(1), ~scalee) /12).round(0.0001)*tonb;
-ton2=2.pow(Select.kr(tone2.round(1), ~scalee) /12).round(0.0001)*tonb;
-ton3=2.pow(Select.kr(tone3.round(1), ~scalee) /12).round(0.0001)*tonb;
+ton1=2.pow(Select.kr(tone1.round(0.0001), ~scalee) /12).round(0.0001)*tonb;
+ton2=2.pow(Select.kr(tone2.round(0.0001), ~scalee) /12).round(0.0001)*tonb;
+ton3=2.pow(Select.kr(tone3.round(0.0001), ~scalee) /12).round(0.0001)*tonb;
 
 
 				lfon=2.pow(pann/992);
@@ -201,19 +208,19 @@ ton3=2.pow(Select.kr(tone3.round(1), ~scalee) /12).round(0.0001)*tonb;
 
 				mq=(m.lag(0.001)+1);
 
-				spr=Cartesian(xx+1,yy+1,zz+1);
+				spr=Cartesian(xx.max(1).lag(0.01),yy.max(1).lag(0.01),zz.max(1).lag(0.01));
 				//spx=Cartesian(spr.x,0,0);
 				//spy=Cartesian(0,spr.y,0);
 				//spz=Cartesian(0,0,spr.z);
 
-				cloud.do{
 
-					polytope=Spherical(sc,spr.theta,spr.phi);
+					polytope=Spherical(sc.max(1).lag(0.01),spr.theta,spr.phi);
 							laxis=Spherical(lamdoma,spr.theta,spr.phi);
 
-b_x=2.pow(polytope.x.round(1) /992)*lamdoma;
-b_y=2.pow(polytope.y.round(1) /992)*lamdoma;
-b_z=2.pow(polytope.z.round(1) /992)*lamdoma;
+
+b_x=2.pow(Select.kr(polytope.x.round(0.0001), ~scaleee) /12).round(0.0001)*lamdoma;
+b_y=2.pow(Select.kr(polytope.y.round(0.0001), ~scaleee) /12).round(0.0001)*lamdoma;
+b_z=2.pow(Select.kr(polytope.z.round(0.0001), ~scaleee) /12).round(0.0001)*lamdoma;
 
 //b_x=laxis.x.round((9/8)/2);
 //b_y=laxis.y.round((9/8)/2);
@@ -357,13 +364,17 @@ threshold3=(((343/0.3)/fund).reciprocal.ampdb/2.sqrt).dbamp;
 
 
 	///final out
-					gain1=gain*rq1.sqrt.reciprocal*cloud.reciprocal*10*env;
-					gain2=gain*rq2.sqrt.reciprocal*cloud.reciprocal*10*env;
-					gain3=gain*rq3.sqrt.reciprocal*cloud.reciprocal*10*env;
+					gain1=gain*rq1.sqrt.reciprocal*env;
+					gain2=gain*rq2.sqrt.reciprocal*env;
+					gain3=gain*rq3.sqrt.reciprocal*env;
 
 
-					sp= LFNoise2.ar(6).range(spread*pi.neg, spread*pi);
-					spl= LFNoise2.ar(6).range(spread*(pi/2).neg, spread*(pi/2));
+		cloud.do{
+					//sp= LFNoise2.ar(6).range(spread*pi.neg, spread*pi);
+					//spl= LFNoise2.ar(6).range(spread*(pi/2).neg, spread*(pi/2));
+								sp=azf*spread;
+					spl=elf*spread;
+
 
 					g_ch1=((sph.x*Spherical(mx,(~az.[0]+sp).wrap(pi,pi.neg),(~el.[0]+spl).wrap(pi/2,(pi/2).neg)).x)+
 						(sph.y*Spherical(my,(~az.[0]+sp).wrap(pi,pi.neg),(~el.[0]+spl).wrap(pi/2,(pi/2).neg)).y)+
@@ -439,44 +450,44 @@ Out.ar(0,VBAP.ar(3,Limiter.ar(LeakDC.ar(
 
 Out.ar(0,PanAz.ar(chan,
 Limiter.ar(LeakDC.ar(FreeVerb.ar(
-sig1,mix.lag(0.0001),room.lag(0.0001),mul:gain1)),0.9,0.01)*g_ch1,LFSaw.ar(pon,0),width:2));
+sig1,mix.lag(0.0001),room.lag(0.0001),mul:gain1)),0.9,0.01)*g_ch1,LFSaw.ar(pon,0),width:spread+1));
 Out.ar(0,PanAz.ar(chan,
 Limiter.ar(LeakDC.ar(FreeVerb.ar(
-sig1,mix.lag(0.0001),room.lag(0.0001),mul:gain1)),0.9,0.01)*g_ch2,LFSaw.ar(pon,1/4),width:2));
+sig1,mix.lag(0.0001),room.lag(0.0001),mul:gain1)),0.9,0.01)*g_ch2,LFSaw.ar(pon,1/4),width:spread+1));
 Out.ar(0,PanAz.ar(chan,
 Limiter.ar(LeakDC.ar(FreeVerb.ar(
-sig1,mix.lag(0.0001),room.lag(0.0001),mul:gain1)),0.9,0.01)*g_ch3,LFSaw.ar(pon,1/2),width:2));
+sig1,mix.lag(0.0001),room.lag(0.0001),mul:gain1)),0.9,0.01)*g_ch3,LFSaw.ar(pon,1/2),width:spread+1));
 Out.ar(0,PanAz.ar(chan,
 Limiter.ar(LeakDC.ar(FreeVerb.ar(
-sig1,mix.lag(0.0001),room.lag(0.0001),mul:gain1)),0.9,0.01)*g_ch4,LFSaw.ar(pon,3/4),width:2));
+sig1,mix.lag(0.0001),room.lag(0.0001),mul:gain1)),0.9,0.01)*g_ch4,LFSaw.ar(pon,3/4),width:spread+1));
 
 Out.ar(0,PanAz.ar(chan,
 Limiter.ar(LeakDC.ar(FreeVerb.ar(
-sig2,mix.lag(0.0001),room.lag(0.0001),mul:gain2)),0.9,0.01)*g_ch1,LFSaw.ar(pon,0),width:2));
+sig2,mix.lag(0.0001),room.lag(0.0001),mul:gain2)),0.9,0.01)*g_ch1,LFSaw.ar(pon,0),width:spread+1));
 Out.ar(0,PanAz.ar(chan,
 Limiter.ar(LeakDC.ar(FreeVerb.ar(
-sig2,mix.lag(0.0001),room.lag(0.0001),mul:gain2)),0.9,0.01)*g_ch2,LFSaw.ar(pon,1/4),width:2));
+sig2,mix.lag(0.0001),room.lag(0.0001),mul:gain2)),0.9,0.01)*g_ch2,LFSaw.ar(pon,1/4),width:spread+1));
 Out.ar(0,PanAz.ar(chan,
 Limiter.ar(LeakDC.ar(FreeVerb.ar(
-sig2,mix.lag(0.0001),room.lag(0.0001),mul:gain2)),0.9,0.01)*g_ch3,LFSaw.ar(pon,1/2),width:2));
+sig2,mix.lag(0.0001),room.lag(0.0001),mul:gain2)),0.9,0.01)*g_ch3,LFSaw.ar(pon,1/2),width:spread+1));
 Out.ar(0,PanAz.ar(chan,
 Limiter.ar(LeakDC.ar(FreeVerb.ar(
-sig2,mix.lag(0.0001),room.lag(0.0001),mul:gain2)),0.9,0.01)*g_ch4,LFSaw.ar(pon,3/4),width:2));
+sig2,mix.lag(0.0001),room.lag(0.0001),mul:gain2)),0.9,0.01)*g_ch4,LFSaw.ar(pon,3/4),width:spread+1));
 
 Out.ar(0,PanAz.ar(chan,
 Limiter.ar(LeakDC.ar(FreeVerb.ar(
-sig3,mix.lag(0.0001),room.lag(0.0001),mul:gain3)),0.9,0.01)*g_ch1,LFSaw.ar(pon,0),width:2));
+sig3,mix.lag(0.0001),room.lag(0.0001),mul:gain3)),0.9,0.01)*g_ch1,LFSaw.ar(pon,0),width:spread+1));
 Out.ar(0,PanAz.ar(chan,
 Limiter.ar(LeakDC.ar(FreeVerb.ar(
-sig3,mix.lag(0.0001),room.lag(0.0001),mul:gain3)),0.9,0.01)*g_ch2,LFSaw.ar(pon,1/4),width:2));
+sig3,mix.lag(0.0001),room.lag(0.0001),mul:gain3)),0.9,0.01)*g_ch2,LFSaw.ar(pon,1/4),width:spread+1));
 Out.ar(0,PanAz.ar(chan,
 Limiter.ar(LeakDC.ar(FreeVerb.ar(
-sig3,mix.lag(0.0001),room.lag(0.0001),mul:gain3)),0.9,0.01)*g_ch3,LFSaw.ar(pon,1/2),width:2));
+sig3,mix.lag(0.0001),room.lag(0.0001),mul:gain3)),0.9,0.01)*g_ch3,LFSaw.ar(pon,1/2),width:spread+1));
 Out.ar(0,PanAz.ar(chan,
 Limiter.ar(LeakDC.ar(FreeVerb.ar(
-sig3,mix.lag(0.0001),room.lag(0.0001),mul:gain3)),0.9,0.01)*g_ch4,LFSaw.ar(pon,3/4),width:2));
+sig3,mix.lag(0.0001),room.lag(0.0001),mul:gain3)),0.9,0.01)*g_ch4,LFSaw.ar(pon,3/4),width:spread+1));
 
-					Out.ar(0,WhiteNoise.ar(0.0001)!chan);
+					Out.ar(0,WhiteNoise.ar(0.00001)!chan);
 
 						azf = (azf+(2pi-(2pi/s))).wrap(pi.neg,pi);
 		   elf = (elf+(pi-(pi/s))).wrap((pi/2).neg,(pi/2))
@@ -527,13 +538,17 @@ m3=m3+1;
 		/////////////sequencer
 		(
 
-			~seq1= Pseq(~dur1/2, inf).asStream;
-				~seq2 = Pseq(~dur2/2, inf).asStream;
-				~seq3 = Pseq(~dur3/2, inf).asStream;
+			~seq1= Pseq(~dur, inf).asStream;
+				~seq2 = Pseq(~dur2, inf).asStream;
+				~seq3 = Pseq(~dur3, inf).asStream;
 		~system= Pseq(~r,inf).asStream;
-			~tonb=992*1.5;
+			~tonb=0;
 			~panwidth=1;
-          ~detune=16;
+          ~detune=1;
+			~pass=992*2;
+			~drive=992*2;
+			~mox=0.8;
+			~gg=0.5;
 
 ~str1 = Routine({
     var i,m,l;
@@ -547,13 +562,13 @@ m3=m3+1;
 i= ~cart.lag(0.01).size.rand;
 					l=~system.next;
 					//~detune=32.rand.round(2).max(1);
-~detune=4;
+~detune=1;
 
-	~synth=Synth.new(\synth,[\gain,0.05,\drive,(992*2),\fu,32,\sc,~magnitude.lag(0.01).[i].round(1).max(1).asInteger,
-						\low,(992*2),\pan,(992*16).neg,\mix,0.8,\room,~rev.lag(0.01),\pann,(992*8).neg,\x,2,\a,1,\spread,~panwidth,
-						\pon,0.01,\pneuma,0,\namp,1,\drone,12.neg,\az,~azimuth.lag(0.01).[i],\el,~elevation.lag(0.01).[i]
+	~synth=Synth.new(\synth,[\gain,~gg,\drive,~drive,\fu,32,\sc,~magnitude.lag(0.01).[i].round(1).max(1).asInteger,
+						\low,~pass,\pan,(992*16).neg,\mix,0.8,\room,~rev.lag(0.01),\pann,(992*16).neg,\x,2,\a,1,\spread,~panwidth,
+						\pon,0.001,\pneuma,0,\namp,1,\drone,12.neg,\az,~azimuth.lag(0.01).[i],\el,~elevation.lag(0.01).[i]
 						,\panx,0.01,\pany,0.001,\panz,0.01,\dron,~tonb,
-						\xx,~cart.lag(0.01).[i].[0].round(1), \yy,~cart.lag(0.01).[i].[1].round(1),\zz,~cart.lag(0.01).[i].[2].round(1)]).register;
+						\xx,~cart.lag(0.01).[i].[0].round(0.00001), \yy,~cart.lag(0.01).[i].[1].round(0.00001),\zz,~cart.lag(0.00001).[i].[2].round(1)]).register;
 
 
         ~seq1.next.wait;
@@ -575,11 +590,10 @@ i= ~cart.lag(0.01).size.rand;
 ~detune=4;
 
 	~synth=Synth.new(\synth,[\gain,0.05,\drive,(992*2),\fu,32,\sc,~magnitude.lag(0.01).[i].round(1).max(1).asInteger,
-						\low,(992*2),\pan,(992*16).neg,\mix,0.8,\room,~rev.lag(0.01),\pann,(992*8).neg,\x,2,\a,1,\spread,~panwidth,
-						\pon,0.01,\pneuma,0,\namp,1,\drone,12.neg,\az,~azimuth.lag(0.01).[i],\el,~elevation.lag(0.01).[i]
-						,\panx,0.01,\pany,0.01,\panz,0.01,\dron,~tonb,
-						\xx,~cart.lag(0.01).[i].[0].round(1), \yy,~cart.lag(0.01).[i].[1].round(1),\zz,~cart.lag(0.01).[i].[2].round(1)]).register;
-
+						\low,(992*2),\pan,(992*16).neg,\mix,0.5,\room,~rev.lag(0.01),\pann,(992*16).neg,\x,2,\a,1,\spread,~panwidth,
+						\pon,0.001,\pneuma,0,\namp,1,\drone,12.neg,\az,~azimuth.lag(0.01).[i],\el,~elevation.lag(0.01).[i]
+						,\panx,0.01,\pany,0.001,\panz,0.01,\dron,~tonb,
+						\xx,~cart.lag(0.01).[i].[0].round(0.00001), \yy,~cart.lag(0.01).[i].[1].round(0.00001),\zz,~cart.lag(0.00001).[i].[2].round(1)]).register;
 
 
         ~seq2.next.wait;
@@ -601,10 +615,10 @@ i= ~cart.lag(0.01).size.rand;
 ~detune=4;
 
 	~synth=Synth.new(\synth,[\gain,0.05,\drive,(992*2),\fu,32,\sc,~magnitude.lag(0.01).[i].round(1).max(1).asInteger,
-						\low,(992*2),\pan,(992*16).neg,\mix,0.8,\room,~rev.lag(0.01),\pann,(992*8).neg,\x,2,\a,1,\spread,~panwidth,
-						\pon,0.01,\pneuma,0,\namp,1,\drone,12.neg,\az,~azimuth.lag(0.01).[i],\el,~elevation.lag(0.01).[i]
-						,\panx,0.01,\pany,0.01,\panz,0.01,\dron,~tonb,
-						\xx,~cart.lag(0.01).[i].[0].round(1), \yy,~cart.lag(0.01).[i].[1].round(1),\zz,~cart.lag(0.01).[i].[2].round(1)]).register;
+						\low,(992*2),\pan,(992*16).neg,\mix,0.5,\room,~rev.lag(0.01),\pann,(992*16).neg,\x,2,\a,1,\spread,~panwidth,
+						\pon,0.001,\pneuma,0,\namp,1,\drone,12.neg,\az,~azimuth.lag(0.01).[i],\el,~elevation.lag(0.01).[i]
+						,\panx,0.01,\pany,0.001,\panz,0.01,\dron,~tonb,
+						\xx,~cart.lag(0.01).[i].[0].round(0.00001), \yy,~cart.lag(0.01).[i].[1].round(0.00001),\zz,~cart.lag(0.00001).[i].[2].round(1)]).register;
 
 
 
@@ -613,15 +627,18 @@ i= ~cart.lag(0.01).size.rand;
     }
 		});
 		);
-	~str1.play;
-	~str2.play;
-	~str3.play;
+
 
 	});
 	Tdef(\drone).play;
 }
 )
 )
+
+
+	~str1.play;
+	~str2.play;
+	~str3.play;
 
 	~str1.stop;
 	~str2.stop;
