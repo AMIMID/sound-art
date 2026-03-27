@@ -244,18 +244,14 @@ anglex=(exp(Complex(0,1)*polytope.theta).real*exp(Complex(0,1)*polytope.phi).rea
 angley=(exp(Complex(0,1)*polytope.theta).imag*exp(Complex(0,1)*polytope.phi).real).round(0.00001);
 anglez=(exp(Complex(0,1)*polytope.phi).imag).round(0.00001);
 
-//phase1=Complex(1,anglex).theta;
-//phase2=Complex(1,angley).theta;
-//phase3=Complex(1,anglez).theta;
+phase1=Complex(1,anglex).theta;
+phase2=Complex(1,angley).theta;
+phase3=Complex(1,anglez).theta;
 
 
-//mod_anglex=SinOsc.ar(lfon,phase1).range(pi.neg,pi);
-//mod_angley=SinOsc.ar(lfon,phase2).range(pi.neg,pi);
-//mod_anglez=SinOsc.ar(lfon,phase3).range((pi/2).neg,(pi/2));
-
-mod_anglex=DelayC.ar(LFNoise1.ar(lfon).range(pi.neg,pi),anglex,anglex);
-mod_angley=DelayC.ar(LFNoise1.ar(lfon).range(pi.neg,pi),angley,angley);
-mod_anglez=DelayC.ar(LFNoise1.ar(lfon).range((pi/2).neg,(pi/2)),anglez,anglez);
+mod_anglex=SinOsc.ar(lfon,phase1).range(pi.neg,pi);
+mod_angley=SinOsc.ar(lfon/2,phase2).range(pi.neg,pi);
+mod_anglez=SinOsc.ar(lfon/3,phase3).range((pi/2).neg,(pi/2));
 
 
 					(
@@ -396,28 +392,28 @@ threshold3=(((343/0.3)/fund).reciprocal.ampdb/2.sqrt).dbamp;
 					spl=elf*spread;
 
 g_ch1 = (
-   (Spherical(mx,(polytope.theta+sp).wrap(pi,pi.neg),(polytope.phi+spl).wrap(pi/2,(pi/2).neg)).x * Spherical(1,~az[0],~el[0]).x) +
- (Spherical(my,(polytope.theta+sp).wrap(pi,pi.neg),(polytope.phi+spl).wrap(pi/2,(pi/2).neg)).y * Spherical(mag,~az[0],~el[0]).y )+
-  (Spherical(mz,(polytope.theta+sp).wrap(pi,pi.neg),(polytope.phi+spl).wrap(pi/2,(pi/2).neg)).z * Spherical(mag,~az[0],~el[0]).z)
+   (Spherical(mx.lag(0.01),(polytope.theta+sp).wrap(pi,pi.neg),(polytope.phi+spl).wrap(pi/2,(pi/2).neg)).x * Spherical(1,~az[0],~el[0]).x) +
+ (Spherical(my.lag(0.01),(polytope.theta+sp).wrap(pi,pi.neg),(polytope.phi+spl).wrap(pi/2,(pi/2).neg)).y * Spherical(1,~az[0],~el[0]).y )+
+  (Spherical(mz.lag(0.01),(polytope.theta+sp).wrap(pi,pi.neg),(polytope.phi+spl).wrap(pi/2,(pi/2).neg)).z * Spherical(1,~az[0],~el[0]).z)
 );
 
 g_ch2 = (
-   (Spherical(mx,(polytope.theta+sp).wrap(pi,pi.neg),(polytope.phi+spl).wrap(pi/2,(pi/2).neg)).x * Spherical(mag,~az[0],~el[0]).x )+
-(Spherical(my,(polytope.theta+sp).wrap(pi,pi.neg),(polytope.phi+spl).wrap(pi/2,(pi/2).neg)).y * Spherical(mag,~az[0],~el[0]).y )+
-  (Spherical(mz,(polytope.theta+sp).wrap(pi,pi.neg),(polytope.phi+spl).wrap(pi/2,(pi/2).neg)).z * Spherical(mag,~az[0],~el[0]).z)
+   (Spherical(mx.lag(0.01),(polytope.theta+sp).wrap(pi,pi.neg),(polytope.phi+spl).wrap(pi/2,(pi/2).neg)).x * Spherical(1,~az[1],~el[1]).x )+
+(Spherical(my.lag(0.01),(polytope.theta+sp).wrap(pi,pi.neg),(polytope.phi+spl).wrap(pi/2,(pi/2).neg)).y * Spherical(1,~az[1],~el[1]).y )+
+  (Spherical(mz.lag(0.01),(polytope.theta+sp).wrap(pi,pi.neg),(polytope.phi+spl).wrap(pi/2,(pi/2).neg)).z * Spherical(1,~az[1],~el[1]).z)
 );
 
 g_ch3 = (
-  (Spherical(mx,(polytope.theta+sp).wrap(pi,pi.neg),(polytope.phi+spl).wrap(pi/2,(pi/2).neg)).x * Spherical(mag,~az[0],~el[0]).x )+
-   (Spherical(my,(polytope.theta+sp).wrap(pi,pi.neg),(polytope.phi+spl).wrap(pi/2,(pi/2).neg)).y * Spherical(mag,~az[0],~el[0]).y )+
-  (Spherical(mz,(polytope.theta+sp).wrap(pi,pi.neg),(polytope.phi+spl).wrap(pi/2,(pi/2).neg)).z * Spherical(mag,~az[0],~el[0]).z)
+  (Spherical(mx.lag(0.01),(polytope.theta+sp).wrap(pi,pi.neg),(polytope.phi+spl).wrap(pi/2,(pi/2).neg)).x * Spherical(1,~az[2],~el[2]).x )+
+   (Spherical(my.lag(0.01),(polytope.theta+sp).wrap(pi,pi.neg),(polytope.phi+spl).wrap(pi/2,(pi/2).neg)).y * Spherical(1,~az[2],~el[2]).y )+
+  (Spherical(mz.lag(0.01),(polytope.theta+sp).wrap(pi,pi.neg),(polytope.phi+spl).wrap(pi/2,(pi/2).neg)).z * Spherical(1,~az[2],~el[2]).z)
 );
 
 g_ch4 = (
-  (Spherical(mx,(polytope.theta+sp).wrap(pi,pi.neg),(polytope.phi+spl).wrap(pi/2,(pi/2).neg)).x * Spherical(mag,~az[0],~el[0]).x) +
- (Spherical(my,(polytope.theta+sp).wrap(pi,pi.neg),(polytope.phi+spl).wrap(pi/2,(pi/2).neg)).y * Spherical(mag,~az[0],~el[0]).y )+
-   (Spherical(mz,(polytope.theta+sp).wrap(pi,pi.neg),(polytope.phi+spl).wrap(pi/2,(pi/2).neg)).z * Spherical(mag,~az[0],~el[0]).z)
-);
+(Spherical(mx.lag(0.01),(polytope.theta+sp).wrap(pi,pi.neg),(polytope.phi+spl).wrap(pi/2,(pi/2).neg)).x * Spherical(1,~az[3],~el[3]).x) +
+ (Spherical(my.lag(0.01),(polytope.theta+sp).wrap(pi,pi.neg),(polytope.phi+spl).wrap(pi/2,(pi/2).neg)).y * Spherical(1,~az[3],~el[3]).y )+
+   (Spherical(mz.lag(0.01),(polytope.theta+sp).wrap(pi,pi.neg),(polytope.phi+spl).wrap(pi/2,(pi/2).neg)).z * Spherical(1,~az[3],~el[3]).z)
+					);
 
 g11 = g_ch1;
 g22 = g_ch2;
@@ -440,42 +436,42 @@ g_ch4 = (g_ch4 / g_sum).lag(0.01);
 
 Out.ar(0,PanAz.ar(chan,
 Limiter.ar(LeakDC.ar(FreeVerb.ar(
-sig1* g_ch1.sign,mix.lag(0.0001),room.lag(0.0001),mul:gain1)),0.9,0.01)*g_ch1.abs,LFSaw.ar(pon,0),width:spread+1));
+sig1* g_ch1.sign.lag(0.1).abs,mix.lag(0.0001),room.lag(0.0001),mul:gain1)),0.9,0.01)*g_ch1.abs.lag(0.1),LFSaw.ar(pon,0),width:spread+1));
 Out.ar(0,PanAz.ar(chan,
 Limiter.ar(LeakDC.ar(FreeVerb.ar(
-sig1* g_ch2.sign,mix.lag(0.0001),room.lag(0.0001),mul:gain1)),0.9,0.01)*g_ch2.abs,LFSaw.ar(pon,1/4),width:spread+1));
+sig1* g_ch2.sign.lag(0.1).abs,mix.lag(0.0001),room.lag(0.0001),mul:gain1)),0.9,0.01)*g_ch2.abs.lag(0.1),LFSaw.ar(pon,1/4),width:spread+1));
 Out.ar(0,PanAz.ar(chan,
 Limiter.ar(LeakDC.ar(FreeVerb.ar(
-sig1* g_ch3.sign,mix.lag(0.0001),room.lag(0.0001),mul:gain1)),0.9,0.01)*g_ch3.abs,LFSaw.ar(pon,1/2),width:spread+1));
+sig1* g_ch3.sign.lag(0.1).abs,mix.lag(0.0001),room.lag(0.0001),mul:gain1)),0.9,0.01)*g_ch3.abs.lag(0.1),LFSaw.ar(pon,1/2),width:spread+1));
 Out.ar(0,PanAz.ar(chan,
 Limiter.ar(LeakDC.ar(FreeVerb.ar(
-sig1* g_ch4.sign,mix.lag(0.0001),room.lag(0.0001),mul:gain1)),0.9,0.01)*g_ch4.abs,LFSaw.ar(pon,3/4),width:spread+1));
+sig1* g_ch4.sign.lag(0.1).abs,mix.lag(0.0001),room.lag(0.0001),mul:gain1)),0.9,0.01)*g_ch4.abs.lag(0.1),LFSaw.ar(pon,3/4),width:spread+1));
 
 Out.ar(0,PanAz.ar(chan,
 Limiter.ar(LeakDC.ar(FreeVerb.ar(
-sig2* g_ch1.sign,mix.lag(0.0001),room.lag(0.0001),mul:gain2)),0.9,0.01)*g_ch1.abs,LFSaw.ar(pon,0),width:spread+1));
+sig2* g_ch1.sign.lag(0.1).abs,mix.lag(0.0001),room.lag(0.0001),mul:gain2)),0.9,0.01)*g_ch1.abs.lag(0.1),LFSaw.ar(pon,0),width:spread+1));
 Out.ar(0,PanAz.ar(chan,
 Limiter.ar(LeakDC.ar(FreeVerb.ar(
-sig2* g_ch2.sign,mix.lag(0.0001),room.lag(0.0001),mul:gain2)),0.9,0.01)*g_ch2.abs,LFSaw.ar(pon,1/4),width:spread+1));
+sig2* g_ch2.sign.lag(0.1).abs,mix.lag(0.0001),room.lag(0.0001),mul:gain2)),0.9,0.01)*g_ch2.abs.lag(0.1),LFSaw.ar(pon,1/4),width:spread+1));
 Out.ar(0,PanAz.ar(chan,
 Limiter.ar(LeakDC.ar(FreeVerb.ar(
-sig2* g_ch3.sign,mix.lag(0.0001),room.lag(0.0001),mul:gain2)),0.9,0.01)*g_ch3.abs,LFSaw.ar(pon,1/2),width:spread+1));
+sig2* g_ch3.sign.lag(0.1).abs,mix.lag(0.0001),room.lag(0.0001),mul:gain2)),0.9,0.01)*g_ch3.abs.lag(0.1),LFSaw.ar(pon,1/2),width:spread+1));
 Out.ar(0,PanAz.ar(chan,
 Limiter.ar(LeakDC.ar(FreeVerb.ar(
-sig2* g_ch4.sign,mix.lag(0.0001),room.lag(0.0001),mul:gain2)),0.9,0.01)*g_ch4.abs,LFSaw.ar(pon,3/4),width:spread+1));
+sig2* g_ch4.sign.lag(0.1).abs,mix.lag(0.0001),room.lag(0.0001),mul:gain2)),0.9,0.01)*g_ch4.abs.lag(0.1),LFSaw.ar(pon,3/4),width:spread+1));
 
 Out.ar(0,PanAz.ar(chan,
 Limiter.ar(LeakDC.ar(FreeVerb.ar(
-sig3* g_ch1.sign,mix.lag(0.0001),room.lag(0.0001),mul:gain3)),0.9,0.01)*g_ch1.abs,LFSaw.ar(pon,0),width:spread+1));
+sig3* g_ch1.sign.lag(0.1).abs,mix.lag(0.0001),room.lag(0.0001),mul:gain3)),0.9,0.01)*g_ch1.abs.lag(0.1),LFSaw.ar(pon,0),width:spread+1));
 Out.ar(0,PanAz.ar(chan,
 Limiter.ar(LeakDC.ar(FreeVerb.ar(
-sig3* g_ch2.sign,mix.lag(0.0001),room.lag(0.0001),mul:gain3)),0.9,0.01)*g_ch2.abs,LFSaw.ar(pon,1/4),width:spread+1));
+sig3* g_ch2.sign.lag(0.1).abs,mix.lag(0.0001),room.lag(0.0001),mul:gain3)),0.9,0.01)*g_ch2.abs.lag(0.1),LFSaw.ar(pon,1/4),width:spread+1));
 Out.ar(0,PanAz.ar(chan,
 Limiter.ar(LeakDC.ar(FreeVerb.ar(
-sig3* g_ch3.sign,mix.lag(0.0001),room.lag(0.0001),mul:gain3)),0.9,0.01)*g_ch3.abs,LFSaw.ar(pon,1/2),width:spread+1));
+sig3* g_ch3.sign.lag(0.1).abs,mix.lag(0.0001),room.lag(0.0001),mul:gain3)),0.9,0.01)*g_ch3.abs.lag(0.1),LFSaw.ar(pon,1/2),width:spread+1));
 Out.ar(0,PanAz.ar(chan,
 Limiter.ar(LeakDC.ar(FreeVerb.ar(
-sig3* g_ch4.sign,mix.lag(0.0001),room.lag(0.0001),mul:gain3)),0.9,0.01)*g_ch4.abs,LFSaw.ar(pon,3/4),width:spread+1));
+sig3* g_ch4.sign.lag(0.1).abs,mix.lag(0.0001),room.lag(0.0001),mul:gain3)),0.9,0.01)*g_ch4.abs.lag(0.1),LFSaw.ar(pon,3/4),width:spread+1));
 
 					Out.ar(0,WhiteNoise.ar(0.00001)!chan);
 					///three channel
@@ -530,13 +526,13 @@ sig3* g_ch4.sign,mix.lag(0.0001),room.lag(0.0001),mul:gain3)),0.9,0.01)*g_ch4.ab
 
 }).add;);
 
-10.wait;
+2.wait;
 
 
 (
-~synth=Synth.new(\synth,[\gain,1,\drive,992*2,\fu,32,\tone1,0,\tone2,0,\tone3,0,\low,992*0,\pan,(992*2).neg,
+~synth=Synth.new(\synth,[\gain,1,\drive,992*0,\fu,32,\tone1,0,\tone2,0,\tone3,0,\low,992*0,\pan,(992*16).neg,
 		\mix,0.3,\drone_amp,1,\room,0.5,\m,1,\pann,(992*16).neg,\pon,0.001,\pneuma1,0,\pneuma2,0,\pneuma3,0,
-			\x,1,\a,1,\panx,0.01,\pany,0.1,\panz,0.01,\spread,1,\namp1,1,\namp2,1,\namp3,1,
+			\x,1,\a,1,\panx,0.01,\pany,0.1,\panz,0.01,\spread,0.1,\namp1,1,\namp2,1,\namp3,1,
 			\az,pi/4,\el,pi/8,\azr,992,\dron,0,\drone,1,\sc,1]).register;
 );
 
@@ -566,7 +562,7 @@ MIDIdef.cc(\midi_pot2,{ |val, num, chan, src|
 									(
 MIDIdef.cc(\midi_pot3,{ |val, num, chan, src|
 		var pan;
-			pan=val.linlin(0,127,(992*16).neg,(992*4)).round(1).asInteger;
+			pan=val.linlin(0,127,(992*16).neg,(992*5)).round(1).asInteger;
 		pan.postln;
 		if(~synth.isPlaying,{~synth.set(\pan,pan)});
 },3);
@@ -575,7 +571,7 @@ MIDIdef.cc(\midi_pot3,{ |val, num, chan, src|
 												(
 MIDIdef.cc(\midi_pot4,{ |val, num, chan, src|
 		var pann;
-			pann=val.linlin(0,127,(992*16).neg,(992*4)).round(1).asInteger;
+			pann=val.linlin(0,127,(992*16).neg,(992*5)).round(1).asInteger;
 		pann.postln;
 		if(~synth.isPlaying,{~synth.set(\pann,pann)});
 },4);
@@ -611,7 +607,7 @@ MIDIdef.cc(\midi_pot7,{ |val, num, chan, src|
 																	(
 MIDIdef.cc(\midi_pot8,{ |val, num, chan, src|
 		var spread;
-			spread=val.linlin(0,127,0.000001,1).round(0.0001);
+			spread=val.linlin(0,127,0.000001,0.5).round(0.0001);
 		spread.postln;
 		if(~synth.isPlaying,{~synth.set(\spread,spread)});
 },8);
