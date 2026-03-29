@@ -3,7 +3,7 @@
 (
 (
 s.options.numWireBufs = 1024*2;
-s.options.numOutputBusChannels=6;
+s.options.numOutputBusChannels=4;
 s.options.numInputBusChannels=0;
 s.options.memSize = 8192*16;
 s.options.blockSize = 64;
@@ -169,7 +169,7 @@ SynthDef.new(\synth,{
 				drive=1,spread=1,drone_amp=1,pann=0,drone=1,xx=1,yy=1,zz=1,
 				pneuma=0,panx=1,pany=1,panz=1,sc=1,dron=1,az=0,el=0;
 
-	var rq=1,cloud=5,attack,decay,curve,band,azf=0,elf=0,q,r1,r2,r3,sq1,sq2,sq3,rotationx,rotationy,rotationz,core=(9/8).rand;
+	var rq=1,cloud=3,attack,decay,curve,band,azf=0,elf=0,q,r1,r2,r3,sq1,sq2,sq3,rotationx,rotationy,rotationz,core=(9/8).rand;
 	var lamdoma,freq1,freq2,freq3,fund,amp1,amp2,amp3,alpha,cell_az,cell_el,x_pos,y_pos,control1,control2,control3;
 	var sig1,sig2,bank=6,out1,out2,band_osc1,band_osc2,ton,threshold1,threshold2,threshold3,phase1,phase2,phase3;
 	var band_osc3,band_osc4,band_osc5,band_osc6,sig3,out3,cell_tria,b_x,b_y,b_z;
@@ -423,12 +423,11 @@ g_ch3 = g_ch3.pow(spread.linlin(0.01,1,0.4,0.01));
 g_ch4 = g_ch4 .pow(spread.linlin(0.01,1,0.4,0.01));
 
 
-		g_ch1.max(0.01) + (g_ch1 - g_ch1.max(0.01)).min(0);
-		g_ch2.max(0.01) + (g_ch2 - g_ch2.max(0.01)).min(0);
-		g_ch3.max(0.01) + (g_ch3 - g_ch3.max(0.01)).min(0);
-		g_ch4.max(0.01) + (g_ch4 - g_ch4.max(0.01)).min(0);
 
-
+g_ch1 =g_ch1.max(0.01) + (g_ch1 - g_ch1.max(0.01)).min(0);
+g_ch2 =g_ch2.max(0.01) + (g_ch2 - g_ch2.max(0.01)).min(0);
+g_ch3 =g_ch3.max(0.01) + (g_ch3 - g_ch3.max(0.01)).min(0);
+g_ch4 =g_ch4.max(0.01) + (g_ch4 - g_ch4.max(0.01)).min(0);
 
 
 //Out.ar(0,Limiter.ar(LeakDC.ar(FreeVerb.ar(sig1,mix.lag(0.001),room.lag(0.001),mul:gain1)),0.9,0.01)*g_ch1*loc1)
@@ -583,17 +582,17 @@ m3=m3+1;
 				~seq2 = Pseq(~dur2, inf).asStream;
 				~seq3 = Pseq(~dur3, inf).asStream;
 		//~system= Pseq(~r,inf).asStream;
-			~tonb=496/32;
+			~tonb=0;
 			~panwidth=1;
           ~detune=1;
-			~pass=992*3;
+			~pass=992*1;
 			~drive=992*3;
 			~mox=0.8;
-			~gg=0.5;
-			~pon=0.05;
-			~sphpan=(992*8).neg;
+			~gg=1;
+			~pon=0.08;
+			~sphpan=(992*7).neg;
 			~bband=(992*16).neg;
-			~drn=0.1;
+			~drn=0.5;
 		//	thisThread.randSeed = 123;
 
 ~str1 = Routine({
@@ -611,7 +610,7 @@ m3=m3+1;
 ~detune=1;
 
 	~synth=Synth.new(\synth,[\gain,~gg,\drive,~drive,\fu,16,\sc,14,//~magnitude.lag(0.01).[i].round(1).max(1).asInteger,
-						\low,~pass,\pan,~bband,\mix,0.6,\room,~rev.lag(0.01),\pann,~sphpan,\x,2,\a,1,\spread,~rev.lag(0.01),
+						\low,~pass,\pan,~bband,\mix,~mox,\room,~rev.lag(0.01),\pann,~sphpan,\x,2,\a,1,\spread,~rev.lag(0.01),
 						\pon,~pon,\pneuma,0,\namp,1,\drone,12.neg,\az,~azimuth.lag(0.01).[i],\el,~elevation.lag(0.01).[i]
 						,\panx,~drn+0.55.rand,\pany,~drn+0.55.rand,\panz,~drn+0.55.rand,\dron,~tonb,
 \xx,~cart.lag(0.01).[i].[0].round(0.00001), \yy,~cart.lag(0.01).[i].[1].round(0.00001),\zz,~cart.lag(0.00001).[i].[2].round(0.00001)]).register;
