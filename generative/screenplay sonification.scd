@@ -16,6 +16,23 @@ s.waitForBoot{
 
 Buffer.freeAll;
 
+	////entire folder
+(
+		PathName.new("/Users/amimid/Desktop/screenplay/").files.do { |f|
+    var img = Image.open(f.fullPath);
+
+    if(img.notNil) {
+        var width = img.width;
+        var height = img.height;
+        var color = img.getColor(0, 0).postln;
+
+        width.postln;
+        height.postln;
+    };
+};
+)
+
+///simple example
 (
 var img = Image.open("/Users/amimid/Desktop/1.png");
 var width = img.width;
@@ -27,6 +44,7 @@ height.postln;
 )
 
 
+	///iteration data draw
 (
 var img = Image.open("/Users/amimid/Desktop/1.png");
 var c=0, color,xx=0,yy=0,r=[],g=[],b=[],h_count=0;
