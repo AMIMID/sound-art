@@ -30,7 +30,8 @@ height.postln;
 (
 var img = Image.open("/Users/amimid/Desktop/1.png");
 var c=0, color,xx=0,yy=0,r=[],g=[],b=[],h_count=0;
-	c=(img.height/10).asInteger;
+	c=(img.height/5).asInteger;
+	h_count=(img.height/5).asInteger;
 		~ax=[]; ~ay=[];  ~az=[];
 
 	5.do{
