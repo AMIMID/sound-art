@@ -32,7 +32,7 @@ var img = Image.open("/Users/amimid/Desktop/1.png");
 var c=0, color,xx=0,yy=0,r=[],g=[],b=[],h_count=0;
 	c=(img.height/5).asInteger;
 	h_count=(img.height/5).asInteger;
-		~ax=[]; ~ay=[];  ~az=[];
+		~cx=[]; ~cy=[];  ~cz=[];
 
 	5.do{
 
@@ -48,10 +48,10 @@ xx=xx+1;
 				xx=0;
 				yy=yy+1;
     };
-        ~ax=~ax++(r.sum / r.size);
-		~ay=~ay++(g.sum / g.size);
-		~az=~az++(b.sum / b.size);
-			r=[];g=[];b=[]
+        ~cx=~cx++(r.sum / r.size);
+		~ay=~cy++(g.sum / g.size);
+		~cz=~cz++(b.sum / b.size);
+			r=[];g=[];b=[];
 };
 )
 
@@ -158,7 +158,7 @@ ton3=2.pow(Select.kr(tone3.lag(0.0001), ~scaleee) /12).round(0.0001)*2.pow(dron.
 
 						cloud.do{
 
-		spr=Cartesian(~ax.[nn],~ay.[nn],~az.[nn]);
+		spr=Cartesian(~cx.[nn],~cy.[nn],~cz.[nn]);
 				sph_object=spr;
 
 
