@@ -49,7 +49,7 @@ xx=xx+1;
 				yy=yy+1;
     };
         ~cx=~cx++(r.sum / r.size);
-		~ay=~cy++(g.sum / g.size);
+		~cy=~cy++(g.sum / g.size);
 		~cz=~cz++(b.sum / b.size);
 			r=[];g=[];b=[];
 };
@@ -137,7 +137,7 @@ SynthDef.new(\synth,{
 	var amb_w,amb_x,amb_y,amb_z,out,amb_sig1,amb_sig2,amb_sig3,axisx,axisy,axisz,cx,cy,cz;
 	var axi1,axi2,axi3,ds1,ds2,ds3,f1,f2,f3,g1,g2,g3,sph_object,lfon,axis;
 	var r_axis, r_v, r, axisr,spr,rot,i,j,k,level=100;
-	var g_ch1,g_ch2,g_ch3,g_ch4,chan=4,nn=0;
+	var g_ch1,g_ch2,g_ch3,g_ch4,chan=2,nn=0;
 	var gn ,g_sum,g_avg ,ton1,ton2,ton3,laxis,sp,spl,g11,g22,g33,g44;
 
 fund=fu*(9/8);
@@ -418,10 +418,10 @@ nn=nn+1;
 }).add;);
 
 
-	~synth=Synth.new(\synth,[\gain,1,\drive,992,\fu,8,\sc,14,\low,992,
+	~synth=Synth.new(\synth,[\gain,1,\drive,992,\fu,32,\sc,14,\low,992,
 	\pan,(992*16).neg,\mix,0.5,\room,1,\tone1,0,\tone2,0,\tone3,0,
-				\pann,~sphpan,\x,2,\a,1,\spread,1,\pon,0.1,
-	\pneuma,0,\namp,1,\drone,5.neg,\panx,0.1\pany,0.1,\panz~0.1,\dron,0]).register;
+	\pann,(992*6).neg,\x,2,\a,1,\spread,1,\pon,0.1,
+	\pneuma,0,\namp,1,\drone,5.neg,\panx,0.1,\pany,0.1,\panz,0.1,\dron,0]).register;
 
 
 

@@ -180,13 +180,13 @@ SynthDef.new(\synth,{
 	var amb_w,amb_x,amb_y,amb_z,out,amb_sig1,amb_sig2,amb_sig3,axisx,axisy,axisz,cx,cy,cz;
 	var axi1,axi2,axi3,ds1,ds2,ds3,f1,f2,f3,g1,g2,g3,sph_object,lfon,axis;
 	var r_axis, r_v, r, axisr,spr,rot,i,j,k,level=100,spx,spy,spz;
-	var g_ch1,g_ch2,g_ch3,g_ch4,chan=4,sp,spl;
+	var g_ch1,g_ch2,g_ch3,g_ch4,chan=2,sp,spl;
 	var gn ,g_sum,g_avg ,ton1,ton2,ton3,tonb,laxis,g11,g22,g33,g44;
 
 
 				m = In.kr(~controlBus3).lag(0.1).round(1);
 
-				env=EnvGen.ar(Env.sine(8),doneAction:2,levelScale:1);
+				env=EnvGen.ar(Env.sine(12),doneAction:2,levelScale:1);
 fund=fu*(9/8);
 lamdoma=(x.lag(0.001)+a.lag(0.001))/x.lag(0.001);
 
@@ -346,8 +346,8 @@ threshold1=(((343/0.3)/fund).reciprocal.ampdb/2.sqrt).dbamp;
 threshold2=(((343/0.3)/fund).reciprocal.ampdb/2.sqrt).dbamp;
 threshold3=(((343/0.3)/fund).reciprocal.ampdb/2.sqrt).dbamp;
 
-		sig1=HPF.ar(sig1,50);
-		sig2=HPF.ar(sig2, 50);
+		sig1=HPF.ar(sig1,65);
+		sig2=HPF.ar(sig2, 65);
 		sig3=HPF.ar(sig3, 50);
 
 		sig1=Compander.ar(sig1,control1,threshold1,1.2,1/3,0.03,0.15);
@@ -371,8 +371,8 @@ threshold3=(((343/0.3)/fund).reciprocal.ampdb/2.sqrt).dbamp;
 		cloud.do{
 					//sp= LFNoise2.ar(6).range(spread*pi.neg, spread*pi);
 					//spl= LFNoise2.ar(6).range(spread*(pi/2).neg, spread*(pi/2));
-								sp=azf*spread;
-					spl=elf*spread;
+								sp=azf;
+					spl=elf;
 
 
 g_ch1 = (
@@ -585,14 +585,14 @@ m3=m3+1;
 			~tonb=0;
 			~panwidth=1;
           ~detune=1;
-			~pass=992*1;
+			~pass=992*2;
 			~drive=992*3;
-			~mox=0.8;
+			~mox=0.6;
 			~gg=1;
-			~pon=0.08;
-			~sphpan=(992*7).neg;
+			~pon=0.5;
+			~sphpan=(992*2).neg;
 			~bband=(992*16).neg;
-			~drn=0.5;
+			~drn=0.1;
 		//	thisThread.randSeed = 123;
 
 ~str1 = Routine({
@@ -609,9 +609,9 @@ m3=m3+1;
 							i= ~cart.lag(0.01).size.rand;
 ~detune=1;
 
-	~synth=Synth.new(\synth,[\gain,~gg,\drive,~drive,\fu,16,\sc,14,//~magnitude.lag(0.01).[i].round(1).max(1).asInteger,
+	~synth=Synth.new(\synth,[\gain,~gg,\drive,~drive,\fu,8,\sc,14,//~magnitude.lag(0.01).[i].round(1).max(1).asInteger,
 						\low,~pass,\pan,~bband,\mix,~mox,\room,~rev.lag(0.01),\pann,~sphpan,\x,2,\a,1,\spread,~rev.lag(0.01),
-						\pon,~pon,\pneuma,0,\namp,1,\drone,12.neg,\az,~azimuth.lag(0.01).[i],\el,~elevation.lag(0.01).[i]
+						\pon,~pon,\pneuma,0,\namp,1,\drone,5.neg,\az,~azimuth.lag(0.01).[i],\el,~elevation.lag(0.01).[i]
 						,\panx,~drn+0.55.rand,\pany,~drn+0.55.rand,\panz,~drn+0.55.rand,\dron,~tonb,
 \xx,~cart.lag(0.01).[i].[0].round(0.00001), \yy,~cart.lag(0.01).[i].[1].round(0.00001),\zz,~cart.lag(0.00001).[i].[2].round(0.00001)]).register;
 
