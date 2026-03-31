@@ -44,7 +44,7 @@ s.meter;
 );*/
 
 		///vbap
-~chan=2;
+~chan=4;
 		///octahedron
 		(
 ~azz=[0.degrad,0.degrad,90.degrad,180.degrad,90.neg.degrad,0.degrad];
@@ -357,9 +357,9 @@ ds3=(LPF.ar((Osc.ar(~w1.bufnum,f3+1,phase:phasez,mul:level).abs*SinOsc.ar(f3+1,p
 	sig3=Select.ar(band.linlin((992*16).neg,((992*16).neg+1),0,1).round(1).asInteger,
 						[sig3,BPF.ar(BRF.ar(sig3,band_osc3.lag(0.1),rq3),band_osc6.lag(0.1),rq6)]);
 
-threshold1=(((343/0.3)/fund).reciprocal.ampdb/2.sqrt).dbamp;
-threshold2=(((343/0.3)/fund).reciprocal.ampdb/2.sqrt).dbamp;
-threshold3=(((343/0.3)/fund).reciprocal.ampdb/2.sqrt).dbamp;
+threshold1=(((343/0.1)/fund).reciprocal.ampdb/2.sqrt).dbamp;
+threshold2=(((343/0.1)/fund).reciprocal.ampdb/2.sqrt).dbamp;
+threshold3=(((343/0.1)/fund).reciprocal.ampdb/2.sqrt).dbamp;
 
 		sig1=HPF.ar(sig1,50);
 		sig2=HPF.ar(sig2, 50);
@@ -388,8 +388,8 @@ threshold3=(((343/0.3)/fund).reciprocal.ampdb/2.sqrt).dbamp;
 
 					//sp= LFNoise2.ar(6).range(spread*pi.neg, spread*pi);
 					//spl= LFNoise2.ar(6).range(spread*(pi/2).neg, spread*(pi/2));
-					sp=azf*spread;
-					spl=elf*spread;
+					sp=azf;
+					spl=elf;
 
 g_ch1 = (
    (Spherical(mx.lag(0.01),(polytope.theta+sp).wrap(pi,pi.neg),(polytope.phi+spl).wrap(pi/2,(pi/2).neg)).x * Spherical(mag,~az[0],~el[0]).x) +
@@ -926,7 +926,7 @@ MIDIdef.cc(\midi_seq_pot8,{ |val, num, chan, src|
 			(
 MIDIdef.cc(\midi_slider1,{ |val, num, chan, src|
 		var gain;
-	gain=val.linlin(0,127,0,1).round(0.0001);
+	gain=val.linlin(0,127,0,10).round(0.0001);
 		gain.postln;
 		if(~synth.isPlaying,{~synth.set(\gain,gain)});
 },49);
