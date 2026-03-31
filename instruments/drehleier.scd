@@ -168,7 +168,7 @@ SynthDef.new(\synth,{
 				fu=32,drive=1,spread=1,drone_amp=1,pann=0,az=0,el=0,azr=0,dron=0,drone=1,theta=0,rx=0,ry=0,rz=0,
 				pneuma1=0,pneuma2=0,pneuma3=0,namp1=1,namp2=1,namp3=1,sc=14;
 
-	var rq=1,cloud=5,attack,decay,curve,band,azf=0,elf=0,q,r1,r2,r3,sq1,sq2,sq3,rotationx,rotationy,rotationz,core=(9/8).rand;
+	var rq=1,cloud=1,attack,decay,curve,band,azf=0,elf=0,q,r1,r2,r3,sq1,sq2,sq3,rotationx,rotationy,rotationz,core=(9/8).rand;
 	var lamdoma,freq1,freq2,freq3,fund,amp1,amp2,amp3,alpha,cell_az,cell_el,x_pos,y_pos,control1,control2,control3;
 	var sig1,sig2,bank=6,out1,out2,band_osc1,band_osc2,threshold1,threshold2,threshold3,phase1,phase2,phase3;
 	var band_osc3,band_osc4,band_osc5,band_osc6,sig3,out3,cell_tria,b_x,b_y,b_z,polytope,gain1,gain2,gain3,env,azimuth,elevation;
@@ -926,7 +926,7 @@ MIDIdef.cc(\midi_seq_pot8,{ |val, num, chan, src|
 			(
 MIDIdef.cc(\midi_slider1,{ |val, num, chan, src|
 		var gain;
-	gain=val.linlin(0,127,0,10).round(0.0001);
+	gain=val.linlin(0,127,0,1).round(0.0001);
 		gain.postln;
 		if(~synth.isPlaying,{~synth.set(\gain,gain)});
 },49);
