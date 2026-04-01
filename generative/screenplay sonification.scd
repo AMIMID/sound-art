@@ -100,11 +100,11 @@ PathName.new("/Users/amimid/Desktop/screenplay/").files.do { |f|
 
 var img = Image.open(f.fullPath);
 var c=0, color,xx=0,yy=0,r=[],g=[],b=[],h_count=0;
-	c=(img.height/3).asInteger;
-	h_count=(img.height/3).asInteger;
+	c=(img.height/9).asInteger;
+	h_count=(img.height/9).asInteger;
 
 
-	3.do{
+	9.do{
 
 h_count.do {
 				img.width.do {
@@ -184,7 +184,7 @@ SynthDef.new(\synth,{
 				fu=32,drive=1,spread=1,drone_amp=1,pann=0,dron=0,drone=1,theta=0,rx=0,ry=0,rz=0,
 				pneuma1=0,pneuma2=0,pneuma3=0,namp1=1,namp2=1,namp3=1,sc=7,mm=0;
 
-	var rq=1,cloud=3,attack,decay,curve,band,azf=0,elf=0,q,r1,r2,r3,sq1,sq2,sq3;
+	var rq=1,cloud=9,attack,decay,curve,band,azf=0,elf=0,q,r1,r2,r3,sq1,sq2,sq3;
 	var rotationx,rotationy,rotationz,core=(9/8).rand,tone1=0,tone2=0,tone3=0;
 	var lamdoma,freq1,freq2,freq3,fund,amp1,amp2,amp3,alpha,cell_az,cell_el,x_pos,y_pos,control1,control2,control3;
 	var sig1,sig2,bank=6,out1,out2,band_osc1,band_osc2,threshold1,threshold2,threshold3,phase1,phase2,phase3;
@@ -432,11 +432,10 @@ g_ch2 = g_ch2.pow(spread.reciprocal);
 g_ch3 = g_ch3.pow(spread.reciprocal);
 g_ch4 = g_ch4 .pow(spread.reciprocal);
 
-pon1=LFSaw.ar(pon,0).range(0.0001,1).lag(0.1);
-pon2=LFSaw.ar(pon,1/4).range(0.0001,1).lag(0.1);
-pon3=LFSaw.ar(pon,2/4).range(0.0001,1).lag(0.1);
-pon4=LFSaw.ar(pon,3/4).range(0.0001,1).lag(0.1);
-
+pon1=SinOsc.ar(pon,0).range(0.0001,1).lag(0.1);
+pon2=SinOsc.ar(pon,0.25pi).range(0.0001,1).lag(0.1);
+pon3=SinOsc.ar(pon,0.5pi).range(0.0001,1).lag(0.1);
+pon4=SinOsc.ar(pon,0.75pi).range(0.0001,1).lag(0.1);
 
 Out.ar(0,
 Limiter.ar(LeakDC.ar(FreeVerb.ar(
