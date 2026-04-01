@@ -34,7 +34,7 @@ Buffer.freeAll;
 
 ///simple example
 (
-var img = Image.open("/Users/amimid/Desktop/1.png");
+var img = Image.open("/Users/amimid/Desktop/screenplay/DSC_0001.jpg");
 var width = img.width;
 var height = img.height;
 var color = img.getColor(0, 0).postln; // returns a Color object
@@ -74,11 +74,86 @@ xx=xx+1;
 )
 
 
+	////////folder routine read
+
+(
+~images = List.new;
+
+PathName.new("/Users/amimid/Desktop/screenplay/").files.do { |f|
+    var img;
+
+    img = Image.open(f.fullPath);
+
+    if(img.notNil) {
+        ~images.add(img);
+    };
+};
+
+~images.postln;
+)
+
+	(
+PathName.new("/Users/amimid/Desktop/screenplay/").files.do { |f|
+
+var img = Image.open(f.fullPath);
+var c=0, color,xx=0,yy=0,r=[],g=[],b=[],h_count=0;
+	c=(img.height/7).asInteger;
+	h_count=(img.height/7).asInteger;
+		~cx=[]; ~cy=[];  ~cz=[];
+
+	7.do{
+
+h_count.do {
+				img.width.do {
+         color = img.getColor(xx, yy);
+		[color.red, color.green, color.blue].postln;
+			r=r++color.red;
+			g=g++color.green;
+         	b=b++color.blue;
+xx=xx+1;
+				};
+				xx=0;
+				yy=yy+1;
+    };
+        ~cx=~cx++(r.sum / r.size);
+		~cy=~cy++(g.sum / g.size);
+		~cz=~cz++(b.sum / b.size);
+			r=[];g=[];b=[];
+};
+	yy=0;
+};
+)
 
 
   r= Routine({loop{
+(
+var img = Image.open("/Users/amimid/Desktop/1.png");
+var c=0, color,xx=0,yy=0,r=[],g=[],b=[],h_count=0;
+	c=(img.height/5).asInteger;
+	h_count=(img.height/5).asInteger;
+		~cx=[]; ~cy=[];  ~cz=[];
 
-	(1/8).wait;
+	5.do{
+
+h_count.do {
+				img.width.do {
+         color = img.getColor(xx, yy);
+		//[color.red, color.green, color.blue].postln;
+			r=r++color.red;
+			g=g++color.green;
+         	b=b++color.blue;
+xx=xx+1;
+				};
+				xx=0;
+				yy=yy+1;
+    };
+        ~cx=~cx++(r.sum / r.size);
+		~cy=~cy++(g.sum / g.size);
+		~cz=~cz++(b.sum / b.size);
+			r=[];g=[];b=[];
+};
+)
+	(1).wait;
 };
 
 	};
