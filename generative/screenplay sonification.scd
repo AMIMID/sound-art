@@ -179,11 +179,11 @@ wt = signal.asWavetable;
 (
 SynthDef.new(\synth,{
 
-	arg gain=1,low=992,tone1=0,tone2=0,tone3=0,x=1,pan=1,mix=0.3,a=1,panx=1,pany=1,panz=1,room=0.5,m=2,pon=1,
+	arg gain=1,low=992,x=1,pan=1,mix=0.3,a=1,panx=1,pany=1,panz=1,room=0.5,m=2,pon=1,
 				fu=32,drive=1,spread=1,drone_amp=1,pann=0,dron=0,drone=1,theta=0,rx=0,ry=0,rz=0,
 				pneuma1=0,pneuma2=0,pneuma3=0,namp1=1,namp2=1,namp3=1,sc=14,mm=0;
 
-	var rq=1,cloud=7,attack,decay,curve,band,azf=0,elf=0,q,r1,r2,r3,sq1,sq2,sq3,rotationx,rotationy,rotationz,core=(9/8).rand;
+	var rq=1,cloud=7,attack,decay,curve,band,azf=0,elf=0,q,r1,r2,r3,sq1,sq2,sq3,rotationx,rotationy,rotationz,core=(9/8).rand,tone1=0,tone2=0,tone3=0;
 	var lamdoma,freq1,freq2,freq3,fund,amp1,amp2,amp3,alpha,cell_az,cell_el,x_pos,y_pos,control1,control2,control3;
 	var sig1,sig2,bank=6,out1,out2,band_osc1,band_osc2,threshold1,threshold2,threshold3,phase1,phase2,phase3;
 	var band_osc3,band_osc4,band_osc5,band_osc6,sig3,out3,cell_tria,b_x,b_y,b_z,polytope,gain1,gain2,gain3,env,azimuth,elevation;
@@ -199,12 +199,19 @@ SynthDef.new(\synth,{
 fund=fu*(9/8);
 lamdoma=(x.lag(0.0001)+a.lag(0.0001))/x.lag(0.0001);
 
+
+
+
+	env=EnvGen.ar(Env.sine(3),doneAction:2,levelScale:10);
+//	env=10;
+
+		tone1=Select.kr(mm,~cx).linlin(0,1,0,28).round(1).asInteger;
+	tone2=Select.kr(mm,~cy).linlin(0,1,0,28).round(1).asInteger;
+	tone3=Select.kr(mm,~cz).linlin(0,1,0,28).round(1).asInteger;
+
 ton1=2.pow(Select.kr(tone1.lag(0.0001), ~scaleee) /12).round(0.0001)*2.pow(dron.lag(0.0001)/992);
 ton2=2.pow(Select.kr(tone2.lag(0.0001), ~scaleee) /12).round(0.0001)*2.pow(dron.lag(0.0001)/992);
 ton3=2.pow(Select.kr(tone3.lag(0.0001), ~scaleee) /12).round(0.0001)*2.pow(dron.lag(0.0001)/992);
-
-	env=EnvGen.ar(Env.sine(4),doneAction:2,levelScale:10);
-//	env=10;
 
 						lfo=2.pow(pan/992);
 				lfon=2.pow(pann/992);
@@ -414,10 +421,10 @@ g_ch2 = (g_ch2 / g_sum).lag(0.01);
 g_ch3 = (g_ch3 / g_sum).lag(0.01);
 g_ch4 = (g_ch4 / g_sum).lag(0.01);
 
-g_ch1 = g_ch1.pow(0.1);
-g_ch2 = g_ch2.pow(0.1);
-g_ch3 = g_ch3.pow(0.1);
-g_ch4 = g_ch4 .pow(0.1);
+g_ch1 = g_ch1.pow(1);
+g_ch2 = g_ch2.pow(1);
+g_ch3 = g_ch3.pow(1);
+g_ch4 = g_ch4 .pow(1);
 
 
 g_ch1 =g_ch1.max(0.01) + (g_ch1 - g_ch1.max(0.01)).min(0);
@@ -427,42 +434,42 @@ g_ch4 =g_ch4.max(0.01) + (g_ch4 - g_ch4.max(0.01)).min(0);
 
 Out.ar(0,PanAz.ar(chan,
 Limiter.ar(LeakDC.ar(FreeVerb.ar(
-sig1* g_ch1.sign.lag(0.1),mix.lag(0.0001),room.lag(0.0001),mul:gain1)),0.9,0.01)*g_ch1.abs.lag(0.1),LFSaw.ar(pon,0),width:spread+1)/cloud);
+sig1* g_ch1.sign.lag(0.1),mix.lag(0.0001),room.lag(0.0001),mul:gain1)),0.9,0.01)*g_ch1.abs.lag(0.1),LFSaw.ar(pon,0),width:spread+1));
 Out.ar(0,PanAz.ar(chan,
 Limiter.ar(LeakDC.ar(FreeVerb.ar(
-sig1* g_ch2.sign.lag(0.1),mix.lag(0.0001),room.lag(0.0001),mul:gain1)),0.9,0.01)*g_ch2.abs.lag(0.1),LFSaw.ar(pon,1/4),width:spread+1)/cloud);
+sig1* g_ch2.sign.lag(0.1),mix.lag(0.0001),room.lag(0.0001),mul:gain1)),0.9,0.01)*g_ch2.abs.lag(0.1),LFSaw.ar(pon,1/4),width:spread+1));
 Out.ar(0,PanAz.ar(chan,
 Limiter.ar(LeakDC.ar(FreeVerb.ar(
-sig1* g_ch3.sign.lag(0.1),mix.lag(0.0001),room.lag(0.0001),mul:gain1)),0.9,0.01)*g_ch3.abs.lag(0.1),LFSaw.ar(pon,1/2),width:spread+1)/cloud);
+sig1* g_ch3.sign.lag(0.1),mix.lag(0.0001),room.lag(0.0001),mul:gain1)),0.9,0.01)*g_ch3.abs.lag(0.1),LFSaw.ar(pon,1/2),width:spread+1));
 Out.ar(0,PanAz.ar(chan,
 Limiter.ar(LeakDC.ar(FreeVerb.ar(
-sig1* g_ch4.sign.lag(0.1),mix.lag(0.0001),room.lag(0.0001),mul:gain1)),0.9,0.01)*g_ch4.abs.lag(0.1),LFSaw.ar(pon,3/4),width:spread+1)/cloud);
+sig1* g_ch4.sign.lag(0.1),mix.lag(0.0001),room.lag(0.0001),mul:gain1)),0.9,0.01)*g_ch4.abs.lag(0.1),LFSaw.ar(pon,3/4),width:spread+1));
 
 Out.ar(0,PanAz.ar(chan,
 Limiter.ar(LeakDC.ar(FreeVerb.ar(
-sig2* g_ch1.sign.lag(0.1),mix.lag(0.0001),room.lag(0.0001),mul:gain2)),0.9,0.01)*g_ch1.abs.lag(0.1),LFSaw.ar(pon,0),width:spread+1)/cloud);
+sig2* g_ch1.sign.lag(0.1),mix.lag(0.0001),room.lag(0.0001),mul:gain2)),0.9,0.01)*g_ch1.abs.lag(0.1),LFSaw.ar(pon,0),width:spread+1));
 Out.ar(0,PanAz.ar(chan,
 Limiter.ar(LeakDC.ar(FreeVerb.ar(
-sig2* g_ch2.sign.lag(0.1),mix.lag(0.0001),room.lag(0.0001),mul:gain2)),0.9,0.01)*g_ch2.abs.lag(0.1),LFSaw.ar(pon,1/4),width:spread+1)/cloud);
+sig2* g_ch2.sign.lag(0.1),mix.lag(0.0001),room.lag(0.0001),mul:gain2)),0.9,0.01)*g_ch2.abs.lag(0.1),LFSaw.ar(pon,1/4),width:spread+1));
 Out.ar(0,PanAz.ar(chan,
 Limiter.ar(LeakDC.ar(FreeVerb.ar(
-sig2* g_ch3.sign.lag(0.1),mix.lag(0.0001),room.lag(0.0001),mul:gain2)),0.9,0.01)*g_ch3.abs.lag(0.1),LFSaw.ar(pon,1/2),width:spread+1)/cloud);
+sig2* g_ch3.sign.lag(0.1),mix.lag(0.0001),room.lag(0.0001),mul:gain2)),0.9,0.01)*g_ch3.abs.lag(0.1),LFSaw.ar(pon,1/2),width:spread+1));
 Out.ar(0,PanAz.ar(chan,
 Limiter.ar(LeakDC.ar(FreeVerb.ar(
-sig2* g_ch4.sign.lag(0.1),mix.lag(0.0001),room.lag(0.0001),mul:gain2)),0.9,0.01)*g_ch4.abs.lag(0.1),LFSaw.ar(pon,3/4),width:spread+1)/cloud);
+sig2* g_ch4.sign.lag(0.1),mix.lag(0.0001),room.lag(0.0001),mul:gain2)),0.9,0.01)*g_ch4.abs.lag(0.1),LFSaw.ar(pon,3/4),width:spread+1));
 
 Out.ar(0,PanAz.ar(chan,
 Limiter.ar(LeakDC.ar(FreeVerb.ar(
-sig3* g_ch1.sign.lag(0.1),mix.lag(0.0001),room.lag(0.0001),mul:gain3)),0.9,0.01)*g_ch1.abs.lag(0.1),LFSaw.ar(pon,0),width:spread+1)/cloud);
+sig3* g_ch1.sign.lag(0.1),mix.lag(0.0001),room.lag(0.0001),mul:gain3)),0.9,0.01)*g_ch1.abs.lag(0.1),LFSaw.ar(pon,0),width:spread+1));
 Out.ar(0,PanAz.ar(chan,
 Limiter.ar(LeakDC.ar(FreeVerb.ar(
-sig3* g_ch2.sign.lag(0.1),mix.lag(0.0001),room.lag(0.0001),mul:gain3)),0.9,0.01)*g_ch2.abs.lag(0.1),LFSaw.ar(pon,1/4),width:spread+1)/cloud);
+sig3* g_ch2.sign.lag(0.1),mix.lag(0.0001),room.lag(0.0001),mul:gain3)),0.9,0.01)*g_ch2.abs.lag(0.1),LFSaw.ar(pon,1/4),width:spread+1));
 Out.ar(0,PanAz.ar(chan,
 Limiter.ar(LeakDC.ar(FreeVerb.ar(
-sig3* g_ch3.sign.lag(0.1),mix.lag(0.0001),room.lag(0.0001),mul:gain3)),0.9,0.01)*g_ch3.abs.lag(0.1),LFSaw.ar(pon,1/2),width:spread+1)/cloud);
+sig3* g_ch3.sign.lag(0.1),mix.lag(0.0001),room.lag(0.0001),mul:gain3)),0.9,0.01)*g_ch3.abs.lag(0.1),LFSaw.ar(pon,1/2),width:spread+1));
 Out.ar(0,PanAz.ar(chan,
 Limiter.ar(LeakDC.ar(FreeVerb.ar(
-sig3* g_ch4.sign.lag(0.1),mix.lag(0.0001),room.lag(0.0001),mul:gain3)),0.9,0.01)*g_ch4.abs.lag(0.1),LFSaw.ar(pon,3/4),width:spread+1)/cloud);
+sig3* g_ch4.sign.lag(0.1),mix.lag(0.0001),room.lag(0.0001),mul:gain3)),0.9,0.01)*g_ch4.abs.lag(0.1),LFSaw.ar(pon,3/4),width:spread+1));
 
 					Out.ar(0,WhiteNoise.ar(0.00001)!chan);
 
@@ -532,30 +539,30 @@ m3=m3+1;
 		//~system= Pseq(~r,inf).asStream;
 			~tonb=0;
 			~panwidth=1;
-          ~detune=1;
-			~pass=992*2;
-			~drive=992*3;
-			~mox=0.6;
+			~pass=992*1;
+			~drive=992*2;
+			~mox=0.7;
 			~gg=1;
-			~pon=0.5;
-			~sphpan=(992*2).neg;
+			~pon=0.1;
+			~sphpan=(992*32).neg;
 			~bband=(992*16).neg;
 			~drn=0.1;
+	~od=5.neg;
+	~rev=0.8;
 		//	thisThread.randSeed = 123;
 
-~str1 = Routine({
+~r1 = Routine({
     var i,m,l=0;
-
     60.do{
 					//	thisThread.randSeed = ~val.asInteger;
 							TempoClock.default.tempo_(1);
 
-	~synth=Synth.new(\synth,[\gain,~gg,\drive,~drive,\fu,8,\sc,14,\low,~pass,\pan,~bband,\mix,~mox,\room,~rev.lag(0.01),
-				\pann,~sphpan,\x,2,\a,1,\spread,~rev.lag(0.01),\pon,~pon,\pneuma,0,\namp,1,\drone,5.neg,\panx,0,
+	~synth=Synth.new(\synth,[\gain,~gg,\drive,~drive,\fu,16,\sc,14,\low,~pass,\pan,~bband,\mix,~mox,\room,~rev,\pann,~sphpan,\x,2,\a,1,\spread,~panwidth,\pon,~pon,\pneuma,0,\namp,1,\drone,~od,\panx,0,
 				\pany,0.1,\panz,0.1,\dron,~tonb,\mm,l]).register;
 
 l=l+7;
-        ~seq1.next.wait;
+      //  ~seq1.next.wait;
+			(1).wait;
 
     }
 		});
@@ -566,9 +573,10 @@ l=l+7;
 
 
 
-	~str1.play;
+	~r1.play;
+s.record;
 
-	~str1.stop;
+	~r1.stop;
 
 
 
