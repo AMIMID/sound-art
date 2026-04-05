@@ -31,7 +31,7 @@ Buffer.freeAll;
 {
 var signal,wt;
 	//signal=Env([1,100],[3],[8]);
-		signal=Env([1,2000],[3],[10]);
+		signal=Env([10,1],[3],[10]);
 	wt = signal.asSignal(1024).asWavetable;
 ~scale2.loadCollection(wt);
 //signal.plot;
@@ -39,7 +39,7 @@ var signal,wt;
 		{
 var signal,wt;
 //	signal=Env([1,10000],[3],[12]);
-			signal=Env([1,1000],[3],[16]);
+			signal=Env([0.1,1],[3],[16]);
 	wt = signal.asSignal(1024).asWavetable;
 ~scale1.loadCollection(wt);
 //signal.plot;
@@ -48,7 +48,7 @@ var signal,wt;
 	{
 var signal,wt;
 	//signal=Env([0.005,1,0.01],[2,1],[4,2.neg]);
-		signal=Env([1,20000,1],[2.95,0.05],[5,1.neg]);
+		signal=Env([2000,200,1],[2.959,0.01],[5,1.neg]);
 	wt = signal.asSignal(1024).asWavetable;
 ~scale.loadCollection(wt);
 //signal.plot;
@@ -64,7 +64,7 @@ var signal,wt;
 
 	{
 var signal,wt;
-	signal=Env([10,1],[3],[8]);
+	signal=Env([10,1,1],[2,1],[8]);
 	wt = signal.asSignal(1024).asWavetable;
 ~harm.loadCollection(wt);
 //signal.plot;
@@ -90,18 +90,18 @@ var signal,wt;
 (
 SynthDef.new(\player,{
 
-	Out.kr(~controlBus.index, (Osc.kr(~scale.bufnum,(1/100)).abs));
-	Out.kr(~controlBus1.index, (Osc.kr(~scale1.bufnum,(1/100)).abs));
-	Out.kr(~controlBus4.index, (Osc.kr(~scale2.bufnum,(1/100)).abs));
-	Out.kr(~controlBus2.index, (Osc.kr(~rotation.bufnum,(1/100)).abs));
-    Out.kr(~controlBus3.index, (Osc.kr(~harm.bufnum,(1/100)).abs));
-	Out.kr(~controlBus5.index, (LFNoise1.kr(1/100).range(pi.neg,pi)));
-	Out.kr(~controlBus6.index, (Osc.kr(~temp.bufnum,(1/100)).abs));
-	Out.kr(~controlBus7.index, (Osc.kr(~space.bufnum,(1/100)).abs));
+	Out.kr(~controlBus.index, (Osc.kr(~scale.bufnum,(1/50)).abs));
+	Out.kr(~controlBus1.index, (Osc.kr(~scale1.bufnum,(1/50)).abs));
+	Out.kr(~controlBus4.index, (Osc.kr(~scale2.bufnum,(1/50)).abs));
+	Out.kr(~controlBus2.index, (Osc.kr(~rotation.bufnum,(1/50)).abs));
+    Out.kr(~controlBus3.index, (Osc.kr(~harm.bufnum,(1/50)).abs));
+	Out.kr(~controlBus5.index, (LFNoise1.kr(1/50).range(pi.neg,pi)));
+	Out.kr(~controlBus6.index, (Osc.kr(~temp.bufnum,(1/50)).abs));
+	Out.kr(~controlBus7.index, (Osc.kr(~space.bufnum,(1/50)).abs));
 
 
 }).add;
-	);~count=[1,2,2,2,2,8];
+	);~count=[2,2,2,3,2,6];
 }
 )
 
@@ -147,11 +147,11 @@ a.drawMethod = \fillRect;
 a.symbolSize = 2;
 a.symbolColor = Color.white;
 a.background = Color.clear;
-b = ScatterView3d(~v, Rect(0,0, 1800,1000), ~data, [-4000, 4000].asSpec,[-4000, 4000].asSpec,[-9000, 4000].asSpec);
-b.drawMethod = \fillRect;
-b.symbolSize = 2;
-b.symbolColor = Color.white;
-b.background = Color.clear;
+//b = ScatterView3d(~v, Rect(0,0, 1800,1000), ~data, [-4000, 4000].asSpec,[-4000, 4000].asSpec,[-9000, 4000].asSpec);
+//b.drawMethod = \fillRect;
+//b.symbolSize = 2;
+//b.symbolColor = Color.white;
+//b.background = Color.clear;
 
   r= Routine({loop{
 
@@ -572,7 +572,7 @@ az6=0;el6=0;
 
 	~azimuth=~az;
 	~elevation=~el;
-	~magnitude=(~magqx.[pla].pow(2)+~magy.pow(2)+~magz.pow(2)).sqrt*(14/~detune);
+	~magnitude=(~magx.[pla].pow(2)+~magy.pow(2)+~magz.pow(2)).sqrt*(14/~detune);
 //~magnitude.postln;
 
 	dota=(~count.[0]*~count.[1]*~count.[2]*~count.[3]*~count.[4]*~count.[5]).collect{
@@ -580,7 +580,7 @@ az6=0;el6=0;
 	az=~az.[pla];
 	el=~el.[pla];
 	//mag=1000;
-			mag=(Cartesian(~magqx.[pla],~magy.[pla],~magz.[pla]).rho)/2.sqrt;
+			mag=(Cartesian(~magx.[pla],~magy.[pla],~magz.[pla]).rho)/2.sqrt;
 	//	mag=mag+(Cartesian(~magqx.[pla],0,0).rho);
 	pla=pla+1;
 			//mk=(mk+(1-(1/1.6180339887499))).wrap(0,1);
@@ -594,7 +594,7 @@ az6=0;el6=0;
         // schedule GUI update on AppClock
         AppClock.sched(0, {
             a.data = data;   // ScatterView3d data
-			b.data = data;
+			//b.data = data;
 
 			~v.background_(Color(space,space,space));
             ~v.refresh;
@@ -611,14 +611,14 @@ r.play;
 
     Pen.translate(1000,600);
 
-		b.symbolColor = Color.new(red:temp,blue:temp,green:temp);
-		//a.symbolColor =Color.new(red:temp,blue:temp,green:temp);
+		//b.symbolColor = Color.new(red:temp,blue:temp,green:temp);
+		a.symbolColor =Color.new(red:temp,blue:temp,green:temp);
    a.rot(ot,ot,ot);
-		 b.rot(ott,ott,ott);
+		// b.rot(ott,ott,ott);
 				~r1=ot; ~r2=ot; ~r3=ot;
 
 		ot = (ot + rotation.degrad).wrap(0,2pi);
-		ott = (ott + (0.1+rotation).degrad).wrap(0,2pi);
+		//ott = (ott + (0.1+rotation).degrad).wrap(0,2pi);
 
     ~cart = data.collect{|p|
 
