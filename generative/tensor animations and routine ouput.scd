@@ -64,7 +64,7 @@ var signal,wt;
 
 	{
 var signal,wt;
-	signal=Env([10,1],[3],[8]);
+	signal=Env([4,0],[3],[8]);
 	wt = signal.asSignal(1024).asWavetable;
 ~harm.loadCollection(wt);
 //signal.plot;
@@ -101,7 +101,7 @@ SynthDef.new(\player,{
 
 
 }).add;
-	);~count=[1,2,2,2,2,8];
+	);~count=[2,2,2,2,2,2];
 }
 )
 
@@ -572,7 +572,7 @@ az6=0;el6=0;
 
 	~azimuth=~az;
 	~elevation=~el;
-	~magnitude=(~magqx.[pla].pow(2)+~magy.pow(2)+~magz.pow(2)).sqrt*(14/~detune);
+	~magnitude=(~magx.[pla].pow(2)+~magy.pow(2)+~magz.pow(2)).sqrt*(14/~detune);
 //~magnitude.postln;
 
 	dota=(~count.[0]*~count.[1]*~count.[2]*~count.[3]*~count.[4]*~count.[5]).collect{
@@ -580,7 +580,7 @@ az6=0;el6=0;
 	az=~az.[pla];
 	el=~el.[pla];
 	//mag=1000;
-			mag=(Cartesian(~magqx.[pla],~magy.[pla],~magz.[pla]).rho)/2.sqrt;
+			mag=(Cartesian(~magx.[pla],~magy.[pla],~magz.[pla]).rho)/2.sqrt;
 	//	mag=mag+(Cartesian(~magqx.[pla],0,0).rho);
 	pla=pla+1;
 			//mk=(mk+(1-(1/1.6180339887499))).wrap(0,1);

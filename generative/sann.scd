@@ -31,7 +31,7 @@ Buffer.freeAll;
 {
 var signal,wt;
 	//signal=Env([1,100],[3],[8]);
-		signal=Env([0.1,1],[3],[10]);
+		signal=Env([1,2],[3],[5]);
 	wt = signal.asSignal(1024).asWavetable;
 ~scale2.loadCollection(wt);
 //signal.plot;
@@ -39,7 +39,7 @@ var signal,wt;
 		{
 var signal,wt;
 //	signal=Env([1,10000],[3],[12]);
-			signal=Env([1,2],[3],[16]);
+			signal=Env([10,1],[3],[5]);
 	wt = signal.asSignal(1024).asWavetable;
 ~scale1.loadCollection(wt);
 //signal.plot;
@@ -48,7 +48,7 @@ var signal,wt;
 	{
 var signal,wt;
 	//signal=Env([0.005,1,0.01],[2,1],[4,2.neg]);
-		signal=Env([2000,500,200,1],[2,0.959,0.01],[5,1.neg]);
+		signal=Env([10000,800,750,1],[2,0.99,0.01],[5,1.neg]);
 	wt = signal.asSignal(1024).asWavetable;
 ~scale.loadCollection(wt);
 //signal.plot;
@@ -56,7 +56,7 @@ var signal,wt;
 
 	{
 var signal,wt;
-	signal=Env([0.4,0.001],[3],[4]);
+	signal=Env([1,0.001],[3],[5]);
 	wt = signal.asSignal(1024).asWavetable;
 ~rotation.loadCollection(wt);
 //signal.plot;
@@ -64,7 +64,7 @@ var signal,wt;
 
 	{
 var signal,wt;
-	signal=Env([10,0,0],[2,1],[8]);
+	signal=Env([100,0,0],[2,1],[8]);
 	wt = signal.asSignal(1024).asWavetable;
 ~harm.loadCollection(wt);
 //signal.plot;
@@ -101,7 +101,7 @@ SynthDef.new(\player,{
 
 
 }).add;
-	);~count=[2,2,2,3,2,6];
+	);~count=[2,2,2,2,2,2];
 }
 )
 
@@ -147,11 +147,11 @@ a.drawMethod = \fillRect;
 a.symbolSize = 2;
 a.symbolColor = Color.white;
 a.background = Color.clear;
-//b = ScatterView3d(~v, Rect(0,0, 1800,1000), ~data, [-4000, 4000].asSpec,[-4000, 4000].asSpec,[-9000, 4000].asSpec);
-//b.drawMethod = \fillRect;
-//b.symbolSize = 2;
-//b.symbolColor = Color.white;
-//b.background = Color.clear;
+b = ScatterView3d(~v, Rect(0,0, 1800,1000), ~data, [-4000, 4000].asSpec,[-4000, 4000].asSpec,[-9000, 4000].asSpec);
+b.drawMethod = \fillRect;
+b.symbolSize = 3;
+b.symbolColor = Color.white;
+b.background = Color.clear;
 
   r= Routine({loop{
 
@@ -594,7 +594,7 @@ az6=0;el6=0;
         // schedule GUI update on AppClock
         AppClock.sched(0, {
             a.data = data;   // ScatterView3d data
-			//b.data = data;
+			b.data = data;
 
 			~v.background_(Color(space,space,space));
             ~v.refresh;
@@ -611,14 +611,14 @@ r.play;
 
     Pen.translate(1000,600);
 
-		//b.symbolColor = Color.new(red:temp,blue:temp,green:temp);
-		a.symbolColor =Color.new(red:temp,blue:temp,green:temp);
+		b.symbolColor = Color.new(red:temp,blue:temp,green:temp);
+		//a.symbolColor =Color.new(red:temp,blue:temp,green:temp);
    a.rot(ot,ot,ot);
-		// b.rot(ott,ott,ott);
+		b.rot(ott,ott,ott);
 				~r1=ot; ~r2=ot; ~r3=ot;
 
 		ot = (ot + rotation.degrad).wrap(0,2pi);
-		//ott = (ott + (0.1+rotation).degrad).wrap(0,2pi);
+		ott = (ott + (0.1+rotation).degrad).wrap(0,2pi);
 
     ~cart = data.collect{|p|
 

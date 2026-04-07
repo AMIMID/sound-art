@@ -185,7 +185,8 @@ SynthDef.new(\synth,{
 	var pon1,pon2,pon3,pon4;
 
 
-				m = In.kr(~controlBus3).lag(0.1).round(1);
+				//m = In.kr(~controlBus3).lag(0.1).round(1);
+				m=3;
 
 				env=EnvGen.ar(Env.sine(4),doneAction:2,levelScale:1);
 fund=fu*(9/8);
@@ -516,13 +517,13 @@ m3=m3+1;
 				~seq2 = Pseq(~dur2, inf).asStream;
 				~seq3 = Pseq(~dur3, inf).asStream;
 		//~system= Pseq(~r,inf).asStream;
-			~tonb=992*2;
+			~tonb=992*3;
 			~panwidth=1;
           ~detune=1;
 			~pass=992*1;
 			~drive=992*1;
 			~mox=0.6;
-			~gg=100;
+			~gg=80;
 			~pon=0.02;
 			~sphpan=(992*5);
 			~bband=(992*16).neg;
@@ -543,7 +544,7 @@ m3=m3+1;
 							i= ~cart.lag(0.01).size.rand;
 ~detune=1;
 
-	~synth=Synth.new(\synth,[\gain,~gg,\drive,~drive,\fu,256,\sc,992,//~magnitude.lag(0.01).[i].round(1).max(1).asInteger,
+	~synth=Synth.new(\synth,[\gain,~gg,\drive,~drive,\fu,512,\sc,992,//~magnitude.lag(0.01).[i].round(1).max(1).asInteger,
 						\low,~pass,\pan,~bband,\mix,~mox,\room,~rev.lag(0.01),\pann,~sphpan,\x,2,\a,1,\spread,~rev.lag(0.01),
 						\pon,~pon,\pneuma,0,\namp,1,\drone,24.neg,\az,~azimuth.lag(0.01).[i],\el,~elevation.lag(0.01).[i]
 						,\panx,~drn,\pany,~drn,\panz,~drn,\dron,~tonb,
