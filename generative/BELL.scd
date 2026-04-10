@@ -85,44 +85,6 @@ s.meter;
 //	 ~b = Buffer.loadCollection(s, ~a.getSetsAndMatrices);
 //);
 
-
-///animation buses
-	//	~controlBus_1a = Bus.control(s, 1);
-	//	~controlBus_2a = Bus.control(s, 1);
-	//	~controlBus_3a = Bus.control(s, 1);
-
-	//	~controlBus_1b = Bus.control(s, 1);
-	//	~controlBus_2b = Bus.control(s, 1);
-	//	~controlBus_3b = Bus.control(s, 1);
-
-	//	~controlBus_1c = Bus.control(s, 1);
-	//	~controlBus_2c = Bus.control(s, 1);
-		//~controlBus_3c = Bus.control(s, 1);
-
-	//	~controlBus_1d = Bus.control(s, 1);
-	//	~controlBus_2d = Bus.control(s, 1);
-	//	~controlBus_3d = Bus.control(s, 1);
-
-	//	~controlBus_1e = Bus.control(s, 1);
-	//	~controlBus_2e = Bus.control(s, 1);
-	//	~controlBus_3e = Bus.control(s, 1);
-
-	//	~controlBus_1f = Bus.control(s, 1);
-	//	~controlBus_2f = Bus.control(s, 1);
-	//	~controlBus_3f = Bus.control(s, 1);
-
-	//	~controlBus_1g = Bus.control(s, 1);
-	//	~controlBus_2g = Bus.control(s, 1);
-	//	~controlBus_3g = Bus.control(s, 1);
-
-	//	~controlBus_1k = Bus.control(s, 1);
-	//	~controlBus_2k = Bus.control(s, 1);
-	//	~controlBus_3k = Bus.control(s, 1);
-
-	///	~controlBus_x = Bus.control(s, 1);
-	//	~controlBus_y = Bus.control(s, 1);
-	//	~controlBus_z = Bus.control(s, 1);
-
 ////// wavetables
 
 		//oscillator table
@@ -194,9 +156,9 @@ SynthDef.new(\synth,{
 fund=fu*(9/8);
 lamdoma=(x.lag(0.01)+a.lag(0.01))/x.lag(0.01);
 
-ton1=2.pow(Select.kr(tone1.lag(0.01), ~scalee) /12).round(0.0001)*2.pow(dron.lag(0.01)/992);
-ton2=2.pow(Select.kr(tone2.lag(0.01), ~scalee) /12).round(0.0001)*2.pow(dron.lag(0.01)/992);
-ton3=2.pow(Select.kr(tone3.lag(0.01), ~scalee) /12).round(0.0001)*2.pow(dron.lag(0.01)/992);
+ton1=2.pow(Select.kr(tone1.lag(0.01), ~scale) /12).round(0.0001)*2.pow(dron.lag(0.01)/992);
+ton2=2.pow(Select.kr(tone2.lag(0.01), ~scale) /12).round(0.0001)*2.pow(dron.lag(0.01)/992);
+ton3=2.pow(Select.kr(tone3.lag(0.01), ~scale) /12).round(0.0001)*2.pow(dron.lag(0.01)/992);
 
 		//		ton=2.pow((tone.lag(0.01))/56).round(0.0001)*2.pow(dron.lag(0.01)/56);
 				env=EnvGen.ar(Env.perc(0.0001,32,curve:cur),doneAction:2);
@@ -532,10 +494,10 @@ sig3* g_ch4.lag(0.1)*pon4,mix.lag(0.01),room.lag(0.01),mul:gain3)),0.9,0.01)/clo
 
 }).add;);
 
-2.wait;
+5.wait;
 
 
-		/////////////sequencer with midi
+		/////////////sequencer
 ({
 			var m1=1.neg, m2=1.neg, m3=1.neg,a,b,c,n=0,bank=4,time=32.reciprocal,beat=1,r=0;
 			~r=0;		~r1=0;		~r2=0;
@@ -581,9 +543,9 @@ m3=m3+1;
 			\gain,0.1,
 			\drive,992*2,
 		\fu,128,
-				\tone1,Pbrown(0,10,1,inf),
-			\tone2,Pbrown(0,10,1,inf),
-			\tone3,Pbrown(0,10,1,inf),
+				\tone1,Pbrown(0,5,1,inf),
+			\tone2,Pbrown(0,5,1,inf),
+			\tone3,Pbrown(0,5,1,inf),
 			\low,Pbrown(0,(992*2),496,inf),
 			\pan,(992*16).neg,
 		\mix,Pseq([0.3],inf),
@@ -595,14 +557,14 @@ m3=m3+1;
 			\pneuma1,0,\pneuma2,0,\pneuma3,0,
 			\x,2,
 			\a,1,
-			\panx,0,
-			\pany,0,
-			\panz,0,
+			\panx,Pexprand(0.5.neg,0.000001,inf),
+			\pany,Pexprand(0.5.neg,0.000001,inf),
+			\panz,Pexprand(0.5.neg,0.000001,inf),
 			\spread,1,\namp1,1,\namp2,1,\namp3,1,
 			\az,Pbrown(pi.neg,pi,0.1pi,inf),
-			\el,Pbrown(0.5pi.neg,0.5pi,0.1pi,inf),
+			\el,Pbrown(0.5pi.neg,0.5pi,0.05pi,inf),
 			\dron,0,
-				\cur,4.neg,
+				\cur,Pbrown(2.neg,8.neg,1,inf),
 			\drone,24.neg,
 			\sc,Pbrown(0,992,992/32,inf)
 	)));
