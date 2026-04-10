@@ -255,21 +255,19 @@ wt = signal.asWavetable;
 
 
 ////scale
+	(
+			{
+				var nn=1.neg;
+		~scale=10.collect{nn=nn+1;Scale.majorPentatonic.performDegreeToKey(nn,12)};
+			}.value;
+		);
+
 		(
 			{
 				var nn=1.neg;
-		~scaleee=14.collect{nn=nn+1;Scale.phrygian.performDegreeToKey(nn,12)};
+		~scalee=10.collect{nn=nn+1;Scale.minorPentatonic.performDegreeToKey(nn,12)};
 			}.value;
 		);
-
-				(
-			{
-				var nn=1.neg;
-		~scalee=7.collect{nn=nn+1;Scale.phrygian.performDegreeToKey(nn,12)};
-			}.value;
-		);
-
-)
 		////sound
 
 (
@@ -315,9 +313,9 @@ env=10;
 	//tone3=lllz.linlin(0,1,0,14).round(1);
 
 
-ton1=2.pow(Select.kr(tone1.lag(0.0001), ~scaleee) /12).round(0.001)*2.pow(dron.lag(0.001)/992);
-ton2=2.pow(Select.kr(tone2.lag(0.0001), ~scaleee) /12).round(0.001)*2.pow(dron.lag(0.001)/992);
-ton3=2.pow(Select.kr(tone3.lag(0.0001), ~scaleee) /12).round(0.001)*2.pow(dron.lag(0.001)/992);
+ton1=2.pow(Select.kr(tone1.lag(0.0001), ~scalee) /12).round(0.001)*2.pow(dron.lag(0.001)/992);
+ton2=2.pow(Select.kr(tone2.lag(0.0001), ~scalee) /12).round(0.001)*2.pow(dron.lag(0.001)/992);
+ton3=2.pow(Select.kr(tone3.lag(0.0001), ~scalee) /12).round(0.001)*2.pow(dron.lag(0.001)/992);
 
 						lfo=2.pow(pan/992);
 				lfon=2.pow(pann/992);
@@ -340,9 +338,9 @@ ton3=2.pow(Select.kr(tone3.lag(0.0001), ~scaleee) /12).round(0.001)*2.pow(dron.l
 //b_y=2.pow(Select.kr(mp.y, ~scalee) /12).round(0.0001)*lamdoma;
 //b_z=2.pow(Select.kr(mp.z, ~scalee) /12).round(0.0001)*lamdoma
 
-b_x=2.pow(mp.x.round(1) /992).round(0.0001)*lamdoma;
-b_y=2.pow(mp.y.round(1) /992).round(0.0001)*lamdoma;
-b_z=2.pow(mp.z.round(1) /992).round(0.0001)*lamdoma;
+b_x=2.pow(mp.x.round(0.0001) /992).round(0.0001)*lamdoma;
+b_y=2.pow(mp.y.round(0.0001) /992).round(0.0001)*lamdoma;
+b_z=2.pow(mp.z.round(0.0001) /992).round(0.0001)*lamdoma;
 
 anglex=(exp(Complex(0,1)*polytope.theta).real*exp(Complex(0,1)*polytope.phi).real).round(0.00001);
 angley=(exp(Complex(0,1)*polytope.theta).imag*exp(Complex(0,1)*polytope.phi).real).round(0.00001);

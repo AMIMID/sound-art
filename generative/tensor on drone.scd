@@ -146,20 +146,19 @@ wt = signal.asWavetable;
 			~dist.loadCollection(~transfer_function.asWavetableNoWrap);
 		);
 ////scale
+	(
+			{
+				var nn=1.neg;
+		~scalee=10.collect{nn=nn+1;Scale.majorPentatonic.performDegreeToKey(nn,12)};
+			}.value;
+		);
+
 		(
 			{
 				var nn=1.neg;
-		~scaleee=14.collect{nn=nn+1;Scale.phrygian.performDegreeToKey(nn,12)};
+		~scaleee=10.collect{nn=nn+1;Scale.minorPentatonic.performDegreeToKey(nn,12)};
 			}.value;
 		);
-
-				(
-			{
-				var nn=1.neg;
-		~scalee=14.collect{nn=nn+1;Scale.phrygian.performDegreeToKey(nn,12)};
-			}.value;
-		);
-
 		////sound
 
 (
@@ -179,21 +178,21 @@ SynthDef.new(\synth,{
 	var loc1,loc2,loc3,g=((1+5.sqrt)/2),s=(1+2.sqrt),tensor,dr;
 	var amb_w,amb_x,amb_y,amb_z,out,amb_sig1,amb_sig2,amb_sig3,axisx,axisy,axisz,cx,cy,cz;
 	var axi1,axi2,axi3,ds1,ds2,ds3,f1,f2,f3,g1,g2,g3,sph_object,lfon,axis;
-	var r_axis, r_v, r, axisr,spr,rot,i,j,k,level=200,spx,spy,spz;
+	var r_axis, r_v, r, axisr,spr,rot,i,j,k,level=400,spx,spy,spz;
 	var g_ch1,g_ch2, g_ch3, g_ch4, chan= 4,sp,spl,mp;
 	var ton1,ton2,ton3,tonb,laxis,g11,g22,g33,g44;
 	var pon1,pon2,pon3,pon4;
 
 
-				//m = In.kr(~controlBus3).lag(0.1).round(1);
-				m=3;
+				m = In.kr(~controlBus3).lag(0.1).round(1);
+			//	m=3;
 
-				env=EnvGen.ar(Env.sine(4),doneAction:2,levelScale:1);
+				env=EnvGen.ar(Env.sine(24),doneAction:2,levelScale:10);
 fund=fu*(9/8);
 lamdoma=(x.lag(0.001)+a.lag(0.001))/x.lag(0.001);
 
 
-						sph_object=Spherical(14,az.lag(0.0001),el.lag(0.0001));
+						sph_object=Spherical(10,az.lag(0.0001),el.lag(0.0001));
 				tone1=sph_object.x;
 				tone2=sph_object.y;
 				tone3=sph_object.z;
@@ -224,9 +223,9 @@ ton3=2.pow(Select.kr(tone3.round(1), ~scaleee) /12).round(0.0001)*tonb;
 //b_y=2.pow(Select.kr(polytope.y.round(1).linlin(1, 14, 0, 24), ~scale1) /12);
 //b_z=2.pow(Select.kr(polytope.z.round(1).linlin(1, 14, 0, 24), ~scale1) /12);
 
-b_x=2.pow(polytope.x.round(1) /992).round(0.0001)*lamdoma;
-b_y=2.pow(polytope.y.round(1) /992).round(0.0001)*lamdoma;
-b_z=2.pow(polytope.z.round(1) /992).round(0.0001)*lamdoma;
+b_x=2.pow(polytope.x.round(0.0001) /992).round(0.0001)*lamdoma;
+b_y=2.pow(polytope.y.round(0.0001) /992).round(0.0001)*lamdoma;
+b_z=2.pow(polytope.z.round(0.0001) /992).round(0.0001)*lamdoma;
 
 //b_x=laxis.x.round((9/8)/2);
 //b_y=laxis.y.round((9/8)/2);
@@ -343,13 +342,13 @@ sig3=(LPF.ar((Osc.ar(~w1.bufnum,freq3,phase:phasez,mul:level).abs*SinOsc.ar(freq
 	sig3=Select.ar(band.linlin((992*16).neg,((992*16).neg+1),0,1).round(1).asInteger,
 						[sig3,BPF.ar(BRF.ar(sig3,band_osc3.lag(0.1),rq3),band_osc6.lag(0.1),rq6)]);
 
-threshold1=(((343/0.1)/fund).reciprocal.ampdb/2.sqrt).dbamp;
-threshold2=(((343/0.1)/fund).reciprocal.ampdb/2.sqrt).dbamp;
-threshold3=(((343/0.1)/fund).reciprocal.ampdb/2.sqrt).dbamp;
+threshold1=(((343/0.01)/fund).reciprocal.ampdb/2.sqrt).dbamp;
+threshold2=(((343/0.01)/fund).reciprocal.ampdb/2.sqrt).dbamp;
+threshold3=(((343/0.01)/fund).reciprocal.ampdb/2.sqrt).dbamp;
 
-		sig1=HPF.ar(sig1,65);
-		sig2=HPF.ar(sig2, 65);
-		sig3=HPF.ar(sig3, 50);
+		sig1=HPF.ar(sig1,80);
+		sig2=HPF.ar(sig2, 80);
+		sig3=HPF.ar(sig3, 80);
 
 		sig1=Compander.ar(sig1,control1,threshold1,1.2,1/3,0.03,0.15);
 		sig2=Compander.ar(sig2,control2,threshold2,1.2,1/3,0.03,0.15);
@@ -462,7 +461,7 @@ Out.ar(3,
 Limiter.ar(LeakDC.ar(FreeVerb.ar(
 sig3* g_ch4.lag(0.1)*pon4,mix.lag(0.01),room.lag(0.01),mul:gain3)),0.9,0.01)/cloud);
 
-					Out.ar(0,WhiteNoise.ar(0.00001)/cloud);
+					Out.ar(0,WhiteNoise.ar(0.00001));
 
 						azf = (azf+(2pi-(2pi/s))).wrap(pi.neg,pi);
 		   elf = (elf+(pi-(pi/s))).wrap((pi/2).neg,(pi/2))
@@ -513,25 +512,27 @@ m3=m3+1;
 		////////2////sequencer
 		(
 
-			~seq1= Pseq(~dur/3, inf).asStream;
+			~seq1= Pseq(~dur*2, inf).asStream;
 				~seq2 = Pseq(~dur2, inf).asStream;
 				~seq3 = Pseq(~dur3, inf).asStream;
 		//~system= Pseq(~r,inf).asStream;
-			~tonb=992*3;
+			~tonb=992*0;
 			~panwidth=1;
           ~detune=1;
-			~pass=992*1;
-			~drive=992*1;
-			~mox=0.6;
-			~gg=80;
-			~pon=0.02;
-			~sphpan=(992*5);
-			~bband=(992*16).neg;
+			~pass=992*4;
+			~drive=992*2;
+			~mox=1;
+			~gg=50;
+			~pon=0.05;
+			~sphpan=(992*5).neg;
+			~bband=(992*7).neg;
 			~drn=0;
+			~oct=24.neg;
 		//	thisThread.randSeed = 123;
 
 ~str1 = Routine({
     var i,m,l;
+
 
     loop {
 					//	thisThread.randSeed = ~val.asInteger;
@@ -541,12 +542,13 @@ m3=m3+1;
 				//	i=0;
 				//	l=~system.next;
 					//~detune=32.rand.round(2).max(1);
-							i= ~cart.lag(0.01).size.rand;
+						//	i= ~cart.lag(0.01).size.rand;
+					i=0;
 ~detune=1;
 
-	~synth=Synth.new(\synth,[\gain,~gg,\drive,~drive,\fu,512,\sc,992,//~magnitude.lag(0.01).[i].round(1).max(1).asInteger,
-						\low,~pass,\pan,~bband,\mix,~mox,\room,~rev.lag(0.01),\pann,~sphpan,\x,2,\a,1,\spread,~rev.lag(0.01),
-						\pon,~pon,\pneuma,0,\namp,1,\drone,24.neg,\az,~azimuth.lag(0.01).[i],\el,~elevation.lag(0.01).[i]
+	~synth=Synth.new(\synth,[\gain,~gg,\drive,~drive,\fu,128,\sc,992,//~magnitude.lag(0.01).[i].round(1).max(1).asInteger,
+						\low,~pass,\pan,~bband,\mix,~mox,\room,1,\pann,~sphpan,\x,3,\a,1,\spread,~panwidth,
+						\pon,~pon,\pneuma,0,\namp,1,\drone,~oct,\az,~azimuth.lag(0.01).[i],\el,~elevation.lag(0.01).[i]
 						,\panx,~drn,\pany,~drn,\panz,~drn,\dron,~tonb,
 \xx,~cart.lag(0.01).[i].[0].round(0.00001), \yy,~cart.lag(0.01).[i].[1].round(0.00001),\zz,~cart.lag(0.00001).[i].[2].round(0.00001)]).register;
 
@@ -557,7 +559,7 @@ m3=m3+1;
 		});
 
 
-		);
+		) ;
 
 
 	});
@@ -567,8 +569,9 @@ m3=m3+1;
 )
 
 
-	~str1.play;
-
+	~str1.play
+;
+s.record;
 
 	~str1.stop;
 
