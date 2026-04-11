@@ -402,10 +402,10 @@ g_ch2 = g_ch2.pow(spread.reciprocal);
 g_ch3 = g_ch3.pow(spread.reciprocal);
 g_ch4 = g_ch4.pow(spread.reciprocal);
 
-pon1=SinOsc.ar(pon,0).range(0.0001,1).lag(0.1);
-pon2=SinOsc.ar(pon,0.25pi).range(0.0001,1).lag(0.1);
-pon3=SinOsc.ar(pon,0.5pi).range(0.0001,1).lag(0.1);
-pon4=SinOsc.ar(pon,0.75pi).range(0.0001,1).lag(0.1);
+pon1=SinOsc.ar(pon*lfon,0).range(0.0001,1).lag(0.1);
+pon2=SinOsc.ar(pon*lfon,0.25pi).range(0.0001,1).lag(0.1);
+pon3=SinOsc.ar(pon*lfon,0.5pi).range(0.0001,1).lag(0.1);
+pon4=SinOsc.ar(pon*lfon,0.75pi).range(0.0001,1).lag(0.1);
 
 
 Out.ar(0,
@@ -547,25 +547,25 @@ m3=m3+1;
 		~aa=Pdef(\1, Pbind(\instrument, \synth,
 			\dur,Pseq(~dur*16,inf),
 			\gain,1,
-			\drive,992*1,
+			\drive,992*2,
 		\fu,256,
 				\tone1,Pbrown(0,5,1,inf),
 			\tone2,Pbrown(0,5,1,inf),
 			\tone3,Pbrown(0,5,1,inf),
-			\low,Pbrown(0,(992*2),496,inf),
+			\low,Pbrown(0,(992*2),496/4,inf),
 			\pan,(992*16).neg,
 		\mix,Prand([0.5,0.6,0.8],inf),
 			\drone_amp,1,
-			\room,Prand([0.7,0.8,1],inf),
-				\m,Prand([1,2,3],inf),
-				\pann,Pbrown((992*2),(992*7),992,inf),
-			\pon,Pbrown(0.001,28,0.1,inf),
+			\room,Prand([0.7,0.8,0.9],inf),
+				\m,Prand([1,2],inf),
+				\pann,Pbrown((992*5).neg,(992*7),992/2,inf),
+			\pon,Pbrown(0.001,2,0.1,inf),
 			\pneuma1,0,\pneuma2,0,\pneuma3,0,
 			\x,2,
 			\a,1,
-			\panx,Pbrown(0.1.neg,0,0.01,inf),
-			\pany,Pbrown(0.1.neg,0,0.01,inf),
-			\panz,Pbrown(0.1.neg,0,0.01,inf),
+			\panx,Pbrown(0.05.neg,0,0.001,inf),
+			\pany,Pbrown(0.05.neg,0,0.001,inf),
+			\panz,Pbrown(0.05.neg,0,0.001,inf),
 			\spread,1,\namp1,1,\namp2,1,\namp3,1,
 			\az,Pbrown(pi.neg,pi,0.2pi,inf),
 			\el,Pbrown(0.5pi.neg,0.5pi,0.1pi,inf),
@@ -580,7 +580,7 @@ m3=m3+1;
 
 
 
-		TempoClock.default.tempo_(2);
+		TempoClock.default.tempo_(8);
 
 	});
 	Tdef(\drone).play;
