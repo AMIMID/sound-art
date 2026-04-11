@@ -1,6 +1,7 @@
-
+(
 	~str1.play;
-
+s.record;
+)
 ~str1.stop;
 
 (
@@ -213,10 +214,15 @@ phase2=Complex(1,angley).theta;
 phase3=Complex(1,anglez).theta;
 
 
-mod_anglex=SinOsc.ar(lfon,phase1).range(pi.neg,pi).lag(0.01);
-mod_angley=SinOsc.ar(lfon,phase2).range(pi.neg,pi).lag(0.01);
-mod_anglez=SinOsc.ar(lfon,phase3).range(35.264390.degrad,35.264390.degrad.neg).lag(0.01);
+//mod_anglex=SinOsc.ar(lfon,phase1).range(pi.neg,pi).lag(0.01);
+//mod_angley=SinOsc.ar(lfon,phase2).range(pi.neg,pi).lag(0.01);
+//mod_anglez=SinOsc.ar(lfon,phase3).range(35.264390.degrad,35.264390.degrad.neg).lag(0.01);
 
+mod_anglex=(LPF.ar((Osc.ar(~w1.bufnum,lfon,phase:phase1,mul:level).abs*SinOsc.ar(lfon,phase:phase1)),lfon*2.pow(low.lag(0.01)/992),1).range(panx*1,1)+(LPF.ar((Osc.ar(~w1.bufnum,lfon/8,phase:phase1,mul:level).abs*SinOsc.ar(lfon/8,phase:phase1)),(lfon/8)*2.pow(low.lag(0.01)/992),(lfon/8).reciprocal))).range(pi.neg,pi).lag(0.01);
+
+mod_angley=(LPF.ar((Osc.ar(~w1.bufnum,lfon,phase:phase2,mul:level).abs*SinOsc.ar(lfon,phase:phase2)),lfon*2.pow(low.lag(0.01)/992),1).range(pany*1,1)+(LPF.ar((Osc.ar(~w1.bufnum,lfon/8,phase:phase2,mul:level).abs*SinOsc.ar(lfon/8,phase:phase2)),(lfon/8)*2.pow(low.lag(0.01)/992),(lfon/8).reciprocal))).range(pi.neg,pi).lag(0.01);
+
+mod_anglez=(LPF.ar((Osc.ar(~w1.bufnum,lfon,phase:phase3,mul:level).abs*SinOsc.ar(lfon,phase:phase3)),lfon*2.pow(low.lag(0.01)/992),1).range(panz*1,1)+(LPF.ar((Osc.ar(~w1.bufnum,lfon/8,phase:phase3,mul:level).abs*SinOsc.ar(lfon/8,phase:phase3)),(lfon/8)*2.pow(low.lag(0.01)/992),(lfon/8).reciprocal))).range(35.264390.degrad,35.264390.degrad.neg).lag(0.01);
 
 
 					(
@@ -318,9 +324,9 @@ sig3=(LPF.ar((Osc.ar(~w1.bufnum,freq3,phase:phasez,mul:level).abs*SinOsc.ar(freq
 	sig3=Select.ar(band.linlin((992*16).neg,((992*16).neg+1),0,1).round(1).asInteger,
 						[sig3,BPF.ar(BRF.ar(sig3,band_osc3.lag(0.1),rq3),band_osc6.lag(0.1),rq6)]);
 
-threshold1=(((343/0.1)/fund).reciprocal.ampdb/2.sqrt).dbamp;
-threshold2=(((343/0.1)/fund).reciprocal.ampdb/2.sqrt).dbamp;
-threshold3=(((343/0.1)/fund).reciprocal.ampdb/2.sqrt).dbamp;
+threshold1=(((343/0.05)/fund).reciprocal.ampdb/2.sqrt).dbamp;
+threshold2=(((343/0.05)/fund).reciprocal.ampdb/2.sqrt).dbamp;
+threshold3=(((343/0.05)/fund).reciprocal.ampdb/2.sqrt).dbamp;
 
 		sig1=HPF.ar(sig1,80);
 		sig2=HPF.ar(sig2, 80);
@@ -398,7 +404,7 @@ pon2=SinOsc.ar(pon,0.25pi).range(0.0001,1).lag(0.1);
 pon3=SinOsc.ar(pon,0.5pi).range(0.0001,1).lag(0.1);
 pon4=SinOsc.ar(pon,0.75pi).range(0.0001,1).lag(0.1);
 
-
+/*(
 Out.ar(0,
 Limiter.ar(LeakDC.ar(FreeVerb.ar(
 	sig1* g_ch1.lag(0.1)*pon1,mix.lag(0.01),room.lag(0.01),mul:gain1)),0.9,0.01)/cloud);
@@ -437,12 +443,13 @@ sig3* g_ch3.lag(0.1)*pon3,mix.lag(0.01),room.lag(0.01),mul:gain3)),0.9,0.01)/clo
 Out.ar(3,
 Limiter.ar(LeakDC.ar(FreeVerb.ar(
 sig3* g_ch4.lag(0.1)*pon4,mix.lag(0.01),room.lag(0.01),mul:gain3)),0.9,0.01)/cloud);
+				)*/
 
 					Out.ar(0,WhiteNoise.ar(0.00001)/cloud);
 					///three channel
-				//	Out.ar(0,Limiter.ar(LeakDC.ar(FreeVerb.ar(sig1,mix.lag(0.01),room.lag(0.01),mul:gain1*loc1.abs)),0.9,0.01));
-				//	Out.ar(1,Limiter.ar(LeakDC.ar(FreeVerb.ar(sig2,mix.lag(0.01),room.lag(0.01),mul:gain2*loc2.abs)),0.9,0.01));
-				//	Out.ar(2,Limiter.ar(LeakDC.ar(FreeVerb.ar(sig3,mix.lag(0.01),room.lag(0.01),mul:gain3*loc3.abs)),0.9,0.01));
+Out.ar(0,Limiter.ar(LeakDC.ar(FreeVerb.ar(sig1,mix.lag(0.01),room.lag(0.01),mul:gain1*mx.lag(0.01))),0.9,0.01));
+Out.ar(1,Limiter.ar(LeakDC.ar(FreeVerb.ar(sig2,mix.lag(0.01),room.lag(0.01),mul:gain2*my.lag(0.01))),0.9,0.01));
+Out.ar(0,Limiter.ar(LeakDC.ar(FreeVerb.ar(sig3,mix.lag(0.01),room.lag(0.01),mul:gain3*mz.lag(0.01))),0.9,0.01)!2);
 
 					////azimuthal multichannel expansion
 
