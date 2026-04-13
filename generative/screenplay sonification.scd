@@ -452,9 +452,16 @@ control1=SinOsc.ar(freq1,phase:phasex,mul:amp1);
 control2=SinOsc.ar(freq2,phase:phasey,mul:amp2);
 control3=SinOsc.ar(freq3,phase:phasez,mul:amp3);
 
-ds1=(LPF.ar((Osc.ar(~w1.bufnum,f1+1,phase:phasex,mul:level).abs*SinOsc.ar(f1+1,phase:phasex)),f1*2.pow(low.lag(0.01)/992),g1));
-ds2=(LPF.ar((Osc.ar(~w1.bufnum,f2+1,phase:phasey,mul:level).abs*SinOsc.ar(f2+1,phase:phasey)),f2*2.pow(low.lag(0.01)/992),g2));
-ds3=(LPF.ar((Osc.ar(~w1.bufnum,f3+1,phase:phasez,mul:level).abs*SinOsc.ar(f3+1,phase:phasez)),f3*2.pow(low.lag(0.01)/992),g3));
+				//rectifier mod
+	// ds1=(LPF.ar((Osc.ar(~w1.bufnum,f1+1,phase:phasex,mul:level).abs*SinOsc.ar(f1+1,phase:phasex)),f1*2.pow(low.lag(0.01)/992),g1));
+	// ds2=(LPF.ar((Osc.ar(~w1.bufnum,f2+1,phase:phasey,mul:level).abs*SinOsc.ar(f2+1,phase:phasey)),f2*2.pow(low.lag(0.01)/992),g2));
+	// ds3=(LPF.ar((Osc.ar(~w1.bufnum,f3+1,phase:phasez,mul:level).abs*SinOsc.ar(f3+1,phase:phasez)),f3*2.pow(low.lag(0.01)/992),g3));
+
+
+ds1=BPF.ar(BrownNoise.ar(qq.sqrt.reciprocal),SinOsc.ar(freq1,phasex,amp1).range(f1-1,f1+1),qq,g1);
+ds2=BPF.ar(BrownNoise.ar(qq.sqrt.reciprocal),SinOsc.ar(freq2,phasey,amp2).range(f2-1,f2+1),qq,g2);
+ds3=BPF.ar(BrownNoise.ar(qq.sqrt.reciprocal),SinOsc.ar(freq3,phasez,amp3).range(f3-1,f3+1),qq,g3);
+
 
 sig1=(LPF.ar((Osc.ar(~w1.bufnum,freq1,phase:phasex,mul:level).abs*SinOsc.ar(freq1,phase:phasex)),freq1*2.pow(low.lag(0.01)/992),amp1).range(panx*amp1,amp1)+(ds1));
 sig2=(LPF.ar((Osc.ar(~w1.bufnum,freq2,phase:phasey,mul:level).abs*SinOsc.ar(freq2,phase:phasey)),freq2*2.pow(low.lag(0.01)/992),amp2).range(pany*amp2,amp2)+(ds2));
@@ -605,7 +612,7 @@ nn=nn+1;
 }).add;);
 (
 (
-	~synth=Synth.new(\synth,[\gain,1,\drive,992*3,\fu,256,\sc,992*1,\low,992*1,
+	~synth=Synth.new(\synth,[\gain,1,\drive,992*3,\fu,256,\sc,992*0,\low,992*1,
 	\pan,(992*16).neg,\mix,0.6,\room,0.6,\mm,0,\m,2,\tone1,3,\tone2,5,\tone3,6,
 	\pann,(992*1.neg).neg,\x,1,\a,1,\spread,1,\pon,5,
 	\pneuma,0,\namp,1,\drone,36.neg,\panx,0,\pany,0,\panz,0,\dron,0]).register;);
