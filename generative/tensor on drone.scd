@@ -159,14 +159,15 @@ wt = signal.asWavetable;
 		~scaleee=10.collect{nn=nn+1;Scale.minorPentatonic.performDegreeToKey(nn,12)};
 			}.value;
 		);
+				~sc=[~scalee,~scaleee];
 		////sound
 
 (
 SynthDef.new(\synth,{
 
 	arg gain=1,low=992,tone1=0,tone2=0,tone3=0,x=1,pan=1,mix=0.3,a=1,room=0.5,fund_tone=1,pon=0.01,namp=1,
-				drive=1,spread=1,drone_amp=1,pann=0,drone=1,xx=1,yy=1,zz=1,
-				pneuma=0,panx=1,pany=1,panz=1,sc=1,dron=1,az=0,el=0;
+				drive=1,spread=1,drone_amp=1,pann=0,drone=1,xx=1,yy=1,zz=1,qq=0.0000001,
+				pneuma=0,panx=1,pany=1,panz=1,sc=1,dron=1,az=0,el=0,qqq=0;
 
 	var rq=1,cloud=3,attack,decay,curve,band,azf=0,elf=0,q,r1,r2,r3,sq1,sq2,sq3,rotationx,rotationy,rotationz,core=(9/8).rand;
 	var lamdoma,freq1,freq2,freq3,fund,amp1,amp2,amp3,alpha,cell_az,cell_el,x_pos,y_pos,control1,control2,control3;
@@ -197,11 +198,11 @@ lamdoma=(x.lag(0.001)+a.lag(0.001))/x.lag(0.001);
 				tone2=sph_object.y;
 				tone3=sph_object.z;
 
-				tonb=2.pow(dron.lag(0.0001)/992);
+				//tonb=2.pow(dron.lag(0.0001)/992);
 
-ton1=2.pow(Select.kr(tone1.round(1), ~scaleee) /12).round(0.0001)*tonb;
-ton2=2.pow(Select.kr(tone2.round(1), ~scaleee) /12).round(0.0001)*tonb;
-ton3=2.pow(Select.kr(tone3.round(1), ~scaleee) /12).round(0.0001)*tonb;
+ton1=2.pow(Select.kr(tone1.lag(0.01), Select.kr(qqq.lag(0.01),~sc)) /12).round(0.0001)*2.pow(dron.lag(0.01)/992);
+ton2=2.pow(Select.kr(tone2.lag(0.01), Select.kr(qqq.lag(0.01),~sc)) /12).round(0.0001)*2.pow(dron.lag(0.01)/992);
+ton3=2.pow(Select.kr(tone3.lag(0.01), Select.kr(qqq.lag(0.01),~sc)) /12).round(0.0001)*2.pow(dron.lag(0.01)/992);
 
 
 				lfon=2.pow(pann/992);
@@ -340,9 +341,9 @@ control3=SinOsc.ar(freq3,phase:phasez,mul:amp3);
 	// ds3=(LPF.ar((Osc.ar(~w1.bufnum,f3+1,phase:phasez,mul:level).abs*SinOsc.ar(f3+1,phase:phasez)),f3*2.pow(low.lag(0.01)/992),g3));
 
 
-ds1=BPF.ar(BrownNoise.ar(qq.sqrt.reciprocal),SinOsc.ar(freq1,phasex,amp1).range(f1-1,f1+1),qq,g1);
-ds2=BPF.ar(BrownNoise.ar(qq.sqrt.reciprocal),SinOsc.ar(freq2,phasey,amp2).range(f2-1,f2+1),qq,g2);
-ds3=BPF.ar(BrownNoise.ar(qq.sqrt.reciprocal),SinOsc.ar(freq3,phasez,amp3).range(f3-1,f3+1),qq,g3);
+ds1=BPF.ar(BrownNoise.ar(qq.sqrt.reciprocal),f1,qq,g1);
+ds2=BPF.ar(BrownNoise.ar(qq.sqrt.reciprocal),f2,qq,g2);
+ds3=BPF.ar(BrownNoise.ar(qq.sqrt.reciprocal),f3,qq,g3
 
 sig1=(LPF.ar((Osc.ar(~w1.bufnum,freq1,phase:phasex,mul:level).abs*SinOsc.ar(freq1,phase:phasex)),freq1*2.pow(low.lag(0.01)/992),amp1).range(panx*amp1,amp1)+(ds1));
 sig2=(LPF.ar((Osc.ar(~w1.bufnum,freq2,phase:phasey,mul:level).abs*SinOsc.ar(freq2,phase:phasey)),freq2*2.pow(low.lag(0.01)/992),amp2).range(pany*amp2,amp2)+(ds2));
@@ -541,7 +542,9 @@ m3=m3+1;
 			~sphpan=(992*5).neg;
 			~bband=(992*7).neg;
 			~drn=0;
+			~qq=0.0000001;
 			~oct=24.neg;
+				~qqq=0;
 		//	thisThread.randSeed = 123;
 
 ~str1 = Routine({
@@ -563,7 +566,7 @@ m3=m3+1;
 	~synth=Synth.new(\synth,[\gain,~gg,\drive,~drive,\fu,128,\sc,992,//~magnitude.lag(0.01).[i].round(1).max(1).asInteger,
 						\low,~pass,\pan,~bband,\mix,~mox,\room,1,\pann,~sphpan,\x,3,\a,1,\spread,~panwidth,
 						\pon,~pon,\pneuma,0,\namp,1,\drone,~oct,\az,~azimuth.lag(0.01).[i],\el,~elevation.lag(0.01).[i]
-						,\panx,~drn,\pany,~drn,\panz,~drn,\dron,~tonb,
+						,\panx,~drn,\pany,~drn,\panz,~drn,\dron,~tonb,\qq,~qq,\qqq,1.rand,
 \xx,~cart.lag(0.01).[i].[0].round(0.00001), \yy,~cart.lag(0.01).[i].[1].round(0.00001),\zz,~cart.lag(0.00001).[i].[2].round(0.00001)]).register;
 
 

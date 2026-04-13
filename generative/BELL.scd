@@ -120,7 +120,7 @@ wt = signal.asWavetable;
 (
 			{
 				var nn=1.neg;
-		~scale=10.collect{nn=nn+1;Scale.majorPentatonic.performDegreeToKey(nn,12)};
+		~scalee=10.collect{nn=nn+1;Scale.majorPentatonic.performDegreeToKey(nn,12)};
 			}.value;
 		);
 
@@ -130,6 +130,7 @@ wt = signal.asWavetable;
 		~scalee=10.collect{nn=nn+1;Scale.minorPentatonic.performDegreeToKey(nn,12)};
 			}.value;
 		);
+				~sc=[~scalee,~scaleee];
 		////sound
 
 (
@@ -137,7 +138,7 @@ SynthDef.new(\synth,{
 
 	arg gain=1,cur=4.neg,low=992,tone1=0,tone2=0,tone3=0,x=1,pan=1,mix=0.3,a=1,panx=1,pany=1,panz=1,room=0.5,m=2,pon=1,
 				fu=32,drive=1,spread=1,drone_amp=1,pann=0,az=0,el=0,azr=0,dron=0,drone=1,theta=0,rx=0,ry=0,rz=0,
-				pneuma1=0,pneuma2=0,pneuma3=0,namp1=1,namp2=1,namp3=1,sc=14;
+				pneuma1=0,pneuma2=0,pneuma3=0,namp1=1,namp2=1,namp3=1,sc=14,qq=0.0000001,qqq=0;
 
 	var rq=1,cloud=1,attack,decay,curve,band,azf=0,elf=0,q,r1,r2,r3,sq1,sq2,sq3,rotationx,rotationy,rotationz,core=(9/8).rand;
 	var lamdoma,freq1,freq2,freq3,fund,amp1,amp2,amp3,alpha,cell_az,cell_el,x_pos,y_pos,control1,control2,control3;
@@ -155,10 +156,9 @@ SynthDef.new(\synth,{
 
 fund=fu*(9/8);
 lamdoma=(x.lag(0.01)+a.lag(0.01))/x.lag(0.01);
-
-ton1=2.pow(Select.kr(tone1.lag(0.01), ~scale) /12).round(0.0001)*2.pow(dron.lag(0.01)/992);
-ton2=2.pow(Select.kr(tone2.lag(0.01), ~scale) /12).round(0.0001)*2.pow(dron.lag(0.01)/992);
-ton3=2.pow(Select.kr(tone3.lag(0.01), ~scale) /12).round(0.0001)*2.pow(dron.lag(0.01)/992);
+ton1=2.pow(Select.kr(tone1.lag(0.01), Select.kr(qqq.lag(0.01),~sc)) /12).round(0.0001)*2.pow(dron.lag(0.01)/992);
+ton2=2.pow(Select.kr(tone2.lag(0.01), Select.kr(qqq.lag(0.01),~sc)) /12).round(0.0001)*2.pow(dron.lag(0.01)/992);
+ton3=2.pow(Select.kr(tone3.lag(0.01), Select.kr(qqq.lag(0.01),~sc)) /12).round(0.0001)*2.pow(dron.lag(0.01)/992);
 
 		//		ton=2.pow((tone.lag(0.01))/56).round(0.0001)*2.pow(dron.lag(0.01)/56);
 				env=EnvGen.ar(Env.perc(0.01,32,curve:cur),doneAction:2);
@@ -315,10 +315,9 @@ control3=SinOsc.ar(freq3,phase:phasez,mul:amp3);
 	// ds2=(LPF.ar((Osc.ar(~w1.bufnum,f2+1,phase:phasey,mul:level).abs*SinOsc.ar(f2+1,phase:phasey)),f2*2.pow(low.lag(0.01)/992),g2));
 	// ds3=(LPF.ar((Osc.ar(~w1.bufnum,f3+1,phase:phasez,mul:level).abs*SinOsc.ar(f3+1,phase:phasez)),f3*2.pow(low.lag(0.01)/992),g3));
 
-
-ds1=BPF.ar(BrownNoise.ar(qq.sqrt.reciprocal),SinOsc.ar(freq1,phasex,amp1).range(f1-1,f1+1),qq,g1);
-ds2=BPF.ar(BrownNoise.ar(qq.sqrt.reciprocal),SinOsc.ar(freq2,phasey,amp2).range(f2-1,f2+1),qq,g2);
-ds3=BPF.ar(BrownNoise.ar(qq.sqrt.reciprocal),SinOsc.ar(freq3,phasez,amp3).range(f3-1,f3+1),qq,g3);
+ds1=BPF.ar(BrownNoise.ar(qq.sqrt.reciprocal),f1,qq,g1);
+ds2=BPF.ar(BrownNoise.ar(qq.sqrt.reciprocal),f2,qq,g2);
+ds3=BPF.ar(BrownNoise.ar(qq.sqrt.reciprocal),f3,qq,g3);
 
 
 				//sig
@@ -575,6 +574,8 @@ m3=m3+1;
 			\az,Pbrown(pi.neg,pi,0.2pi,inf),
 			\el,Pbrown(0.5pi.neg,0.5pi,0.1pi,inf),
 			\dron,496,
+				\qq,Pexprand(0.00000001,0.0001,inf),
+				\qqq,Prand([0,1],inf),
 				\cur,Pbrown(2.neg,8.neg,1,inf),
 			\drone,36.neg,
 			\sc,Pbrown(0,992,992/32,inf)
