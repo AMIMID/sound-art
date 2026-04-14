@@ -13,7 +13,7 @@
 s.options.numWireBufs  = 1024*2;
 s.options.numOutputBusChannels=8;
 s.options.numInputBusChannels=0;
-s.options.memSize = 8192*4;
+s.options.memSize = 8192*16;
 s.options.blockSize = 64;
 s.options.maxNodes = 1024 * 2;
 //s.makeGui(w);
@@ -142,7 +142,7 @@ SynthDef.new(\synth,{
 				fu=32,drive=1,spread=1,drone_amp=1,pann=0,az=0,el=0,azr=0,dron=0,drone=1,theta=0,rx=0,ry=0,rz=0,
 				pneuma1=0,pneuma2=0,pneuma3=0,namp1=1,namp2=1,namp3=1,sc=14,qq=0.0000001,qqq=0,spirit=1;
 
-	var rq=1,cloud=1,attack,decay,curve,band,azf=0,elf=0,q,r1,r2,r3,sq1,sq2,sq3,rotationx,rotationy,rotationz,core=(9/8).rand;
+	var rq=1,cloud=5,attack,decay,curve,band,azf=0,elf=0,q,r1,r2,r3,sq1,sq2,sq3,rotationx,rotationy,rotationz,core=(9/8).rand;
 	var lamdoma,freq1,freq2,freq3,fund,amp1,amp2,amp3,alpha,cell_az,cell_el,x_pos,y_pos,control1,control2,control3;
 	var sig1,sig2,bank=6,out1,out2,band_osc1,band_osc2,threshold1,threshold2,threshold3,phase1,phase2,phase3;
 	var band_osc3,band_osc4,band_osc5,band_osc6,sig3,out3,cell_tria,b_x,b_y,b_z,polytope,gain1,gain2,gain3,env,azimuth,elevation;
@@ -189,8 +189,7 @@ ton3=2.pow(Select.kr(tone3.lag(0.01), Select.kr(qqq.lag(0.01),~sc)) /12).round(0
 //				sph_object=Cartesian(r.b,r.c,r.d);
 				sph_object=spr;
 
-
-
+	cloud.do{
 				axis=Spherical(sc,(sph_object.theta+azf).wrap(pi,pi.neg),  (sph_object.phi+elf).wrap((pi/2),(pi/2).neg));
 	//		laxis=Spherical(lamdoma,(sph_object.theta+azf).wrap(pi,pi.neg),  (sph_object.phi+elf).wrap((pi/2),(pi/2).neg));
 
@@ -368,12 +367,14 @@ threshold3=(((343/0.15)/fund).reciprocal.ampdb/2.sqrt).dbamp;
 					gain2=gain*rq2.sqrt.reciprocal*cloud.reciprocal*10*namp2*env;
 					gain3=gain*rq3.sqrt.reciprocal*cloud.reciprocal*10*namp3*env;
 
-						cloud.do{
 
 					//sp= LFNoise2.ar(6).range(spread*pi.neg, spread*pi);
 					//spl= LFNoise2.ar(6).range(spread*(pi/2).neg, spread*(pi/2));
+
+
 					sp=azf;
 					spl=elf;
+
 
 g_ch1 = (
    (Spherical(mx.lag(0.01),(polytope.theta+sp).wrap(pi,pi.neg),(polytope.phi+spl).wrap(35.264390.degrad,35.264390.degrad.neg)).x *
@@ -461,11 +462,11 @@ Out.ar(3,
 Limiter.ar(LeakDC.ar(FreeVerb.ar(
 sig3* g_ch4.lag(0.1)*pon4,mix.lag(0.01),room.lag(0.01),mul:gain3)),0.9,0.01)/cloud);
 
-		Out.ar(0,WhiteNoise.ar(0.00001)!4);
+		Out.ar(0,WhiteNoise.ar(0.00001/cloud)!4);
 					///three channel
-Out.ar(5,Limiter.ar(LeakDC.ar(FreeVerb.ar(sig1,mix.lag(0.01),room.lag(0.01),mul:gain1*mx.lag(0.01))),0.9,0.01));
-Out.ar(6,Limiter.ar(LeakDC.ar(FreeVerb.ar(sig2,mix.lag(0.01),room.lag(0.01),mul:gain2*my.lag(0.01))),0.9,0.01));
-Out.ar(7,Limiter.ar(LeakDC.ar(FreeVerb.ar(sig3,mix.lag(0.01),room.lag(0.01),mul:gain3*mz.lag(0.01))),0.9,0.01));
+Out.ar(5,Limiter.ar(LeakDC.ar(FreeVerb.ar(sig1,mix.lag(0.01),room.lag(0.01),mul:gain1*mx.lag(0.01))),0.9,0.01)/cloud);
+Out.ar(6,Limiter.ar(LeakDC.ar(FreeVerb.ar(sig2,mix.lag(0.01),room.lag(0.01),mul:gain2*my.lag(0.01))),0.9,0.01)/cloud);
+Out.ar(7,Limiter.ar(LeakDC.ar(FreeVerb.ar(sig3,mix.lag(0.01),room.lag(0.01),mul:gain3*mz.lag(0.01))),0.9,0.01)/cloud);
 					////azimuthal multichannel expansion
 
 //Out.ar(0,PanAz.ar(2,Limiter.ar(LeakDC.ar(FreeVerb.ar(sig1,mix.lag(0.01),room.lag(0.01),mul:gain1*loc1.abs)),0.9,0.01),SinOsc.ar(panx,phasex),width:spread));	//Out.ar(0,PanAz.ar(2,Limiter.ar(LeakDC.ar(FreeVerb.ar(sig2,mix.lag(0.01),room.lag(0.01),mul:gain2*loc2.abs)),0.9,0.01),SinOsc.ar(pany,phasey),width:spread));
@@ -558,13 +559,13 @@ m3=m3+1;
 
 			(
 		~aa=Pdef(\1, Pbind(\instrument, \synth,
-			\dur,Pseq(~dur*16,inf),
-			\gain,1/1.2,
+			\dur,Pseq(~dur*32,inf),
+			\gain,10,
 			\drive,992*2,
-		\fu,256,
-				\tone1,Pbrown(0,5,1,inf),
-			\tone2,Pbrown(0,5,1,inf),
-			\tone3,Pbrown(0,5,1,inf),
+		\fu,128,
+				\tone1,Pbrown(0,10,1,inf),
+			\tone2,Pbrown(0,10,1,inf),
+			\tone3,Pbrown(0,10,1,inf),
 			\low,Pbrown(0,(992*3),496/4,inf),
 			\pan,(992*16).neg,
 		\mix,Pexprand(0.6,1,inf),
@@ -572,22 +573,22 @@ m3=m3+1;
 			\room,Pexprand(0.6,1,inf),
 				\m,Prand([1,2,3],inf),
 				\pann,Pbrown((992*5).neg,(992*7),992/4,inf),
-			\pon,Pbrown(0.001,10,0.999,inf),
+			\pon,Pbrown(0.001,6,0.999,inf),
 			\pneuma1,0,\pneuma2,0,\pneuma3,0,
-			\x,2,
+			\x,1,
 			\a,1,
-				\spirit,Pexprand(0.1,1),
+				\spirit,Pexprand(0.01,1),
 			\panx,Pbrown(0.05.neg,0,0.001,inf),
 			\pany,Pbrown(0.05.neg,0,0.001,inf),
 			\panz,Pbrown(0.05.neg,0,0.001,inf),
 			\spread,1,\namp1,1,\namp2,1,\namp3,1,
 			\az,Pbrown(pi.neg,pi,0.2pi,inf),
 			\el,Pbrown(0.5pi.neg,0.5pi,0.1pi,inf),
-			\dron,496,
-				\qq,Pexprand(0.00000001,0.0001,inf),
+			\dron,992*2,
+				\qq,Pexprand(0.0001,0.01,inf),
 				\qqq,Prand([0,1],inf),
-				\cur,Pbrown(2.neg,8.neg,1,inf),
-			\drone,36.neg,
+				\cur,Pbrown(2.neg,5.neg,1,inf),
+			\drone,24.neg,
 			\sc,Pbrown(0,992,992/32,inf)
 	)));
 
