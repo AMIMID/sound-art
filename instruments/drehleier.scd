@@ -968,7 +968,7 @@ MIDIdef.cc(\midi_slider8,{ |val, num, chan, src|
 	(
 MIDIdef.cc(\midi_slider9,{ |val, num, chan, src|
 		var th;
-	th=val.linlin(0,127,1/2,32).round(1/7);
+	th=val.linlin(0,127,1/4,32).round(1/7);
 		th.postln;
 	TempoClock.default.tempo_(th);
 },32);
@@ -1084,7 +1084,7 @@ m3=m3+1;
 
 
 
-		TempoClock.default.tempo_(2);
+		TempoClock.default.tempo_(1/7);
 
 	});
 	Tdef(\drone).play;
