@@ -514,7 +514,7 @@ Out.ar(0,Limiter.ar(LeakDC.ar(FreeVerb.ar(sig3,mix.lag(0.01),room.lag(0.01),mul:
 		\mix,0.3,\drone_amp,1,\room,0.5,\m,1,\pann,(992*16).neg,\pon,0.001,\pneuma,0, \namp,1,
 			\x,1,\a,1,\panx,0.01,\pany,0.01,\panz,0.01,\spread,1,
 			\az,pi/4,\el,pi/8,\azr,992,\dron,0,\drone,1,\sc,1]).register;
-)
+);
 
 		(
 MIDIClient.init;
@@ -533,7 +533,7 @@ MIDIdef.cc(\midi_pot1,{ |val, num, chan, src|
 				(
 MIDIdef.cc(\midi_pot2,{ |val, num, chan, src|
          var low;
-		low=val.linlin(0,127,(992*2).neg,(992*5)).round(1).asInteger;
+		low=val.linlin(0,127,(992*2).neg,(992*3)).round(1).asInteger;
 		low.postln;
 		if(~synth.isPlaying,{~synth.set(\low,low)});
 },2);
@@ -958,7 +958,7 @@ MIDIdef.cc(\midi_slider7,{ |val, num, chan, src|
 (
 MIDIdef.cc(\midi_slider8,{ |val, num, chan, src|
 		var th;
-	th=val.linlin(0,127,0.0000001,0.0001).round(0.0000001);
+	th=val.linlin(0,127,0.000001,0.00001).round(0.00000001);
 		th.postln;
 	if(~synth.isPlaying,{~synth.set(\qq,th)});
 },31);
