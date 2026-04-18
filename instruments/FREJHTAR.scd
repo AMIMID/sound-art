@@ -163,9 +163,9 @@ lamdoma=(x.lag(0.01)+a.lag(0.01))/x.lag(0.01);
 //ton2=2.pow(Select.kr(tone2.lag(0.01), Select.kr(qqq.lag(0.01),~sc)) /12).round(0.0001)*2.pow(dron.lag(0.01)/992);
 //ton3=2.pow(Select.kr(tone3.lag(0.01), Select.kr(qqq.lag(0.01),~sc)) /12).round(0.0001)*2.pow(dron.lag(0.01)/992);
 
-ton1=2.pow(tone1.lag(0.01) /16256).round(0.0001)*2.pow(dron.lag(0.01)/992);
-ton2=2.pow(tone2.lag(0.01)/16256).round(0.0001)*2.pow(dron.lag(0.01)/992);
-ton3=2.pow(tone3.lag(0.01) /16256).round(0.0001)*2.pow(dron.lag(0.01)/992);
+ton1=2.pow(tone1.lag(0.01) /992).round(0.0001)*2.pow(dron.lag(0.01)/992);
+ton2=2.pow(tone2.lag(0.01)/992).round(0.0001)*2.pow(dron.lag(0.01)/992);
+ton3=2.pow(tone3.lag(0.01) /992).round(0.0001)*2.pow(dron.lag(0.01)/992);
 		//		ton=2.pow((tone.lag(0.01))/56).round(0.0001)*2.pow(dron.lag(0.01)/56);
 
 //	env=EnvGen.ar(Env.sine(decay),gate:gate);
@@ -562,9 +562,9 @@ SynthDef.new(\synthd,{
 fund=fu*(9/8);
 lamdoma=(x.lag(0.01)+a.lag(0.01))/x.lag(0.01);
 
-ton1=2.pow(0 /16256).round(0.0001)*2.pow(dron.lag(0.01)/992);
-ton2=2.pow(0/16256).round(0.0001)*2.pow(dron.lag(0.01)/992);
-ton3=2.pow(0 /16256).round(0.0001)*2.pow(dron.lag(0.01)/992);
+ton1=2.pow(0 /992).round(0.0001)*2.pow(dron.lag(0.01)/992);
+ton2=2.pow(0/992).round(0.0001)*2.pow(dron.lag(0.01)/992);
+ton3=2.pow(0 /992).round(0.0001)*2.pow(dron.lag(0.01)/992);
 
 		//		ton=2.pow((tone.lag(0.01))/56).round(0.0001)*2.pow(dron.lag(0.01)/56);
 
@@ -938,7 +938,7 @@ Out.ar(6,Limiter.ar(LeakDC.ar(FreeVerb.ar(sig3,mix.lag(0.01),room.lag(0.01),mul:
 
 		(
 
-~synthd=Synth.new(\synthd,[\gain,1,\drive,992*2,\fu,128,\tone1,0,\tone2,0,\tone3,0,\low,992*0,\pan,(992*16).neg,
+~synthd=Synth.new(\synthd,[\gain,1,\drive,992*2,\fu,256,\tone1,0,\tone2,0,\tone3,0,\low,992*0,\pan,(992*16).neg,
 		\mix,0.3,\drone_amp,1,\room,0.5,\m,1,\pann,(992*16).neg,\pon,0.001,\pneuma,0, \namp,1,
 			\x,1,\a,1,\panx,0.01,\pany,0.01,\panz,0.01,\spread,1,
 			\az,pi/4,\el,pi/8,\azr,992,\dron,0,\drone,1,\sc,1]).register;
@@ -1416,7 +1416,7 @@ MIDIdef.cc(\midi_slider9,{ |val, num, chan, src|
 						thisThread.randSeed = ~val;
 		//	rhythm=Spherical(2,((1/992)*pi)*992.rand2,((1/496)*pi)*992.rand2);
 					//melody=Spherical(10,(0.2pi)*5.rand2,(0.1pi)*5.rand2);
-					rhythm=exp(Complex(0,1)*((1/16256)*2pi)*16256.rand2);
+					rhythm=exp(Complex(0,1)*((1/992)*2pi)*992.rand2);
 					az=Complex(1,rhythm.real).theta*4;   el=Complex(1,rhythm.imag).theta*2;
 					melody=Spherical(16256,az,el);
 				r1=2.pow(rhythm.real.abs).round(time);  r2=2.pow(rhythm.imag.abs).round(time); // r3=2.pow(rhythm.z).round(time);
