@@ -110,14 +110,7 @@ wt = signal.asWavetable;
 );
 
 
-		/////distortion table
-		(
-		~transfer_function= Env([0.8.neg,0,0.8],[1,1],[8,8.neg]).asSignal(1024);
-			~transfer_function=~transfer_function+(Signal.sineFill(~signalSize,~array,~ph)/8);
-		~transfer_function=~transfer_function.normalize;
-		//	~transfer_function.plot;
-			~dist=Buffer.loadCollection(s,~transfer_function.asWavetableNoWrap);
-		);
+		/////scales
 (
 			{
 				var nn=1.neg;
@@ -140,7 +133,7 @@ SynthDef.new(\synth,{
 	arg gain=1,low=992,tone1=0,tone2=0,tone3=0,x=1,pan=1,mix=0.3,a=1,panx=1,pany=1,panz=1,room=0.5,m=2,pon=1,
 				fu=32,drive=1,spread=1,drone_amp=1,pann=0,az=0,el=0,azr=0,dron=0,drone=1,theta=0,rx=0,ry=0,rz=0,
 				pneuma1=0,pneuma2=0,pneuma3=0,namp1=1,namp2=1,namp3=1,sc=14,qq=0.0000001,qqq=0,spirit=0,
-				attack=0.01,decay=4,curve=2.neg,gate=1;
+				attack=0.01,decay=4,curve=2.neg,gate=1,amp=1,waveFreq=1,waveSpeed=1;
 
 	var rq=1,cloud=1,band,azf=0,elf=0,q,r1,r2,r3,sq1,sq2,sq3,rotationx,rotationy,rotationz,core=(9/8).rand;
 	var lamdoma,freq1,freq2,freq3,fund,amp1,amp2,amp3,alpha,cell_az,cell_el,x_pos,y_pos,control1,control2,control3;
@@ -154,7 +147,8 @@ SynthDef.new(\synth,{
 	var r_axis, r_v, r, axisr,spr,rot,i,j,k,level=200,spx,spy,spz;
 	var g_ch1,g_ch2,g_ch3,g_ch4,chan=~chan;
 	var gn ,g_sum,g_avg ,ton1,ton2,ton3,laxis,sp,spl,g11,g22,g33,g44;
-	var pon1,pon2,pon3,pon4;
+	var pon1,pon2,pon3,pon4,wave,angphi,angtheta;
+
 
 fund=fu*(9/8);
 lamdoma=(x.lag(0.01)+a.lag(0.01))/x.lag(0.01);
@@ -256,7 +250,6 @@ magqx=(((Complex(cos(((polytope.theta+mod_anglex)*mq).wrap(pi.neg,pi)),cos(((pol
 (Complex(cos((polytope.phi.round(0.00001)).wrap((pi/2).neg,(pi/2))),cos((polytope.phi.round(0.00001)).wrap((pi/2).neg,(pi/2))))))).rho/(2.sqrt);
 
 
-
  magqy=((((Complex(sin(((polytope.theta.round(0.00001)+mod_angley)*mq).wrap(pi.neg,pi)),
 sin(((polytope.theta.round(0.00001)+mod_angley)*mq).wrap(pi.neg,pi))))*
 (Complex(sin((polytope.phi.round(0.00001)*(mq-1)).wrap((pi/2).neg,(pi/2))),
@@ -265,7 +258,11 @@ sin((polytope.phi.round(0.00001)*(mq-1)).wrap((pi/2).neg,(pi/2)))))*
 cos((polytope.phi.round(0.00001)).wrap((pi/2).neg,(pi/2))))))).rho/(2.sqrt));
 	);
 
-					mx=(Cartesian(magx,0,0).rho);
+					 angtheta = polytope.theta;
+     angphi = polytope.phi;
+	wave = amp*sin((waveFreq * angtheta) + (waveFreq * angphi )- waveSpeed);
+
+					mx=(Cartesian(wave,0,0).rho);
 					my=(Cartesian(0,magy,0).rho);
 					mz=(Cartesian(0,0,magz).rho);
 					mag=(Cartesian(mx,my,mz)) ;
@@ -546,8 +543,8 @@ Out.ar(6,Limiter.ar(LeakDC.ar(FreeVerb.ar(sig3,mix.lag(0.01),room.lag(0.01),mul:
 SynthDef.new(\synthd,{
 
 	arg gain=1,low=992,tone1=0,tone2=0,tone3=0,x=1,pan=1,mix=0.3,a=1,panx=1,pany=1,panz=1,room=0.5,m=2,pon=1,
-				fu=32,drive=1,spread=1,drone_amp=1,pann=0,az=0,el=0,azr=0,dron=0,drone=1,theta=0,rx=0,ry=0,rz=0,
-				pneuma1=0,pneuma2=0,pneuma3=0,namp1=1,namp2=1,namp3=1,sc=14,qq=0.0000001,qqq=0,spirit=0;
+				fu=32,drive=1,spread=1,drone_amp=1,pann=0,az=0,el=0,azr=0,dron=0,drone=1,theta=0,rx=0,ry=0,rz=0,	pneuma1=0,pneuma2=0,pneuma3=0,namp1=1,namp2=1,namp3=1,sc=14,qq=0.0000001,qqq=0,
+spirit=0,amp=1,waveFreq=1,waveSpeed=1;
 
 	var rq=1,cloud=1,attack,decay,curve,band,azf=0,elf=0,q,r1,r2,r3,sq1,sq2,sq3,rotationx,rotationy,rotationz,core=(9/8).rand;
 	var lamdoma,freq1,freq2,freq3,fund,amp1,amp2,amp3,alpha,cell_az,cell_el,x_pos,y_pos,control1,control2,control3;
@@ -561,7 +558,7 @@ SynthDef.new(\synthd,{
 	var r_axis, r_v, r, axisr,spr,rot,i,j,k,level=200,spx,spy,spz;
 	var g_ch1,g_ch2,g_ch3,g_ch4,chan=~chan;
 	var gn ,g_sum,g_avg ,ton1,ton2,ton3,laxis,sp,spl,g11,g22,g33,g44;
-	var pon1,pon2,pon3,pon4;
+	var pon1,pon2,pon3,pon4,wave,angphi,angtheta;
 
 fund=fu*(9/8);
 lamdoma=(x.lag(0.01)+a.lag(0.01))/x.lag(0.01);
@@ -662,8 +659,11 @@ sin((polytope.phi.round(0.00001)*(mq-1)).wrap((pi/2).neg,(pi/2)))))*
 (Complex(cos((polytope.phi.round(0.00001)).wrap((pi/2).neg,(pi/2))),
 cos((polytope.phi.round(0.00001)).wrap((pi/2).neg,(pi/2))))))).rho/(2.sqrt));
 	);
+	 angtheta = polytope.theta;
+     angphi = polytope.phi;
+	wave = amp*sin((waveFreq * angtheta) + (waveFreq * angphi )- waveSpeed);
 
-					mx=(Cartesian(magx,0,0).rho);
+					mx=(Cartesian(wave,0,0).rho);
 					my=(Cartesian(0,magy,0).rho);
 					mz=(Cartesian(0,0,magz).rho);
 					mag=(Cartesian(mx,my,mz)) ;
@@ -1317,6 +1317,23 @@ a.postln;
 );
 
 (
+									(
+MIDIdef.cc(\midi_seq_pot1,{ |val, num, chan, src|
+         var s2;
+					s2=val.linlin(0,127,1,10).round(1).asInteger;
+		s2.postln;
+			if(~synthd.isPlaying,{~synthd.set(\waveSpeed,s2)});
+},17);
+						);
+
+				(
+MIDIdef.cc(\midi_seq_pot2,{ |val, num, chan, src|
+         var s2;
+					s2=val.linlin(0,127,1,10).round(1).asInteger;
+		s2.postln;
+			if(~synthd.isPlaying,{~synthd.set(\waveFreq,s2)});
+},18);
+	);
 			(
 MIDIdef.cc(\midi_slider1,{ |val, num, chan, src|
 		var gain;
@@ -1332,7 +1349,7 @@ MIDIdef.cc(\midi_slider2,{ |val, num, chan, src|
 		var th;
 	th=val.linlin(0,127,0.0001,1).round(0.0001);
 		th.postln;
-~ss1=th
+		if(~synthd.isPlaying,{~synthd.set(\amp,th)});
 },25);
 	);
 														(
