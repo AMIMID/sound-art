@@ -428,11 +428,13 @@ g_ch2 = g_ch2.pow(spread.reciprocal);
 g_ch3 = g_ch3.pow(spread.reciprocal);
 g_ch4 = g_ch4.pow(spread.reciprocal);
 
-pon1=SinOsc.ar(pon*lfon,0).range(0.0001,1).lag(0.1);
-pon2=SinOsc.ar(pon*lfon,0.25pi).range(0.0001,1).lag(0.1);
-pon3=SinOsc.ar(pon*lfon,0.5pi).range(0.0001,1).lag(0.1);
-pon4=SinOsc.ar(pon*lfon,0.75pi).range(0.0001,1).lag(0.1);
+//pon1=SinOsc.ar(pon*lfon,0).range(0.0001,1).lag(0.1);
+//pon2=SinOsc.ar(pon*lfon,0.25pi).range(0.0001,1).lag(0.1);
+//pon3=SinOsc.ar(pon*lfon,0.5pi).range(0.0001,1).lag(0.1);
+//pon4=SinOsc.ar(pon*lfon,0.75pi).range(0.0001,1).lag(0.1);
 
+pon1=SinOsc.ar(pon*lfon,0);
+pon2=SinOsc.ar(pon*lfon,90.degrad);
 /*(
 Out.ar(0,
 Limiter.ar(LeakDC.ar(FreeVerb.ar(
@@ -486,10 +488,18 @@ Out.ar(0,Limiter.ar(LeakDC.ar(FreeVerb.ar(sig3,mix.lag(0.01),room.lag(0.01),mul:
 					)*/
 
 	///three channel
-					(
+					/*(
 Out.ar(0,Limiter.ar(LeakDC.ar(FreeVerb.ar(sig1,mix.lag(0.01),room.lag(0.01),mul:gain1*mx.lag(0.01))),0.9,0.01));
 Out.ar(1,Limiter.ar(LeakDC.ar(FreeVerb.ar(sig2,mix.lag(0.01),room.lag(0.01),mul:gain2*my.lag(0.01))),0.9,0.01));
 Out.ar(2,Limiter.ar(LeakDC.ar(FreeVerb.ar(sig3,mix.lag(0.01),room.lag(0.01),mul:gain3*mz.lag(0.01))),0.9,0.01));
+					)*/
+
+										(
+Out.ar(0,PanAz.ar(3,Limiter.ar(LeakDC.ar(FreeVerb.ar(sig1,mix.lag(0.01),room.lag(0.01),mul:gain1*mx.lag(0.01))),0.9,0.01),
+							pon1));
+Out.ar(0,PanAz.ar(3,Limiter.ar(LeakDC.ar(FreeVerb.ar(sig2,mix.lag(0.01),room.lag(0.01),mul:gain2*my.lag(0.01))),0.9,0.01),
+							pon2));
+Out.ar(0,Limiter.ar(LeakDC.ar(FreeVerb.ar(sig3,mix.lag(0.01),room.lag(0.01),mul:gain3*mz.lag(0.01))),0.9,0.01)!3);
 					);
 
 						azf = (azf+(2pi-(2pi/s))).wrap(pi.neg,pi);
