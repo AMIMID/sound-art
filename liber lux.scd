@@ -24,41 +24,55 @@ green = ~controlBus1.getSynchronous;
 )*/
 
 (
-var win,amp1 = 0,amp2 = 0,amp3 = 0;
+var win;
 Window.closeAll;
-    win = Window("RGB Audio Visualizer", Rect(100, 100, 400, 400));
-~v = UserView(win, Rect(0, 0, 400, 400)).front;
+
+~amp1 = 0;
+~amp2 = 0;
+~amp3 = 0;
+
+win = Window("RGB Audio Visualizer", Rect(100, 100, 900, 300));
+~v1 = UserView(win, Rect(0,0,900,300));
 
 a = {
-	var amp1 = Amplitude.ar(InFeedback.ar(4,1),mul:10);
-	var amp2 = Amplitude.ar(InFeedback.ar(5,1),mul:10);
-	var amp3 = Amplitude.ar(InFeedback.ar(6,1),mul:10);
-	SendReply.ar(Impulse.ar(25), '/amp1', amp1);
-		SendReply.ar(Impulse.ar(25), '/amp2', amp2);
-		SendReply.ar(Impulse.ar(25), '/amp3', amp3);
+	var amp1 = Amplitude.ar(InFeedback.ar(4,100));
+	var amp2 = Amplitude.ar(InFeedback.ar(5,100));
+	var amp3 = Amplitude.ar(InFeedback.ar(6,100));
+
+	SendReply.ar(Impulse.ar(24), '/amp1', amp1);
+	SendReply.ar(Impulse.ar(24), '/amp2', amp2);
+	SendReply.ar(Impulse.ar(24), '/amp3', amp3);
 }.play;
 
+// OSC
 OSCdef(\ampt1, { |msg|
 	~amp1 = msg[3];
-	defer { ~v.refresh };
-}, '/amp1', s.addr);
+	defer { ~v1.refresh };
+}, '/amp1');
 
 OSCdef(\ampt2, { |msg|
 	~amp2 = msg[3];
-	defer { ~v.refresh };
-}, '/amp2', s.addr);
+	defer { ~v1.refresh };
+}, '/amp2');
 
 OSCdef(\ampt3, { |msg|
 	~amp3 = msg[3];
-	defer { ~v.refresh };
-}, '/amp3', s.addr);
+	defer { ~v1.refresh };
+}, '/amp3');
 
+// ONE drawFunc
+~v1.drawFunc = {
+	Pen.fillColor = Color(~amp1, ~amp1, ~amp1);
+	Pen.fillRect(Rect(0,0,300,300));
 
-~v.drawFunc=({ |view|
-	    Pen.fillColor = Color(~amp1, ~amp2, ~amp3);
-        Pen.fillRect(view.bounds);
-});
-    win.front;
+	Pen.fillColor = Color(~amp2, ~amp2, ~amp2);
+	Pen.fillRect(Rect(300,0,300,300));
+
+	Pen.fillColor = Color(~amp3, ~amp3, ~amp3);
+	Pen.fillRect(Rect(600,0,300,300));
+};
+
+win.front;
 )
 
 

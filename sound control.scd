@@ -7,6 +7,7 @@
 ~rand.stop;
 s.record;
 Server.killAll
+~synth.free
 (
 (
 s.options.numWireBufs = 1024*2;
@@ -491,8 +492,8 @@ Out.ar(0,Limiter.ar(LeakDC.ar(FreeVerb.ar(sig3,mix.lag(0.01),room.lag(0.01),mul:
 					);
 
 					(
-Out.ar(4,Limiter.ar(LeakDC.ar(FreeVerb.ar(sig1.abs,mix.lag(0.01),room.lag(0.01),mul:gain1*mx.lag(0.01))),0.9,0.01));
-Out.ar(5,Limiter.ar(LeakDC.ar(FreeVerb.ar(sig2.abs,mix.lag(0.01),room.lag(0.01),mul:gain2*my.lag(0.01))),0.9,0.01));
+Out.ar(4,Limiter.ar(LeakDC.ar(FreeVerb.ar(sig1,mix.lag(0.01),room.lag(0.01),mul:gain1*mx.lag(0.01))),0.9,0.01));
+Out.ar(5,Limiter.ar(LeakDC.ar(FreeVerb.ar(sig2,mix.lag(0.01),room.lag(0.01),mul:gain2*my.lag(0.01))),0.9,0.01));
 Out.ar(6,Limiter.ar(LeakDC.ar(FreeVerb.ar(sig3,mix.lag(0.01),room.lag(0.01),mul:gain3*mz.lag(0.01))),0.9,0.01));
 					);
 
@@ -1531,9 +1532,9 @@ m3=m3+1;
 };
 });
 	);
-			~str1.play;
-			~tempi.play;
-		~rand.play;
+		//	~str1.play;
+		//	~tempi.play;
+		//~rand.play;
 
 	});
 	Tdef(\drone).play;
