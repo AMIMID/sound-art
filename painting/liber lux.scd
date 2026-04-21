@@ -73,13 +73,13 @@ OSCdef(\ampt4, { |msg|
 	1.do{
 
 		Pen.translate(150,150);
-	Pen.fillColor = Color(~amp1, ~amp1, ~amp1);
+	Pen.fillColor = Color(0, 0, 0,~amp1);
 	Pen.fillRect(Rect(wx+0,wy+0,300,300));
-	Pen.fillColor = Color(~amp2, ~amp2, ~amp2);
+	Pen.fillColor = Color(1, 1, 1, ~amp2);
 	Pen.fillRect(Rect(wx+300,wy+0,300,300));
-	Pen.fillColor = Color(~amp4, ~amp4, ~amp4);
+	Pen.fillColor = Color(0, 0, 0, ~amp4);
 	Pen.fillRect(Rect(wx+0,wy+300,300,300));
-	Pen.fillColor = Color(~amp3, ~amp3, ~amp3);
+	Pen.fillColor = Color(0, 0, 0, ~amp3);
 	Pen.fillRect(Rect(wx+300,wy+300,300,300));
 	}
 };
