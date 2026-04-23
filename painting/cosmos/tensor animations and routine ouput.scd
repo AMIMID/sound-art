@@ -1,5 +1,6 @@
 
 (
+~time=60;
 s.options.numWireBufs = 1024*4;
 s.options.numOutputBusChannels=8;
 s.options.numInputBusChannels=1;
@@ -90,14 +91,14 @@ var signal,wt;
 (
 SynthDef.new(\player,{
 
-	Out.kr(~controlBus.index, (Osc.kr(~scale.bufnum,(1/60)).abs));
-	Out.kr(~controlBus1.index, (Osc.kr(~scale1.bufnum,(1/60)).abs));
-	Out.kr(~controlBus4.index, (Osc.kr(~scale2.bufnum,(1/60)).abs));
-	Out.kr(~controlBus2.index, (Osc.kr(~rotation.bufnum,(1/60)).abs));
-    Out.kr(~controlBus3.index, (Osc.kr(~harm.bufnum,(1/60)).abs));
-	Out.kr(~controlBus5.index, (LFNoise1.kr(1/100).range(pi.neg,pi)));
-	Out.kr(~controlBus6.index, (Osc.kr(~temp.bufnum,(1/60)).abs));
-	Out.kr(~controlBus7.index, (Osc.kr(~space.bufnum,(1/60)).abs));
+	Out.kr(~controlBus.index, (Osc.kr(~scale.bufnum,(1/~time)).abs));
+	Out.kr(~controlBus1.index, (Osc.kr(~scale1.bufnum,(1/~time)).abs));
+	Out.kr(~controlBus4.index, (Osc.kr(~scale2.bufnum,(1/~time)).abs));
+	Out.kr(~controlBus2.index, (Osc.kr(~rotation.bufnum,(1/~time)).abs));
+    Out.kr(~controlBus3.index, (Osc.kr(~harm.bufnum,(1/~time)).abs));
+	Out.kr(~controlBus5.index, (LFNoise2.kr(1/~time).range(pi.neg,pi)));
+	Out.kr(~controlBus6.index, (Osc.kr(~temp.bufnum,(1/~time)).abs));
+	Out.kr(~controlBus7.index, (Osc.kr(~space.bufnum,(1/~time)).abs));
 
 
 }).add;
