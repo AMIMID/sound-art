@@ -158,7 +158,7 @@ wt = signal.asWavetable;
 (
 SynthDef.new(\synth,{
 
-	arg gain=1,low=992,tone1=0,tone2=0,tone3=0,x=1,pan=1,mix=0.3,a=1,panx=1,pany=1,panz=1,room=0.5,m=2,pon=1,cmp=50,
+	arg gain=1,low=992,tone1=0,tone2=0,tone3=0,x=1,pan=1,mix=0.3,a=1,panx=1,pany=1,panz=1,room=0.5,m=2,pon=1,cmp=50,limit=1,
 				fu=32,drive=1,spread=1,drone_amp=1,pann=0,az=0,el=0,azr=0,dron=0,drone=1,theta=0,rx=0,ry=0,rz=0,
 				pneuma1=0,pneuma2=0,pneuma3=0,namp1=1,namp2=1,namp3=1,qq=0.0000001,qqq=0,spirit=0,
 				attack=0.01,decay=4,curve=2.neg,gate=1,xx=1,yy=1,zz=1;
@@ -489,9 +489,9 @@ Out.ar(0,Limiter.ar(LeakDC.ar(FreeVerb.ar(sig3,mix.lag(0.01),room.lag(0.01),mul:
 
 	///three channel
 					(
-Out.ar(4,Limiter.ar(LeakDC.ar(FreeVerb.ar(sig1,mix.lag(0.01),room.lag(0.01),mul:gain1*mx.lag(0.01))),0.9,0.01));
-Out.ar(5,Limiter.ar(LeakDC.ar(FreeVerb.ar(sig2,mix.lag(0.01),room.lag(0.01),mul:gain2*my.lag(0.01))),0.9,0.01));
-Out.ar(6,Limiter.ar(LeakDC.ar(FreeVerb.ar(sig3,mix.lag(0.01),room.lag(0.01),mul:gain3*mz.lag(0.01))),0.9,0.01));
+Out.ar(4,Limiter.ar(LeakDC.ar(FreeVerb.ar(sig1,mix.lag(0.01),room.lag(0.01),mul:gain1*mx.lag(0.01))),limit,0.01));
+Out.ar(5,Limiter.ar(LeakDC.ar(FreeVerb.ar(sig2,mix.lag(0.01),room.lag(0.01),mul:gain2*my.lag(0.01))),limit,0.01));
+Out.ar(6,Limiter.ar(LeakDC.ar(FreeVerb.ar(sig3,mix.lag(0.01),room.lag(0.01),mul:gain3*mz.lag(0.01))),limit,0.01));
 					);
 
 										/*(
@@ -570,6 +570,7 @@ m3=m3+1;
 			~strech=12;
 			~detune=1;
 			~cmp=50;
+				~limit=1;
 
 			(
 MIDIClient.init;
@@ -725,7 +726,15 @@ MIDIdef.cc(\midi_slider1,{ |val, num, chan, src|
 		gain.postln;
 	~cmp=gain;
 },49);
-			)
+			);
+																(
+MIDIdef.cc(\midi_slider2,{ |val, num, chan, src|
+		var th;
+	th=val.linlin(0,127,0.1,1).round(0.0001);
+		th.postln;
+		~limit=th;
+},25);
+	);
 	);
 );
 
@@ -758,7 +767,7 @@ MIDIdef.cc(\midi_slider1,{ |val, num, chan, src|
 					sphr=[r1,r2,r3];
 
 		~synth=Synth.new(\synth,[\gain,~gg,\drive,~drive,\fu,32,\decay,~strech,
-						\low,~drive,\pan,~bband,\mix,~mox,\room,~room,\pann,~sphpan,\x,~lx,\a,~la,\spread,~panwidth,
+						\low,~drive,\pan,~bband,\mix,~mox,\room,~room,\pann,~sphpan,\x,~lx,\a,~la,\spread,~panwidth,\limit,~limit,
 						\pon,~panner,\pneuma,0,\namp,1,\drone,~oct,\az,az,\el,el,
 						\panx,~rect,\pany,~rect,\panz,~rect,\dron,~ton,\qq,~feed,\qqq,~scalar,\gate,1,\cmp,~cmp,
 						\xx,~cart.lag(0.01).[i].[0].round(0.00001),
@@ -767,7 +776,7 @@ MIDIdef.cc(\midi_slider1,{ |val, num, chan, src|
 					(~speed*sphr.[0]).wait;
 
 		~synth=Synth.new(\synth,[\gain,~gg,\drive,~drive,\fu,32,\decay,~strech,
-						\low,~drive,\pan,~bband,\mix,~mox,\room,~room,\pann,~sphpan,\x,~lx,\a,~la,\spread,~panwidth,
+						\low,~drive,\pan,~bband,\mix,~mox,\room,~room,\pann,~sphpan,\x,~lx,\a,~la,\spread,~panwidth,\limit,~limit,
 						\pon,~panner,\pneuma,0,\namp,1,\drone,~oct,\az,az,\el,el,
 						\panx,~rect,\pany,~rect,\panz,~rect,\dron,~ton,\qq,~feed,\qqq,~scalar,\gate,1,\cmp,~cmp,
 						\xx,~cart.lag(0.01).[i].[0].round(0.00001),
@@ -776,7 +785,7 @@ MIDIdef.cc(\midi_slider1,{ |val, num, chan, src|
 	(~speed*sphr.[1]).wait;
 
 		~synth=Synth.new(\synth,[\gain,~gg,\drive,~drive,\fu,32,\decay,~strech,
-						\low,~drive,\pan,~bband,\mix,~mox,\room,~room,\pann,~sphpan,\x,~lx,\a,~la,\spread,~panwidth,
+						\low,~drive,\pan,~bband,\mix,~mox,\room,~room,\pann,~sphpan,\x,~lx,\a,~la,\spread,~panwidth,\limit,~limit,
 						\pon,~panner,\pneuma,0,\namp,1,\drone,~oct,\az,az,\el,el,
 						\panx,~rect,\pany,~rect,\panz,~rect,\dron,~ton,\qq,~feed,\qqq,~scalar,\gate,1,\cmp,~cmp,
 						\xx,~cart.lag(0.01).[i].[0].round(0.00001),
