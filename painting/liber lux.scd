@@ -70,8 +70,8 @@ var win,wx=0,wy=0;
 ~amp6= 0;
 ~amp7= 0;
 
-win = Window("RGB Audio Visualizer", Rect(10, 10, 1200, 1200));
-~v1 = UserView(win, Rect(0,0,1200,1200)).background_(Color.black);
+win = Window("RGB Audio Visualizer", Rect(10, 10, 600, 600));
+~v1 = UserView(win, Rect(0,0,600,600)).background_(Color.black);
 
 SynthDef(\painting, {
 	arg lag=0.1,gain1=5,gain2=100;
@@ -132,9 +132,9 @@ OSCdef(\ampt5, { |msg|
 ~v1.drawFunc = {
 	1.do{
 
-		Pen.translate(300,300);
+		Pen.translate(150,150);
 	Pen.fillColor = Color(~amp1, ~amp2, ~amp3);
-	Pen.fillRect(Rect(wx+~amp4,wy+~amp5,500,500));
+	Pen.fillRect(Rect(wx+~amp4,wy+~amp5,300,300));
 	//Pen.fillColor = Color(1, 1, 1, ~amp2);
 	//Pen.fillRect(Rect(wx+300,wy+0,300,300));
 	//Pen.fillColor = Color(0, 0, 0, ~amp4);
