@@ -672,7 +672,7 @@ MIDIdef.cc(\midi_pot13,{ |val, num, chan, src|
 														(
 MIDIdef.cc(\midi_pot14,{ |val, num, chan, src|
 		var pan;
-					pan=val.linlin(0,127,0001,12).round(0.0001);
+					pan=val.linlin(0,127,0.01,12).round(0.0001);
 		pan.postln;
 	~panner=pan;
 
