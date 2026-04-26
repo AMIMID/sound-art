@@ -5,7 +5,7 @@
 s.options.numWireBufs = 1024*2;
 s.options.numOutputBusChannels=10;
 s.options.numInputBusChannels=1;
-s.options.memSize = 8192*16;
+s.options.memSize = 8192*32;
 s.options.blockSize = 64;
 s.options.maxNodes = 1024 * 2;
 //s.makeGui(w);
@@ -163,7 +163,7 @@ SynthDef.new(\synth,{
 				pneuma1=0,pneuma2=0,pneuma3=0,namp1=1,namp2=1,namp3=1,qq=0.0000001,qqq=0,spirit=0,
 				attack=0.01,decay=4,curve=2.neg,gate=1,xx=1,yy=1,zz=1;
 
-	var rq=1,cloud=5,band,azf=0,elf=0,q,r1,r2,r3,sq1,sq2,sq3,rotationx,rotationy,rotationz,core=(9/8).rand;
+	var rq=1,cloud=1,band,azf=0,elf=0,q,r1,r2,r3,sq1,sq2,sq3,rotationx,rotationy,rotationz,core=(9/8).rand;
 	var lamdoma,freq1,freq2,freq3,fund,amp1,amp2,amp3,alpha,cell_az,cell_el,x_pos,y_pos,control1,control2,control3;
 	var sig1,sig2,bank=6,out1,out2,band_osc1,band_osc2,threshold1,threshold2,threshold3,phase1,phase2,phase3;
 	var band_osc3,band_osc4,band_osc5,band_osc6,sig3,out3,cell_tria,b_x,b_y,b_z,polytope,gain1,gain2,gain3,env,azimuth,elevation;
@@ -429,10 +429,10 @@ g_ch2 = g_ch2.pow(spread.reciprocal);
 g_ch3 = g_ch3.pow(spread.reciprocal);
 g_ch4 = g_ch4.pow(spread.reciprocal);
 
-pon1=SinOsc.ar(pon*lfon,0).range(0.0001,1).lag(0.1);
-pon2=SinOsc.ar(pon*lfon,0.25pi).range(0.0001,1).lag(0.1);
-pon3=SinOsc.ar(pon*lfon,0.5pi).range(0.0001,1).lag(0.1);
-pon4=SinOsc.ar(pon*lfon,0.75pi).range(0.0001,1).lag(0.1);
+pon1=SinOsc.ar(pon,0).range(0.0001,1).lag(0.1);
+pon2=SinOsc.ar(pon,0.25pi).range(0.0001,1).lag(0.1);
+pon3=SinOsc.ar(pon,0.5pi).range(0.0001,1).lag(0.1);
+pon4=SinOsc.ar(pon,0.75pi).range(0.0001,1).lag(0.1);
 
 pon5=SinOsc.ar(pon*lfon,0);
 pon6=SinOsc.ar(pon*lfon,90.degrad);
@@ -742,7 +742,7 @@ MIDIdef.cc(\midi_slider2,{ |val, num, chan, src|
 ////music parameters
 			~val=12364.rand;
 					~seq= Pseq(1 *~dur, inf).asStream;
-			~speed=1;
+			~speed=10;
 
 ~str = Routine({
     var i=0,m,l,az=0,el=0,expansion;
@@ -792,7 +792,7 @@ MIDIdef.cc(\midi_slider2,{ |val, num, chan, src|
 						\xx,~cart.lag(0.01).[i].[0].round(0.00001),
 				        \yy,~cart.lag(0.01).[i].[1].round(0.00001),
 						\zz,~cart.lag(0.01).[i].[2].round(0.00001)]).register;
-						sphr.[2].wait;
+						(~speed*sphr.[2]).wait;
     }
 		});
 
