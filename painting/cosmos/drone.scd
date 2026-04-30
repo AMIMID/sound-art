@@ -331,16 +331,41 @@ ds3=((LPF.ar((Osc.ar(~w1.bufnum,f3,phase:phasez,mul:level).abs*
 					+BPF.ar(BrownNoise.ar(qq.sqrt.reciprocal),f3*dr,qq,g3/dr));
 				)*/
 
-						(
-ds1=((LPF.ar((Osc.ar(~w1.bufnum,f1*dr1.reciprocal,phase:phasex+rph,mul:level).abs*
-					SinOsc.ar(f1*dr1.reciprocal,phase:phasex+rph)),f1*dr1.reciprocal*2.pow(low.lag(0.01)/992),g1*dr1)).abs
-					*BPF.ar((SoundIn.ar(0,gain)*qq.sqrt.reciprocal),f1*dr2.reciprocal,qq,g1*dr2));
-ds2=((LPF.ar((Osc.ar(~w1.bufnum,f2*dr1.reciprocal,phase:phasey+rph,mul:level).abs*
-						SinOsc.ar(f2*dr1.reciprocal,phase:phasey+rph)),f2*dr1.reciprocal*2.pow(low.lag(0.01)/992),g2*dr1)).abs
-					*BPF.ar((SoundIn.ar(0,gain)*qq.sqrt.reciprocal),f2*dr2.reciprocal,qq,g2*dr2));
-ds3=((LPF.ar((Osc.ar(~w1.bufnum,f3*dr1.reciprocal,phase:phasez+rph,mul:level).abs*
-					SinOsc.ar(f3*dr1.reciprocal,phase:phasez+rph)),f3*dr1.reciprocal*2.pow(low.lag(0.01)/992),g3*dr1)).abs
-					*BPF.ar((SoundIn.ar(0,gain)*qq.sqrt.reciprocal),f3*dr2.reciprocal,qq,g3*dr2));
+					/*(
+ds1=((LPF.ar(
+(Osc.ar(~w1.bufnum,(f1*dr1.reciprocal),phase:phasex+rph,mul:level).abs*
+SinOsc.ar((f1*dr1.reciprocal),phase:phasex+rph)),(f1*dr1.reciprocal)*2.pow(low.lag(0.01)/992),(g1*dr1))).abs
+*BPF.ar((SoundIn.ar(0,gain)*qq.sqrt.reciprocal),(f1*dr2.reciprocal),qq,(g1*dr2)));
+
+ds2=((LPF.ar(
+(Osc.ar(~w1.bufnum,f2*dr1.reciprocal,phase:phasey+rph,mul:level).abs*
+SinOsc.ar((f2*dr1.reciprocal),phase:phasey+rph)),(f2*dr1.reciprocal)*2.pow(low.lag(0.01)/992),(g2*dr1))).abs
+*BPF.ar((SoundIn.ar(0,gain)*qq.sqrt.reciprocal),(f2*dr2.reciprocal),qq,(g2*dr2)));
+
+ds3=((LPF.ar(
+(Osc.ar(~w1.bufnum,(f3*dr1.reciprocal),phase:phasez+rph,mul:level).abs*
+SinOsc.ar((f3*dr1.reciprocal),phase:phasez+rph)),(f3*dr1.reciprocal)*2.pow(low.lag(0.01)/992),(g3*dr1))).abs
+*BPF.ar((SoundIn.ar(0,gain)*qq.sqrt.reciprocal),(f3*dr2.reciprocal),qq,(g3*dr2)));
+				)*/
+
+				(
+ds1=((LPF.ar(
+(Osc.ar(~w1.bufnum,(f1*dr1.reciprocal)+SinOsc.ar(dr1,phasex+rph,dr1.reciprocal),phase:phasex+rph,mul:level).abs*
+SinOsc.ar((f1*dr1.reciprocal)+SinOsc.ar(dr1,phasex+rph,dr1.reciprocal),phase:phasex+rph)),
+						(f1*dr1.reciprocal)*2.pow(low.lag(0.01)/992)+SinOsc.ar(dr1,phasex+rph,dr1.reciprocal),(g1*dr1))).abs
+*BPF.ar((SoundIn.ar(0,gain)*qq.sqrt.reciprocal),(f1*dr2.reciprocal)+SinOsc.ar(dr2,phasex+rph,dr2.reciprocal),qq,(g1*dr2)));
+
+ds2=((LPF.ar(
+(Osc.ar(~w1.bufnum,(f2*dr1.reciprocal)+SinOsc.ar(dr1,phasey+rph,dr1.reciprocal),phase:phasey+rph,mul:level).abs*
+SinOsc.ar((f2*dr1.reciprocal)+SinOsc.ar(dr1,phasey+rph,dr1.reciprocal),phase:phasey+rph)),
+						(f2*dr1.reciprocal)*2.pow(low.lag(0.01)/992)+SinOsc.ar(dr1,phasey+rph,dr1.reciprocal),(g2*dr1))).abs
+*BPF.ar((SoundIn.ar(0,gain)*qq.sqrt.reciprocal),(f2*dr2.reciprocal)+SinOsc.ar(dr2,phasey+rph,dr2.reciprocal),qq,(g2*dr2)));
+
+ds3=((LPF.ar(
+(Osc.ar(~w1.bufnum,(f3*dr1.reciprocal)+SinOsc.ar(dr1,phasez+rph,dr1.reciprocal),phase:phasez+rph,mul:level).abs*
+SinOsc.ar((f3*dr1.reciprocal)+SinOsc.ar(dr1,phasez+rph,dr1.reciprocal),phase:phasez+rph)),
+						(f3*dr1.reciprocal)*2.pow(low.lag(0.01)/992)+SinOsc.ar(dr1,phasez+rph,dr1.reciprocal),(g3*dr1))).abs
+*BPF.ar((SoundIn.ar(0,gain)*qq.sqrt.reciprocal),(f3*dr2.reciprocal)+SinOsc.ar(dr2,phasez+rph,dr2.reciprocal),qq,(g3*dr2)));
 				);
 
 ds1 = (ds1*2.pow(drive/992)).softclip;
